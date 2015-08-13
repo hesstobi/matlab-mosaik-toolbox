@@ -94,14 +94,12 @@ classdef Simulator < handle
 
         end
 
-        %Parses request and calls simulator function.
-        function response = exec(sim, request)
-            sim.id = request{2};
-            func = request{3}{1};
-            args = request{3}{2};
-            kwargs = request{3}{3};
+        
+        function response = simSocketReceivedRequest(sim,~,request) 
+            %Parses request and calls simulator function.
+            func = request{1};
             func = str2func(func);
-            response = func(sim, args, kwargs);
+            response = func(sim, request{2:end});
         end
 
         %Returns empty response.
