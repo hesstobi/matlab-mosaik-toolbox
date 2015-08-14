@@ -1,8 +1,8 @@
-classdef SimSocketDelegate
+classdef SimSocketDelegate < handle
     %SIMSOCKETDELEGATE 
     %   Abstract delegate class for SimSocket
     %
-    %   Requiered delegate methods are:
+    %   Required delegate methods are:
     %    - response = simSocketReceivedRequest(this,simSocket,request);
     %
     
