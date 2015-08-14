@@ -1,7 +1,7 @@
 classdef ModelSimulator < handle
 	
 	properties
-		models = struct('A', 'ieeh_mosaik_api_matlab.model_a', 'B', 'ieeh_mosaik_api_matlab.model_b');
+		models = struct('A', 'model_a', 'B', 'model_b');
 		instances = cell.empty;
 		results = cell.empty;
 	end

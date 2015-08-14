@@ -1,4 +1,4 @@
-classdef ExampleSim < MoasikAPI.Simulator
+classdef ExampleSim < MosaikAPI.Simulator
 
 	properties
 		sid;
@@ -12,11 +12,12 @@ classdef ExampleSim < MoasikAPI.Simulator
     
     methods 
 		function sim = ExampleSim(server)
- 			sim = sim@ieeh_mosaik_api_matlab.Simulator(server);
+ 			sim = sim@MosaikAPI.Simulator(server);
 		end
 	end
 
-	methods (Access = protected)
+	methods
+
 		function meta = init(sim, args, kwargs)
 			sim.sid = args{1};
 			A.('public') = true;
@@ -34,15 +35,15 @@ classdef ExampleSim < MoasikAPI.Simulator
 			else
 				sim.step_size = kwargs.step_size;
 			end			
-			example_sim_meta = init@ieeh_mosaik_api_matlab.Simulator(sim, example_sim_meta);
-			meta = savejson('', example_sim_meta, 'ParseLogical', 1);
+			example_sim_meta = updateMeta(sim, example_sim_meta);
+			meta = example_sim_meta;
 		end
 
 		function entity_list = create(sim, args, kwargs)
 			entity_list = cell.empty;
 			num = args{1};
 			model = args{2};		
-			sim.msim = ieeh_mosaik_api_matlab.ModelSimulator(model, num, kwargs.init_val);
+			sim.msim = ModelSimulator(model, num, kwargs.init_val);
 			sim.simulators(end+1) = {sim.msim};	
 			sim_id = numel(sim.simulators);
 			for i = 1:numel(sim.msim.instances)
@@ -54,7 +55,6 @@ classdef ExampleSim < MoasikAPI.Simulator
 			if eq(numel(entity_list), 1)
 				entity_list(end+1) = {[]};
 			end
-			entity_list = savejson('', entity_list, 'ParseLogical', 1);
 		end
 
 		function time_next_step = step(sim, args, ~)            
@@ -103,11 +103,12 @@ classdef ExampleSim < MoasikAPI.Simulator
 					end
 				end
 			end
-			data = savejson('',data,'ParseLogical',1);
 		end
+
 	end
 
 	methods
+
 		function extra = wtimes(~, args, kwargs)
 			word = args;
 			extra = '';
@@ -120,5 +121,7 @@ classdef ExampleSim < MoasikAPI.Simulator
 				extra = strcat(extra, word);
 			end
 		end
+
 	end
+
 end

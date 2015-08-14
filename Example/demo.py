@@ -2,7 +2,8 @@ import mosaik
 
 sim_config = {
     'Matlab': {
-        'cmd': 'matlab.exe -minimize - nosplash -nodesktop -r "server=\'%(addr)s\';ieeh_mosaik_api_matlab.ExampleSim(server)"'
+    	'cwd': 'C:\\Users\\sjras\\OneDrive\\Dokumente\\MATLAB\\IEEHMosaikToolbox\\Example',
+        'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(server)"'
     }
 }
 
@@ -24,6 +25,4 @@ for a, b in zip(a_set, b_set):
 
 world.run(until=10)
 #exsim_0.wtimes('Hallo', times=23)
-#world.shutdown()
-
-# 
+#world.shutdown() 
