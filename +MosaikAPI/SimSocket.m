@@ -17,7 +17,7 @@ classdef SimSocket < handle
     methods
         
         function this = SimSocket(server,port,varargin)
-            %this = SimSocket(callback,server,port)
+            % this = SimSocket(callback,server,port)
             % Constructor of the class SimSocket
             %
             % Parameter:
@@ -32,13 +32,14 @@ classdef SimSocket < handle
             p = inputParser;
             addRequired(p,'server',@ischar);
             addRequired(p,'port',@(x)validateattributes(x,{'numeric'},{'scalar','integer','positive'}));
-            addOptional(p,'delegate',[],@(x)isa(x,'ieeh_mosiak_api_matlab.SimSocketDelegate'));
+            addOptional(p,'delegate',[],@(x)isa(x,'MosaikAPI.SimSocketDelegate'));
             parse(p,server,port,varargin{:});
             
             this.server = p.Results.server;
             this.port = p.Results.port;
             this.delegate = p.Results.delegate;
             
+            main_loop(this);
         end
         
         function delete(this)
@@ -65,8 +66,8 @@ classdef SimSocket < handle
                     [~,id,content] = this.deserialize(request);
                     
                     % Forward the request to the Delegate
-                    response = content;
-                    %response = this.delegate.simSocketReceivedRequest(content);
+                    %response = content;
+                    response = this.delegate.simSocketReceivedRequest(content);
                     
                     % Serialize and write the response
                     response = this.serialize(response,1,id);
