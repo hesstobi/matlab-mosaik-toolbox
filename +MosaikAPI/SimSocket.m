@@ -91,23 +91,71 @@ classdef SimSocket < handle
             message{1}=type;
             message{2}=varargin{1};
             
-            message = uint8(savejson('',message,'ParseLogical',1,'Compact',1));
-            message(2:end+1) = message;
-            message(1) = numel(savejson('',message,'ParseLogical',1,'Compact',1));
-            message(end+1) = 10;
+            % content = savejson('',content,'ParseLogical',1,'Compact',1);
+            % message = strcat('[1, ', num2str(varargin{1}), ', ', content, ']');
+            % message = strrep(message, ',null', '');
+            % message = uint8(message);
+            % message = savejson('',message,'ParseLogical',1,'Compact',1);
+            
+            
+            message = savejson('',message,'ParseLogical',1,'Compact',1);
+            message = strrep(message, sprintf('\t'), '');
+            message = strrep(message, sprintf('\n'), '');
+            message = uint8(strrep(message, ',null', ''));
+            header = makeHeader(this,message);
+
+            disp(strcat(header, message));
+
+            uint8(strcat(header, message));
+            
+            
+            
+            
         end
         
         function [type,id,content] = deserialize(this,message)
             
-            message = loadjson(char(message));
-            
+            disp(char(message(5:end)));
+
+            message = loadjson(char(message(5:end)));
+
             type = message{1};
             id = message{2};
-            content = message{3};
-            
+            content = message{3};      
+
             this.last_id = id;
             
         end
+
+        %% makeHeader: function description
+        % function header = makeHeader(~,message)
+        %     size = numel(message);
+        %     header = [];
+        %     for i = 1:4
+        %         if lt(size,256^(4-i))
+        %             header(i) = 0;
+        %         else
+        %             header(i) = fix(size/256^(4-i));
+        %             size = size - header(i)*256^(4-i);
+        %         end
+        %     end
+        % end
+
+        function header = makeHeader(~, message)
+            size = numel(uint8(message));
+            size = dec2hex(size);
+            header = '\x00\x00\x00\x00';
+            for i = 1:numel(size)
+                j = i-1;
+                if eq(i, 3) || eq(i, 4) || eq(i, 7) || eq(i, 8) || eq(i, 11) || eq(i, 12) || eq(i, 15) || eq(i, 16)
+                    j = j + 2;
+                end
+                header(16-j)= size(numel(size)+1-i);              
+            end
+            disp(header);
+        end
+            
+        
         
         function value = next_request_id(this)
             this.last_id = this.last_id+1;
