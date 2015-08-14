@@ -79,10 +79,10 @@ classdef SimSocket < handle
                 end
             end
             disp('Terminating Simulator.');
-            this.delete;
+            this.delete();
         end
         
-        function message = serialize(~,content,type,varargin)
+        function message = serialize(this,content,type,varargin)
             % if no id is given it is set automaticaly
             if nargin < 4
                 varargin{1}=next_request_id(this);
