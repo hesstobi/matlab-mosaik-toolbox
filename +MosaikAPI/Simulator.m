@@ -3,6 +3,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
     properties
         api_version = 2;
         meta = containers.Map();
+        delegator;
     end
 
     methods
@@ -22,7 +23,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
 
             %Get server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
-            [ip,port] = parseAddress(sim,server);
+            [ip,port] = parse_address(sim,server);
 
             %Creates socket and starts main loop
             MosaikAPI.SimSocket(ip,port,sim);
@@ -32,7 +33,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
 
     methods
                 
-        function response = simSocketReceivedRequest(sim,request) 
+        function response = delegate(sim,request) 
             %Parses request and calls simulator function.
             func = request{1};
             func = str2func(func);
@@ -48,7 +49,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             null = [];
         end
         
-        function [ip, port] = parseAddress(~, server)
+        function [ip, port] = parse_address(~, server)
             %Parses address string. Returns ip as string and port as integer.
             server = strsplit(server,':');
             if ~isempty(server(1))
@@ -67,26 +68,27 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
 
     end
 
-    methods %(Access=protected)
     methods
     
         function set_delegator(sim, delegator)
             sim.delegator = delegator;
         end
 
-        function meta = updateMeta(sim, meta)
+        function meta = update_meta(sim, meta)
             meta.('api_version') = sim.api_version;
         end
 
         function stop = stop(~, ~, ~)
             stop = ('stop');
         end
+
         function progress = get_progress(sim)
             content{1} = 'get_progress';
             content{2} = [];
             content{3} = {};
             sim.delegator.send_request();
         end
+
     end
 
 
