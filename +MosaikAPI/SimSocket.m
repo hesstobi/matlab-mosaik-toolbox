@@ -54,7 +54,8 @@ classdef SimSocket < handle
         function main_loop(this)
             this.socket = tcpclient(this.server,this.port);
             
-            while ~strcmp(response,'stop') 
+            content = {'init'};
+            while ~strcmp(content{1},'stop') 
                 try
                     % Wait for bytes
                     while ~this.socket.BytesAvailable
@@ -64,13 +65,13 @@ classdef SimSocket < handle
                     % Read and deserialize the request
                     request = read(this.socket);
                     [~,id,content] = this.deserialize(request);
-                    
+
                     % Forward the request to the Delegate
                     %response = content;
                     response = this.delegate.simSocketReceivedRequest(content);
                     
                     % Serialize and write the response
-                    response = this.serialize(response,1,id);
+                    response = this.serialize(response,1,id);                    
                     write(this.socket,response);
                     
                 catch exception
@@ -102,12 +103,11 @@ classdef SimSocket < handle
             message = savejson('',message,'ParseLogical',1,'Compact',1);
             message = strrep(message, sprintf('\t'), '');
             message = strrep(message, sprintf('\n'), '');
-            message = uint8(strrep(message, ',null', ''));
+            message = strrep(message, ',null', '');
+            
             header = makeHeader(this,message);
 
-            disp(strcat(header, message));
-
-            uint8(strcat(header, message));
+            message = uint8(sprintf(strcat(header, message)));
             
             
             
@@ -127,20 +127,6 @@ classdef SimSocket < handle
             this.last_id = id;
             
         end
-
-        %% makeHeader: function description
-        % function header = makeHeader(~,message)
-        %     size = numel(message);
-        %     header = [];
-        %     for i = 1:4
-        %         if lt(size,256^(4-i))
-        %             header(i) = 0;
-        %         else
-        %             header(i) = fix(size/256^(4-i));
-        %             size = size - header(i)*256^(4-i);
-        %         end
-        %     end
-        % end
 
         function header = makeHeader(~, message)
             size = numel(uint8(message));
