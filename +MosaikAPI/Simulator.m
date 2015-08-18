@@ -68,6 +68,11 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
     end
 
     methods %(Access=protected)
+    methods
+    
+        function set_delegator(sim, delegator)
+            sim.delegator = delegator;
+        end
 
         function meta = updateMeta(sim, meta)
             meta.('api_version') = sim.api_version;
