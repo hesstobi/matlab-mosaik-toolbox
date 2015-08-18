@@ -35,7 +35,7 @@ classdef ExampleSim < MosaikAPI.Simulator
 			else
 				sim.step_size = kwargs.step_size;
 			end			
-			example_sim_meta = updateMeta(sim, example_sim_meta);
+			example_sim_meta = update_meta(sim, example_sim_meta);
 			meta = example_sim_meta;
 		end
 
@@ -66,6 +66,9 @@ classdef ExampleSim < MosaikAPI.Simulator
 				inputs = struct;
             end
             
+            progress = sim.get_progress();
+            disp(progress);
+
 			for i = 1:numel(sim.simulators)
 				sim_inputs = cell(1, numel(sim.simulators{i}.instances));
 				for j = 1:numel(sim_inputs)
