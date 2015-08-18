@@ -38,6 +38,7 @@ classdef SimSocket < handle
             this.server = p.Results.server;
             this.port = p.Results.port;
             this.delegate = p.Results.delegate;
+            this.delegate.set_delegator(this);
             
             main_loop(this);
         end
