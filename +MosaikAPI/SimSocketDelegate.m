@@ -7,7 +7,7 @@ classdef SimSocketDelegate < handle
     %
     
     methods (Abstract)
-        simSocketReceivedRequest(this,simSocket,request);
+        delegate(this,simSocket,request);
     end
     
 end
