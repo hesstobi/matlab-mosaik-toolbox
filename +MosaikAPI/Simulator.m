@@ -81,6 +81,12 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
         function stop = stop(~, ~, ~)
             stop = ('stop');
         end
+        function progress = get_progress(sim)
+            content{1} = 'get_progress';
+            content{2} = [];
+            content{3} = {};
+            sim.delegator.send_request();
+        end
     end
 
 
