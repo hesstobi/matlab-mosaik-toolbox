@@ -38,6 +38,7 @@ classdef SimSocket < handle
             this.server = p.Results.server;
             this.port = p.Results.port;
             this.delegate = p.Results.delegate;
+
             this.delegate.set_delegator(this);
             
             main_loop(this);
@@ -69,7 +70,7 @@ classdef SimSocket < handle
 
                     % Forward the request to the Delegate
                     %response = content;
-                    response = this.delegate.simSocketReceivedRequest(content);
+                    response = this.delegate.delegate(content);
                     
                     % Serialize and write the response
                     response = this.serialize(response,1,id);                    
@@ -92,27 +93,16 @@ classdef SimSocket < handle
             
             message{3}=content;
             message{1}=type;
-            message{2}=varargin{1};
-            
-            % content = savejson('',content,'ParseLogical',1,'Compact',1);
-            % message = strcat('[1, ', num2str(varargin{1}), ', ', content, ']');
-            % message = strrep(message, ',null', '');
-            % message = uint8(message);
-            % message = savejson('',message,'ParseLogical',1,'Compact',1);
-            
+            message{2}=varargin{1};            
             
             message = savejson('',message,'ParseLogical',1,'Compact',1);
             message = strrep(message, sprintf('\t'), '');
             message = strrep(message, sprintf('\n'), '');
             message = strrep(message, ',null', '');
             
-            header = makeHeader(this,message);
+            header = make_header(this,message);
 
             message = uint8(sprintf(strcat(header, message)));
-            
-            
-            
-            
         end
         
         function [type,id,content] = deserialize(this,message)
@@ -129,7 +119,7 @@ classdef SimSocket < handle
             
         end
 
-        function header = makeHeader(~, message)
+        function header = make_header(~, message)
             size = numel(uint8(message));
             size = dec2hex(size);
             header = '\x00\x00\x00\x00';
@@ -142,8 +132,6 @@ classdef SimSocket < handle
             end
             disp(header);
         end
-            
-        
         
         function value = next_request_id(this)
             this.last_id = this.last_id+1;
@@ -167,25 +155,16 @@ classdef SimSocket < handle
             request = this.serialize(content,0);
             write(this.socket,request);
             
-            % waiting for response
+            % Wait for response
             while ~this.socket.BytesAvailable
                 pause(0.001);
             end
             
-            % read the deserialze the response
+            % Read and deserialize the response
             response = read(this.socket);
             [~,~,content] = this.deserialize(this,response);
-            response = content;
-            
-        end
-        
+            response = content;            
+        end        
     end
-    
-    
-    
-    
-    
-    
-    
 end
 
