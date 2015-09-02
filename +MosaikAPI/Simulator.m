@@ -1,4 +1,4 @@
-classdef Simulator < MosaikAPI.SimSocketDelegate
+classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
     properties
         api_version = 2;
