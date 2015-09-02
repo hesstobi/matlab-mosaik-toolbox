@@ -3,7 +3,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     properties
         api_version = 2;
         meta = containers.Map();
-        delegator;
+        socket;
     end
 
     methods
@@ -25,8 +25,17 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
             [ip,port] = parse_address(sim,server);
 
-            %Creates socket and starts main loop
-            MosaikAPI.SimSocket(ip,port,sim);
+            %Creates socket
+            sim.socket = MosaikAPI.SimSocket(ip,port,sim);
+            
+            %Starts the socket client and waiting for messages
+            sim.socket.start();
+            
+            % Delete the Socket
+            sim.socket = [];
+            
+            % Close Matlab
+            exit;
         end
 
     end
@@ -70,10 +79,6 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
     methods
     
-        function set_delegator(sim, delegator)
-            sim.delegator = delegator;
-        end
-
         function meta = update_meta(sim, meta)
             meta.('api_version') = sim.api_version;
         end
@@ -86,7 +91,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             content{1} = 'get_progress';
             content{2} = [];
             content{3} = {};
-            sim.delegator.send_request();
+            progress = sim.socket.send_request(content);
         end
 
     end

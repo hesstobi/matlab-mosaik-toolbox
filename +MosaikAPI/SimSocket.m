@@ -38,10 +38,7 @@ classdef SimSocket < handle
             this.server = p.Results.server;
             this.port = p.Results.port;
             this.delegate = p.Results.delegate;
-
-            this.delegate.set_delegator(this);
-            
-            main_loop(this);
+                     
         end
         
         function delete(this)
@@ -82,7 +79,7 @@ classdef SimSocket < handle
                 end
             end
             disp('Terminating Simulator.');
-            this.delete();
+            %this.delete();
         end
         
         function message = serialize(this,content,type,varargin)
