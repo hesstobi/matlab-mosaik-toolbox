@@ -3,8 +3,8 @@ import os.path
 
 sim_config = {
     'Matlab': {
-    	'cwd': os.path.dirname(os.path.realpath(__file__)),
-        'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(server)"'
+        'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
+        'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(\'%(addr)s\')"'
     }
 }
 
@@ -26,4 +26,4 @@ for a, b in zip(a_set, b_set):
 
 world.run(until=10)
 #exsim_0.wtimes('Hallo', times=23)
-#world.shutdown() 
+#world.shutdown()
