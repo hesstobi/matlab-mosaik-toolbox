@@ -3,7 +3,7 @@ import mosaik
 sim_config = {
     'Matlab': {
     	'cwd': 'C:\\Users\\sjras\\OneDrive\\Dokumente\\MATLAB\\IEEHMosaikToolbox\\Example',
-        'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(server)"'
+        'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleMas(server)"'
     }
 }
 
@@ -14,14 +14,14 @@ mosaik_config = {
 
 world = mosaik.World(sim_config, mosaik_config)
 
-exsim_0 = world.start('Matlab', step_size=2)
+exsim_0 = world.start('Matlab')
 exsim_1 = world.start('Matlab')
 
-a_set = [exsim_0.A(init_val=i) for i in range(3)]
-b_set = exsim_1.B.create(3, init_val=1)
+a_set = exsim_0.Agent.create(3)
+b_set = exsim_1.Agent.create(3)
 
 for a, b in zip(a_set, b_set):
-    world.connect(a, b, ('val_out', 'val_in'))
+    world.connect_randomly(a, b, ('val_out', 'val_in'), async_requests=True)
 
 world.run(until=10)
 #exsim_0.wtimes('Hallo', times=23)

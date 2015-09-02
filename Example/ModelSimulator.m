@@ -14,8 +14,8 @@ classdef ModelSimulator < handle
 				inst = str2func(msim.models.(model));
 				inst = inst(init_val);
 				result = inst.next();
-				disp(inst);
-				disp(result);
+				% disp(inst);
+				% disp(result);
 				msim.results(end+1) = {result};
 				msim.instances(end+1) = {inst};
 			end
@@ -27,9 +27,9 @@ classdef ModelSimulator < handle
             end
             msim.results = cell.empty;
             for i = 1:numel(inputs)
-                disp(msim.instances{i});
+                % disp(msim.instances{i});
                 result = msim.instances{i}.send(inputs{i});
-                disp(result);
+                % disp(result);
             	msim.results(end+1) = {result};
             end
 		end

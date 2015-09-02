@@ -3,53 +3,62 @@ classdef ExampleSim < MosaikAPI.Simulator
 	properties
 		sid;
 		step_size;
-		value;		
-		simulators = cell.empty;
-        msim;
-            
-    end
-    
-    
-    methods 
+		value;
+		simulators = cell.empty;		
+	end
+
+	methods 
 		function sim = ExampleSim(server)
- 			sim = sim@MosaikAPI.Simulator(server);
+			example_sim_meta = struct( ...
+			'models', struct( ...
+				'A', struct( ...
+					'public', true, 'params', {{'init_val', []}}, 'attrs', {{'val_out', 'dummy_out'}} ...
+					), ...
+				'B', struct( ...
+					'public', true, 'params', {{'init_val', []}}, 'attrs', {{'val_in', 'val_out', 'dummy_in'}} ...
+					) ...
+				), ...
+			'extra_methods', {{'example_method', []}} ...
+			);
+			sim = sim@MosaikAPI.Simulator(server, example_sim_meta);
 		end
 	end
 
 	methods
 
 		function meta = init(sim, args, kwargs)
-			sim.sid = args{1};
-			A.('public') = true;
-			A.('params') = {'init_val', []};
- 			A.('attrs') = {'val_out', 'dummy_out'};
- 			B.('public') = true;
- 			B.('params') = {'init_val', []};
- 			B.('attrs') = {'val_in', 'val_out', 'dummy_in'};
- 			models.('A') = A;
- 			models.('B') = B;
- 			example_sim_meta.('models') = models;
- 			example_sim_meta.('extra_methods') = {'waua', []};
-			if ~isfield(kwargs, 'step_size')
-				sim.step_size = 1;
+			sid = args{1};
+			if isfield(kwargs, 'step_size')
+				step_size = kwargs.step_size;
 			else
-				sim.step_size = kwargs.step_size;
-			end			
-			example_sim_meta = update_meta(sim, example_sim_meta);
-			meta = example_sim_meta;
+				step_size = 1;
+			end
+
+			sim.sid = sid;
+			sim.step_size = step_size;
+
+			meta = sim.meta;			
+			             
+			
 		end
 
-		function entity_list = create(sim, args, kwargs)
-			entity_list = cell.empty;
+		function entity_list = create(sim, args, kwargs)			
 			num = args{1};
-			model = args{2};		
-			sim.msim = ModelSimulator(model, num, kwargs.init_val);
-			sim.simulators(end+1) = {sim.msim};	
+			model = args{2};
+			if isfield(kwargs, 'init_val')
+				init_val = kwargs.init_val;
+			else
+				init_val = 0;
+			end
+
+			msim = ModelSimulator(model, num, init_val);
+			sim.simulators(end+1) = {msim};
 			sim_id = numel(sim.simulators);
-			for i = 1:numel(sim.msim.instances)
+			entity_list = cell.empty;
+			for i = 1:numel(msim.instances)
 				l.('eid') = strcat('i', num2str(sim_id),'_',num2str(i));
 				l.('type') = model;
-				l.('rel') = '[]';
+				l.('rel') = {{}};
 				entity_list(end+1) = {l};
 			end
 			if eq(numel(entity_list), 1)
@@ -57,17 +66,19 @@ classdef ExampleSim < MosaikAPI.Simulator
 			end
 		end
 
-		function time_next_step = step(sim, args, ~)            
-            if iscell(args)
-				time = args{1};			
+		function time_next_step = step(sim, args, ~)
+		if iscell(args)
+				time = args{1};
 				inputs = args{2};
 			else
 				time = args;
 				inputs = struct;
-            end
-            
-            progress = sim.get_progress();
-            disp(progress);
+		end
+
+		progress = sim.as_get_progress();
+		disp(progress);
+		%related_entities = sim.as_get_related_entities();
+		%disp(related_entities);
 
 			for i = 1:numel(sim.simulators)
 				sim_inputs = cell(1, numel(sim.simulators{i}.instances));
@@ -95,6 +106,7 @@ classdef ExampleSim < MosaikAPI.Simulator
 
 		function data = get_data(sim, args, ~)
 			outputs = args{1};
+
 			fn = fieldnames(outputs);
 			for i = 1:numel(fn)
 				for j = 1:numel(outputs.(fn{i}))
@@ -112,17 +124,7 @@ classdef ExampleSim < MosaikAPI.Simulator
 
 	methods
 
-		function extra = wtimes(~, args, kwargs)
-			word = args;
-			extra = '';
-			if ~isfield(kwargs, 'times')
-				times = 1;
-			else
-				times = kwargs.times;
-			end
-			for i = 1:times
-				extra = strcat(extra, word);
-			end
+		function example_method(~, ~, ~)
 		end
 
 	end
