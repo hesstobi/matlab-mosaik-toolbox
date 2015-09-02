@@ -95,10 +95,8 @@ classdef SimSocket < handle
             message = strrep(message, sprintf('\t'), '');
             message = strrep(message, sprintf('\n'), '');
             message = strrep(message, ',null', '');
-            
-            header = make_header(this,message);
 
-            message = uint8(sprintf(strcat(header, message)));
+            message = [this.make_header(message) uint8(message)];
         end
         
         function [type,id,content] = deserialize(this,message)
@@ -116,17 +114,9 @@ classdef SimSocket < handle
         end
 
         function header = make_header(~, message)
-            size = numel(uint8(message));
-            size = dec2hex(size);
-            header = '\x00\x00\x00\x00';
-            for i = 1:numel(size)
-                j = i-1;
-                if eq(i, 3) || eq(i, 4) || eq(i, 7) || eq(i, 8) || eq(i, 11) || eq(i, 12) || eq(i, 15) || eq(i, 16)
-                    j = j + 2;
-                end
-                header(16-j)= size(numel(size)+1-i);              
-            end
-            disp(header);
+            sizeMessage = numel(message);
+            header = typecast(swapbytes(uint32(sizeMessage)),'uint8');
+            %disp(header);
         end
         
         function value = next_request_id(this)
