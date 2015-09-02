@@ -3,6 +3,10 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     properties
         api_version = 2;
         meta = containers.Map();
+        
+    end
+    
+    properties (Access=private)
         socket;
     end
 
