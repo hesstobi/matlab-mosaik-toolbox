@@ -61,7 +61,6 @@ classdef SimSocket < handle
 				try
 					% Wait for bytes
 					while ~this.socket.BytesAvailable
-						pause(0.001);
 					end
 					
 					% Read and deserialize the request
@@ -102,7 +101,7 @@ classdef SimSocket < handle
 			
 			header = make_header(this,message);
 
-			disp(strcat(header, message));
+			disp(message);
 			message = uint8(sprintf(strcat(header, message)));
 		end
 		
@@ -161,7 +160,6 @@ classdef SimSocket < handle
 			
 			% Wait for response
 			while ~this.socket.BytesAvailable
-				pause(0.001);
 			end
 			
 			% Read and deserialize the response
