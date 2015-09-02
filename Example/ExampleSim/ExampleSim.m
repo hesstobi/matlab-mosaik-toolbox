@@ -69,18 +69,13 @@ classdef ExampleSim < MosaikAPI.Simulator
 		end
 
 		function time_next_step = step(sim, args, ~)
-		if iscell(args)
-				time = args{1};
-				inputs = args{2};
-			else
-				time = args;
-				inputs = struct;
-		end
-
-		progress = sim.as_get_progress();
-		disp(progress);
-		%related_entities = sim.as_get_related_entities();
-		%disp(related_entities);
+			if iscell(args)
+					time = args{1};
+					inputs = args{2};
+				else
+					time = args;
+					inputs = struct;
+			end
 
 			for i = 1:numel(sim.simulators)
 				sim_inputs = cell(1, numel(sim.simulators{i}.instances));

@@ -84,16 +84,16 @@ classdef ExampleMas < MosaikAPI.Simulator
 				end
 				sim.rel = sim.as_get_related_entities(c);
 
-				fn = fieldnames(sim.rel);
+				fn_src_full_id = fieldnames(sim.rel);
 				for i = 1:numel(sim.rel)
-					disp(fn{i});
-					disp(sim.rel.(fn{i}));
+					disp(fn_src_full_id{i});
+					disp(sim.rel.(fn_src_full_id{i}));
 				end
 			end
 
-			fn = fieldnames(sim.rel);
+			fn_src_full_id = fieldnames(sim.rel);
 			for i = numel(sim.rel)
-				rels = sim.rel.(fn{i});
+				rels = sim.rel.(fn_src_full_id{i});
 				if strcmp(class(rels), 'cell');
 					for j = numel(rels)
 						eid = rels{j};
