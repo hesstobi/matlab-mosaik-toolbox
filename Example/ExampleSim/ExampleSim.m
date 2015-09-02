@@ -86,14 +86,14 @@ classdef ExampleSim < MosaikAPI.Simulator
 				sim_inputs = cell(1, numel(sim.simulators{i}.instances));
 				for j = 1:numel(sim_inputs)
 					eid = strcat('i', num2str(i),'_',num2str(j));
-					fn = fieldnames(inputs);
+					fn_eid = fieldnames(inputs);
 					for k = 1:numel(fn)
-						if strcmp(eid,fn{k})
-							vl = inputs.(eid).('val_in');
-							vl_fn = fieldnames(vl);
+						if strcmp(eid, fn_eid{k})
+							val_in = inputs.(eid).('val_in');
+							fn_src_full_id = fieldnames(val_in);
 							sm = 0;
-							for l = 1:numel(vl)
-								sm = sm + vl.(vl_fn{1});
+							for l = 1:numel(val_in)
+								sm = sm + val_in.(fn_src_full_id{1});
 							end
 							sim_inputs(j) = {sm};
 						end
@@ -109,14 +109,13 @@ classdef ExampleSim < MosaikAPI.Simulator
 		function data = get_data(sim, args, ~)
 			outputs = args{1};
 
-			fn = fieldnames(outputs);
-			for i = 1:numel(fn)
-				for j = 1:numel(outputs.(fn{i}))
-					if strcmp(outputs.(fn{i}){j}, 'val_out')
-						sid_eid = strsplit(fn{i}, 'i');
+			fn_eid = fieldnames(outputs);
+			for i = 1:numel(fn_eid)
+				for j = 1:numel(outputs.(fn_eid{i}))
+					if strcmp(outputs.(fn_eid{i}){j}, 'val_out')
+						sid_eid = strsplit(fn_eid{i}, 'i');
 						sid_eid = strsplit(sid_eid{2}, '_');
-						tmp.fn{i}.(outputs.(fn{i}){j}) = sim.simulators{str2double(sid_eid{1})}.results{str2double(sid_eid{2})};
-						data.(fn{i}) = tmp.fn{i};
+						data.(fn_eid{i}).(outputs.(fn{i}){j}) = sim.simulators{str2double(sid_eid{1})}.results{str2double(sid_eid{2})};
 					end
 				end
 			end
