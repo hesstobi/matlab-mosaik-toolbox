@@ -142,7 +142,7 @@ classdef SimSocket < handle
     methods
         
         function start(this)
-            %assert(~isempty(this.delegate),'You need to specify a delegate before starting the socket');
+            assert(~isempty(this.delegate),'You need to specify a delegate before starting the socket');
             this.main_loop();
         end
         
