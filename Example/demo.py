@@ -1,8 +1,9 @@
 import mosaik
+import os.path
 
 sim_config = {
     'Matlab': {
-    	'cwd': 'C:\\Users\\sjras\\OneDrive\\Dokumente\\MATLAB\\IEEHMosaikToolbox\\Example',
+    	'cwd': os.path.dirname(os.path.realpath(__file__)),
         'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(server)"'
     }
 }
