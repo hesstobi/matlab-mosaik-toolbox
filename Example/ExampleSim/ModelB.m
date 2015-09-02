@@ -1,10 +1,10 @@
-classdef model_b < handle
+classdef ModelB < handle
 	properties (Access = private)
 		val
 	end
 
 	methods
-		function model = model_b(val)
+		function model = ModelB(val)
 			model.val = val;
 		end
 

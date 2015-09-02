@@ -61,6 +61,8 @@ classdef ExampleSim < MosaikAPI.Simulator
 				l.('rel') = {{}};
 				entity_list(end+1) = {l};
 			end
+
+			% Adds empty cell for JSONlab
 			if eq(numel(entity_list), 1)
 				entity_list(end+1) = {[]};
 			end

@@ -1,10 +1,10 @@
-classdef model_a < handle
+classdef ModelA < handle
 	properties (Access = private)
 		i
 	end
 
 	methods
-		function model = model_a(i)
+		function model = ModelA(i)
 			model.i = i;
 		end
 

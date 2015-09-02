@@ -53,14 +53,19 @@ classdef ExampleMas < MosaikAPI.Simulator
 			num_agents = numel(sim.agents);
 			agents  = cell.empty;
 			for eid = num_agents:num_agents + num - 1
-				l.('eid') = strrep(strcat('i', num2str(eid)), '.', '_');
+				l.('eid') = num2str(eid);
 				l.('type') = model;
 				l.('rel') = {{}};
 				agents(end+1) = {l};
 			end
 
 			for i = 1:numel(agents)
-				sim.agents(end+1)  = agents(i);
+				sim.agents(end+1)  = {agents{i}};
+			end
+
+			% Adds empty cell for JSONlab
+			if eq(numel(agents), 1)
+				agents(end+1) = {[]};
 			end
 		end
 
@@ -78,30 +83,41 @@ classdef ExampleMas < MosaikAPI.Simulator
 					c(end+1) = {strcat(sim.sid, '.', a.eid)};
 				end
 				sim.rel = sim.as_get_related_entities(c);
-				disp(sim.rel);
+
+				fn = fieldnames(sim.rel);
+				for i = 1:numel(sim.rel)
+					disp(fn{i});
+					disp(sim.rel.(fn{i}));
+				end
 			end
+
 			fn = fieldnames(sim.rel);
 			for i = numel(sim.rel)
 				rels = sim.rel.(fn{i});
-				fn2 = fieldnames(rels);
-				for j = numel(rels)
-					eid = fn2{j};
-					disp(eid);
-					l.(eid) = {'val_out', []};
+				if strcmp(class(rels), 'cell');
+					for j = numel(rels)
+						eid = rels{j};
+						disp(eid);
+						l.(eid) = {'val_out', []};
+					end
 				end
 			end
-			data = sim.as_get_data(l);
-			disp(data);
+			if ~eq(exist('l'), 0)
+				data = sim.as_get_data(l);
+				disp(data);
+			end			
 
 			inputs = struct;
 			for i = 1:numel(sim.agents)
-				a = sim.agents(i);
-				full_id = strcat('i', sim.sid, '_', a.eid);
-				for j = 1:numel(sim.rel.(full_id))
-					eid = sim.rel.(full_id)(j);
-					l.(eid) = struct('val_in', 23);
+				a = sim.agents{i};
+				full_id = strcat(sim.sid, '.', a.eid);
+				if isfield(sim.rel, full_id)
+					for j = 1:numel(sim.rel.(full_id))
+						eid = sim.rel.(full_id)(j);
+						l.(eid) = struct('val_in', 23);
+					end
+					inputs.(full_id) = l;
 				end
-				inputs.(full_id) = l;
 			end
 			sim.as_set_data(inputs);
 

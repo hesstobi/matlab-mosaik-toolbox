@@ -1,7 +1,7 @@
 classdef ModelSimulator < handle
 	
 	properties
-		models = struct('A', 'model_a', 'B', 'model_b');
+		models = struct('A', 'ModelA', 'B', 'ModelB');
 		instances = cell.empty;
 		results = cell.empty;
 	end
