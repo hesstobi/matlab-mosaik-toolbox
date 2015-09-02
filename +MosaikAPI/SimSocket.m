@@ -78,8 +78,7 @@ classdef SimSocket < handle
                     rethrow(exception)
                 end
             end
-            disp('Terminating Simulator.');
-            %this.delete();
+            disp('Terminating Socket.');
         end
         
         function message = serialize(this,content,type,varargin)
