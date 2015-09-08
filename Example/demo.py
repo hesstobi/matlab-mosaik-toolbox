@@ -2,28 +2,34 @@ import mosaik
 import os.path
 
 sim_config = {
-    'Matlab': {
-        'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
-        'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(\'%(addr)s\')"'
-    }
+	'Matlab': {
+		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
+		'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(\'%(addr)s\')"'
+	},
+	'Monitor': {
+		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
+		'cmd': 'matlab.exe -r "MosaikUtilities.Collector(\'%(addr)s\')"'
+	}
 }
 
 mosaik_config = {
-    'start_timeout': 3000,  # seconds
-    'stop_timeout': 10,  # seconds
+	'start_timeout': 600,  # seconds
+	'stop_timeout': 10,  # seconds
 }
 
 world = mosaik.World(sim_config, mosaik_config)
 
-exsim_0 = world.start('Matlab', step_size=2)
-exsim_1 = world.start('Matlab')
+matlab  = world.start('Matlab', step_size=1)
+monitor  = world.start('Monitor', step_size=1)
 
-a_set = [exsim_0.A(init_val=i) for i in range(3)]
-b_set = exsim_1.B.create(3, init_val=1)
+model = matlab.Model(init_value=2)
+collector = monitor.Collector()
 
-for a, b in zip(a_set, b_set):
-    world.connect(a, b, ('val_out', 'val_in'))
+world.connect(model, collector, 'val', 'delta')
+
 
 world.run(until=10)
+
 #exsim_0.wtimes('Hallo', times=23)
-#world.shutdown()
+
+world.shutdown()
