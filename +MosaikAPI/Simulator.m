@@ -10,18 +10,25 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
     methods
 
-        function sim = Simulator(server)
+        function sim = Simulator(server,varargin)
             % this = Simulator(server)
             % Constructor of the class Simulator
             %
             % Parameter:
             %  - server  : Server IP and port as char, format: 'IP:port'
+            %  - varargin: Optional Parameter Value List
+            %              debug: false|true - Create the Simulator in
+            %              debug Mode where no Socket Server is started.
             %
             % Return:
-            %  - sim: Simulator Object            
-
-            %Error when server is not a string
-            assert(ischar(server), 'Wrong server configuration. Check server configuration.')
+            %  - sim: Simulator Object
+            
+            p = inputParser;
+            addRequired(p,'server',@ischar);
+            addOptional(p,'debug',false,@islogical);
+            parse(p,server,varargin{:});
+            
+            server = p.Results.server;
 
             %Get server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
@@ -30,14 +37,20 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             %Creates socket
             sim.socket = MosaikAPI.SimSocket(ip,port,sim);
             
-            %Starts the socket client and waiting for messages
-            sim.socket.start();
             
-            % Delete the Socket
-            sim.socket = [];
-            
-            % Close Matlab
-            exit;
+            if ~p.Results.debug
+                %Starts the socket client and waiting for messages
+                sim.socket.start();
+                % Delete the Socket
+                sim.socket = [];
+                % Close Matlab
+                pause(10);
+                exit;
+            end
+           
+        end
+        
+        
         function value = meta(this)
            value.api_version = this.api_version;
            value.extra_methods = {};
