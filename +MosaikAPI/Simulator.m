@@ -117,10 +117,6 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     end
 
     methods
-    
-        function meta = update_meta(sim, meta)
-            meta.('api_version') = sim.api_version;
-        end
 
         function stop = stop(~, ~, ~)
             stop = ('stop');
