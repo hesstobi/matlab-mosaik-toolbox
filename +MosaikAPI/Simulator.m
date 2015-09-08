@@ -1,11 +1,9 @@
 classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
-    properties
-        api_version = 2;
-        meta = containers.Map();
-        
+    properties (Constant)
+        api_version = 2
     end
-    
+       
     properties (Access=private)
         socket;
     end
@@ -40,6 +38,10 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             
             % Close Matlab
             exit;
+        function value = meta(this)
+           value.api_version = this.api_version;
+           value.extra_methods = {};
+           value.models = struct; 
         end
 
     end
