@@ -67,7 +67,7 @@ classdef SimSocket < handle
 
                     % Forward the request to the Delegate
                     %response = content;
-                    response = this.delegate.delegate(content);
+                    response = this.delegate.simSocketReceivedRequest(content);
                     
                     % Serialize and write the response
                     response = this.serialize(response,1,id);                    
