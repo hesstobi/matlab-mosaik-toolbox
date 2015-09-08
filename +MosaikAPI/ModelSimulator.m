@@ -13,8 +13,8 @@ classdef ModelSimulator < MosaikAPI.Simulator
     
     methods 
 		
-        function sim = ModelSimulator(varargin)
-            sim = sim@MosaikAPI.Simulator(varargin{:});
+        function this = ModelSimulator(varargin)
+            this = this@MosaikAPI.Simulator(varargin{:});
         end
         
         function value = meta(this)
@@ -31,13 +31,13 @@ classdef ModelSimulator < MosaikAPI.Simulator
     
     methods (Access=protected)
         
-        function eid = nextEidForModel(sim,model)
+        function eid = nextEidForModel(this,model)
             
                       
-            modelsIdx = cellfun(@(x) x.modelName,sim.entities,'UniformOutput',false);
+            modelsIdx = cellfun(@(x) x.modelName,this.entities,'UniformOutput',false);
             modelsIdx = strcmp(modelsIdx,model);
             
-            eids = cellfun(@(x) x.eid,sim.entities(modelsIdx),'UniformOutput',false);
+            eids = cellfun(@(x) x.eid,this.entities(modelsIdx),'UniformOutput',false);
             
             eid = 0;
             if ~isempty(eids)
@@ -48,9 +48,9 @@ classdef ModelSimulator < MosaikAPI.Simulator
             
         end
         
-        function dscrList = dscrListForEntities(sim,varargin)
+        function dscrList = dscrListForEntities(this,varargin)
            
-           e = sim.entities(varargin{:});
+           e = this.entities(varargin{:});
            
            eids = cellfun(@(x) x.eid,e,'UniformOutput',false);
            types = cellfun(@(x) x.modelName,e,'UniformOutput',false);
@@ -63,17 +63,17 @@ classdef ModelSimulator < MosaikAPI.Simulator
         end
         
         
-        function entities = entitiesWithEids(sim,eids)
+        function entities = entitiesWithEids(this,eids)
            
             if isa(eids,'char')
                 eids = {eids};
             end
             
-            simEids = cellfun(@(x) x.eid,sim.entities,'UniformOutput',false);
+            simEids = cellfun(@(x) x.eid,this.entities,'UniformOutput',false);
             [~,~,labels] = unique([simEids(:); eids(:)],'stable');
             idx  = any(bsxfun(@eq,labels(1:numel(simEids))',labels(numel(simEids)+1:end)),1);
             
-            entities = sim.entities(idx);
+            entities = this.entities(idx);
            
         end
         
@@ -85,40 +85,40 @@ classdef ModelSimulator < MosaikAPI.Simulator
         
         
         
-        function dscrList = create(sim,num,model,varargin)
-            modelFunc = sim.functionForModelNameWithoutPackage(model);
+        function dscrList = create(this,num,model,varargin)
+            modelFunc = this.functionForModelNameWithoutPackage(model);
                                  
             for idx=1:num
-                sim.entities{end+1} = modelFunc(sim.nextEidForModel(model),varargin{:});
+                this.entities{end+1} = modelFunc(this.nextEidForModel(model),varargin{:});
             end
             
            
-            dscrList = sim.dscrListForEntities(numel(sim.entities)-num+1:numel(sim.entities));
+            dscrList = this.dscrListForEntities(numel(this.entities)-num+1:numel(this.entities));
 
         end
         
         
-        function data = get_data(sim, outputs)
+        function data = get_data(this, outputs)
 						
             eids = fieldnames(outputs);
-            req_entities = sim.entitiesWithEids(eids);
+            req_entities = this.entitiesWithEids(eids);
             values = cellfun(@(x,y) x.get_data(y),req_entities,struct2cell(outputs)','UniformOutput',false);
             data = cell2struct(values,eids',2);  
           
         end
         
-        function time_next_step = step(sim,time,varargin)           
+        function time_next_step = step(this,time,varargin)           
             
             if ~isempty(varargin)
                 % Set data to entities
-                data = sim.concentrateInputs(varargin{1});
-                sim.setEntitiesData(data);
+                data = this.concentrateInputs(varargin{1});
+                this.setEntitiesData(data);
             end
             
             % Preform a step with all entities
-            cellfun(@(x) x.step(time),sim.entities);
+            cellfun(@(x) x.step(time),this.entities);
             
-			time_next_step = time + sim.step_size;
+			time_next_step = time + this.step_size;
 		end
          
                
@@ -127,10 +127,10 @@ classdef ModelSimulator < MosaikAPI.Simulator
         %% Utilities
     methods 
         
-         function setEntitiesData(sim,inputs)
+         function setEntitiesData(this,inputs)
             
              eids = fieldnames(inputs);
-             req_entities = sim.entitiesWithEids(eids);
+             req_entities = this.entitiesWithEids(eids);
              cellfun(@(x,y) x.set_data(y),req_entities,struct2cell(inputs)','UniformOutput',false);
                                 
          end

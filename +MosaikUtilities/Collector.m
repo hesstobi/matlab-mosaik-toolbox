@@ -14,8 +14,8 @@ classdef Collector < MosaikAPI.Simulator
     end
     
     methods 
-		function sim = Collector(varargin)
-            sim = sim@MosaikAPI.Simulator(varargin{:});
+		function this = Collector(varargin)
+            this = this@MosaikAPI.Simulator(varargin{:});
         end
         
         function value = meta(this)

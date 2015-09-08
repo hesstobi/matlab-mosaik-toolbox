@@ -15,7 +15,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
     methods
 
-        function sim = Simulator(server,varargin)
+        function this = Simulator(server,varargin)
             % this = Simulator(server)
             % Constructor of the class Simulator
             %
@@ -26,7 +26,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             %              debug Mode where no Socket Server is started.
             %
             % Return:
-            %  - sim: Simulator Object
+            %  - this: Simulator Object
             
             p = inputParser;
             addRequired(p,'server',@ischar);
@@ -37,17 +37,17 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
             %Get server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
-            [ip,port] = parse_address(sim,server);
+            [ip,port] = parse_address(this,server);
 
             %Creates socket
-            sim.socket = MosaikAPI.SimSocket(ip,port,sim);
+            this.socket = MosaikAPI.SimSocket(ip,port,this);
             
             
             if ~p.Results.debug
                 %Starts the socket client and waiting for messages
-                sim.socket.start();
+                this.socket.start();
                 % Delete the Socket
-                sim.socket = [];
+                this.socket = [];
                 % Close Matlab
                 pause(10);
                 exit;
@@ -68,7 +68,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     
     methods
                 
-        function response = delegate(sim,request) 
+        function response = delegate(this,request) 
             %Parses request and calls simulator function.
             func = request{1};
             func = str2func(func);
@@ -85,7 +85,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             else
                kwargs = {}; 
             end
-            response = func(sim,args{:},kwargs{:});
+            response = func(this,args{:},kwargs{:});
         end
 
     end
@@ -122,11 +122,11 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             stop = ('stop');
         end
 
-        function progress = get_progress(sim)
+        function progress = get_progress(this)
             content{1} = 'get_progress';
             content{2} = [];
             content{3} = {};
-            progress = sim.socket.send_request(content);
+            progress = this.socket.send_request(content);
         end
 
     end
@@ -134,8 +134,8 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     %% Mosaik API
     
     methods
-        function meta = init(sim, sid, varargin)
-            sim.sid = sid;
+        function meta = init(this, sid, varargin)
+            this.sid = sid;
             
             p = inputParser;
             p.KeepUnmatched = true;
@@ -144,19 +144,19 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             if ~isempty(p.Unmatched)
                 prop = fieldnames(p.Unmatched);
                 for i=1:numel(prop)
-                    sim.(prop{i}) = p.Unmatched.(prop{i});
+                    this.(prop{i}) = p.Unmatched.(prop{i});
                 end
             end
             
-            meta = sim.meta;
+            meta = this.meta;
         end
     end
     
     
     methods (Abstract) 
-        create(sim,num,model,varargin)
-        step(sim,time,inputs);
-        get_data(sim, outputs);
+        create(this,num,model,varargin)
+        step(this,time,inputs);
+        get_data(this, outputs);
     end
     
     
