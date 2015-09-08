@@ -68,7 +68,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     
     methods
                 
-        function response = delegate(this,request) 
+        function response = simSocketReceivedRequest(this,request) 
             %Parses request and calls simulator function.
             func = request{1};
             func = str2func(func);

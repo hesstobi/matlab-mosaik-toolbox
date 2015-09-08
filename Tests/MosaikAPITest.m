@@ -26,7 +26,7 @@ classdef MosaikAPITest < matlab.unittest.TestCase
             
             args = {'UnitTest'};
             kwargs.step_size = round(100*rand);
-            meta = sim.delegate({'init',args,kwargs});
+            meta = sim.simSocketReceivedRequest({'init',args,kwargs});
             
             % Verify the simulator Object
             testCase.verifyEqual(sim.sid, args{1}, ...
@@ -98,7 +98,7 @@ classdef MosaikAPITest < matlab.unittest.TestCase
             kwargs = cell2struct(num2cell(100*rand(size(params))),params,2);
             args = {num, modelWithoutPackageName};
             
-            list = sim.delegate({'create',args,kwargs});
+            list = sim.simSocketReceivedRequest({'create',args,kwargs});
             
             testCase.verifyNumElements(sim.entities,num,...
                 'Simulator did not create correct number of entities');
@@ -143,7 +143,7 @@ classdef MosaikAPITest < matlab.unittest.TestCase
             attrs = model.get_attrs();
             
             output.(eid) = attrs;
-            data = sim.delegate({'get_data',{output},{}});
+            data = sim.simSocketReceivedRequest({'get_data',{output},{}});
             
             testCase.verifyClass(data,'struct',...
                 'get_data function has to return a struct');
@@ -174,7 +174,7 @@ classdef MosaikAPITest < matlab.unittest.TestCase
             sim.create(num,model);
             
             req = loadjson('["step", [0, {"Model_0": {"val": {"Matlab-1.Model_0": 3}, "delta": {"Matlab-1.Model_0": 1}}}], {}]');
-            time = sim.delegate(req);
+            time = sim.simSocketReceivedRequest(req);
             
             testCase.verifyGreaterThan(time,req{2}{1},...
                 'Simulation step does not increase simulation time');
@@ -192,7 +192,7 @@ classdef MosaikAPITest < matlab.unittest.TestCase
             sim.create(num,model);
             
             req = loadjson('["step", [0, {}], {}]');
-            time = sim.delegate(req);
+            time = sim.simSocketReceivedRequest(req);
             
             testCase.verifyGreaterThan(time,req{2},...
                 'Simulation step does not increase simulation time');
