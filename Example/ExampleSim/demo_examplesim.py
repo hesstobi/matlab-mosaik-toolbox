@@ -2,7 +2,7 @@ import mosaik
 
 sim_config = {
     'Matlab': {
-    	'cwd': 'C:\\Users\\sjras\\OneDrive\\Dokumente\\MATLAB\\IEEHMosaikToolbox\\Example',
+    	'cwd': 'C:\\Users\\sjras\\OneDrive\\Dokumente\\MATLAB\\IEEHMosaikToolbox\\Example\\ExampleSim',
         'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(server)"'
     }
 }

@@ -1,4 +1,6 @@
 classdef Simulator < MosaikAPI.SimSocketDelegate
+	%SIMULATOR superclass for simulators
+	%  Provides parsing, method calling, asynchronous methods and abstract methods for simulators
 
 	properties
 		api_version = 2;
