@@ -7,6 +7,11 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     properties (Access=private)
         socket;
     end
+    
+    properties
+        sid = 'Matlab'
+    end
+       
 
     methods
 
@@ -59,13 +64,28 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
     end
 
+  
+    
     methods
                 
         function response = delegate(sim,request) 
             %Parses request and calls simulator function.
             func = request{1};
             func = str2func(func);
-            response = func(sim,request{2:end});
+            args = request{2};
+            kwargs = request{3};
+            if ~isa(args,'cell')
+               args = {args}; 
+            end
+            if numel(request) > 3
+               warning('Request has more than 3 arguments, these will be ignored') 
+            end
+            if ~isempty(kwargs)
+               kwargs = [fieldnames(kwargs)';struct2cell(kwargs)'];
+            else
+               kwargs = {}; 
+            end
+            response = func(sim,args{:},kwargs{:});
         end
 
     end
@@ -115,17 +135,32 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
     end
 
-
-    %Methods the simulator needs to inherit from.
-    methods (Abstract)
-
-        init(sim,args,kwargs);
-
-        create(sim,args,kwargs);
-        
-        step(sim,args,kwargs);
-
-        get_data(sim,args,kwargs);
-        
+    %% Mosaik API
+    
+    methods
+        function meta = init(sim, sid, varargin)
+            sim.sid = sid;
+            
+            p = inputParser;
+            p.KeepUnmatched = true;
+            parse(p,varargin{:})
+                       
+            if ~isempty(p.Unmatched)
+                prop = fieldnames(p.Unmatched);
+                for i=1:numel(prop)
+                    sim.(prop{i}) = p.Unmatched.(prop{i});
+                end
+            end
+            
+            meta = sim.meta;
+        end
+    end
+    
+    
+    methods (Abstract) 
+        create(sim,num,model,varargin)
+        step(sim,time,inputs);
+        get_data(sim, outputs);
+    end
     end
 end
