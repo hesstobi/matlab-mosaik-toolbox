@@ -162,5 +162,20 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         step(sim,time,inputs);
         get_data(sim, outputs);
     end
+    
+    
+    %% Utilities
+    
+    methods (Static)
+       
+        function value = concentrateInputs(inputs)
+            
+            value = structfun(@(x) structfun(@(y) sum(cell2mat(struct2cell(y))),x,'UniformOutput',false), ...
+                inputs,'UniformOutput',false);
+             
+        end
+         
+               
     end
+      
 end
