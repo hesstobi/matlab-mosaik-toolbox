@@ -7,6 +7,10 @@ classdef MosaikAPITest < matlab.unittest.TestCase
         simConstructorArgs = {'127.0.0.1:1234','debug',true}
     end
     
+    properties
+        sim
+    end
+    
     methods (TestClassSetup)
         
         function addExampleSimToPath(testCase)
@@ -15,23 +19,35 @@ classdef MosaikAPITest < matlab.unittest.TestCase
             addpath(fullfile(fileparts(pwd),'Example'))
         end
         
+        function createSimulator(testCase)
+           args = MosaikAPITest.simConstructorArgs;
+           testCase.sim = ExampleSim(args{:}); 
+        end
+        
+        
+    end
+    
+    methods
+        function createTestEntities(testCase)
+            num = 1;
+            model = testCase.sim.providedModels{1};
+            testCase.sim.create(num,model);
+        end
     end
     
     
     methods (Test)
         
         function testInitFunction(testCase)
-            args = MosaikAPITest.simConstructorArgs;
-            sim = ExampleSim(args{:});
-            
-            args = {'UnitTest'};
-            kwargs.step_size = round(100*rand);
-            meta = sim.simSocketReceivedRequest({'init',args,kwargs});
+                        
+            sid = 'UnitTest';
+            step_size = round(100*rand);
+            meta = testCase.sim.init(sid,'step_size',step_size);
             
             % Verify the simulator Object
-            testCase.verifyEqual(sim.sid, args{1}, ...
+            testCase.verifyEqual(testCase.sim.sid, sid, ...
                 'Init method failed to correctly set sid');
-            testCase.verifyEqual(sim.step_size, kwargs.step_size, ...
+            testCase.verifyEqual(testCase.sim.step_size, step_size, ...
                 'Init method failed to correctly set simulation parameter');
             
             % Verify the return meta struct
@@ -85,26 +101,23 @@ classdef MosaikAPITest < matlab.unittest.TestCase
         end
         
         function testCreateFunction(testCase)
-            sim_args = MosaikAPITest.simConstructorArgs;
-            sim = ExampleSim(sim_args{:});
-            
-            
+                        
             num = ceil(rand*5)+1;
-            model = sim.providedModels{1};
-            modelWithoutPackageName = sim.providedModelsWithoutPackage{1};
+            model = testCase.sim.providedModels{1};
+            modelWithoutPackageName = testCase.sim.providedModelsWithoutPackage{1};
+            
             
             params = eval([model '.meta']);
-            params = params.params(cellfun(@(x) ~isempty(x),params.params));
-            kwargs = cell2struct(num2cell(100*rand(size(params))),params,2);
-            args = {num, modelWithoutPackageName};
+            params = params.params(cellfun(@(x) ~isempty(x),params.params));          
+            params = [params num2cell(100*rand(size(params)))]';
             
-            list = sim.simSocketReceivedRequest({'create',args,kwargs});
+            list = testCase.sim.create(num,model,params{:});
             
-            testCase.verifyNumElements(sim.entities,num,...
+            testCase.verifyNumElements(testCase.sim.entities,num,...
                 'Simulator did not create correct number of entities');
-            testCase.verifyTrue(all(cellfun(@(x) isa(x,model),sim.entities)), ...
+            testCase.verifyTrue(all(cellfun(@(x) isa(x,model),testCase.sim.entities)), ...
                 'Simulator did not create correct type of model entites');
-            testCase.verifyEqual(numel(unique(cellfun(@(x) x.eid,sim.entities,'UniformOutput',false))),num,...
+            testCase.verifyEqual(numel(unique(cellfun(@(x) x.eid,testCase.sim.entities,'UniformOutput',false))),num,...
                 'Simulator Models did not have unique eids');
             
             
@@ -131,23 +144,20 @@ classdef MosaikAPITest < matlab.unittest.TestCase
         
         
         function testGetDataFunction(testCase)
-            args = MosaikAPITest.simConstructorArgs;
-            sim = ExampleSim(args{:});
             
-            num = 1;
-            model = sim.providedModels{1};
-            sim.create(num,model);
             
-            model = sim.entities{1};
+            testCase.createTestEntities();
+            
+            model = testCase.sim.entities{1};
             eid = model.eid;
             attrs = model.get_attrs();
             
             output.(eid) = attrs;
-            data = sim.simSocketReceivedRequest({'get_data',{output},{}});
+            data = testCase.sim.get_data(output);
             
             testCase.verifyClass(data,'struct',...
                 'get_data function has to return a struct');
-            testCase.verifyNumElements(data,num, ...
+            testCase.verifyNumElements(data,1, ...
                 'the number of enteties in the returned data as to be the same as requestes');
             testCase.verifyTrue(any(strcmp(fieldnames(data),eid)),...
                 'The data form the requested entities is not in the results');
@@ -166,17 +176,14 @@ classdef MosaikAPITest < matlab.unittest.TestCase
         
         function testStepFunctionWithData(testCase)
             
-            args = MosaikAPITest.simConstructorArgs;
-            sim = ExampleSim(args{:});
+            testCase.createTestEntities();
             
-            num = 1;
-            model = sim.providedModels{1};
-            sim.create(num,model);
+            time = 0;
+            inputs = struct('Model_0',struct('val',struct('source',3),'delta',struct('source',1)));
             
-            req = loadjson('["step", [0, {"Model_0": {"val": {"Matlab-1.Model_0": 3}, "delta": {"Matlab-1.Model_0": 1}}}], {}]');
-            time = sim.simSocketReceivedRequest(req);
+            new_time = testCase.sim.step(time,inputs);
             
-            testCase.verifyGreaterThan(time,req{2}{1},...
+            testCase.verifyGreaterThan(new_time,0,...
                 'Simulation step does not increase simulation time');
             
         end
@@ -184,20 +191,10 @@ classdef MosaikAPITest < matlab.unittest.TestCase
         
         function testStepFunctionWithOutData(testCase)
             
-             args = MosaikAPITest.simConstructorArgs;
-            sim = ExampleSim(args{:});
+            new_time = testCase.sim.step(0);
             
-            num = 1;
-            model = sim.providedModels{1};
-            sim.create(num,model);
-            
-            req = loadjson('["step", [0, {}], {}]');
-            time = sim.simSocketReceivedRequest(req);
-            
-            testCase.verifyGreaterThan(time,req{2},...
+            testCase.verifyGreaterThan(new_time,0,...
                 'Simulation step does not increase simulation time');
-            
-            
         end
         
     end

@@ -1,8 +1,13 @@
+function res = test()
 import matlab.unittest.TestSuite
 
-testCase = MosaikAPITest; res = run(testCase)
-testCase = SimulatorUtilitiesTest; res = run(testCase)
+testCase = SimSocketTest; res = run(testCase);
+testCase = MosaikSimulatorTest; res = [res run(testCase)];
+testCase = MosaikAPITest; res = [res run(testCase)];
+testCase = SimulatorUtilitiesTest; res = [res run(testCase)];
 
+
+end
 
 %suiteFolder = TestSuite.fromFolder(pwd);
 %result = run(suiteFolder)
