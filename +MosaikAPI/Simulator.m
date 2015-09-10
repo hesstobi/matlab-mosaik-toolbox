@@ -38,10 +38,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             %Get server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
             [ip,port] = parse_address(this,server);
-
-            
-            
-            
+        
             if ~p.Results.debug
                 %Creates socket
                 this.socket = MosaikAPI.SimSocket(ip,port,this);
@@ -49,9 +46,13 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
                 this.socket.start();
                 % Delete the Socket
                 this.socket = [];
-                % Close Matlab
-                pause(10);
-                exit;
+                % Call the finalize methode()
+                this.finalize();
+                % Close Matlab with timer
+                t = timer();
+                t.StartDelay = 1;
+                t.TimerFcn = @(myTimerObj, thisEvent)exit;
+                start(t);
             end
            
         end
@@ -152,6 +153,11 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             
             meta = this.meta;
         end
+        
+        function finalize(this)
+            % Do nothing by default
+        end
+        
     end
     
     

@@ -69,8 +69,9 @@ classdef Collector < MosaikAPI.Simulator
         end
         
                 
-        function delete(this)
+        function finalize(this)
            disp(this.data);
+           pause;
         end
         
     end
