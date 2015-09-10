@@ -157,7 +157,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     
     methods (Abstract) 
         create(this,num,model,varargin)
-        step(this,time,inputs);
+        step(this,time,varargin);
         get_data(this, outputs);
     end
     
