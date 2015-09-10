@@ -39,11 +39,12 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
             [ip,port] = parse_address(this,server);
 
-            %Creates socket
-            this.socket = MosaikAPI.SimSocket(ip,port,this);
+            
             
             
             if ~p.Results.debug
+                %Creates socket
+                this.socket = MosaikAPI.SimSocket(ip,port,this);
                 %Starts the socket client and waiting for messages
                 this.socket.start();
                 % Delete the Socket
