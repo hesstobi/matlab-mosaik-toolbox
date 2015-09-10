@@ -1,9 +1,9 @@
 classdef Simulator < handle & MosaikAPI.SimSocketDelegate
-
+    
     properties (Constant)
         api_version = 2
     end
-       
+    
     properties (Access=private)
         socket;
     end
@@ -11,10 +11,10 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     properties
         sid = 'Matlab'
     end
-       
-
+    
+    
     methods
-
+        
         function this = Simulator(server,varargin)
             % this = Simulator(server)
             % Constructor of the class Simulator
@@ -34,11 +34,11 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             parse(p,server,varargin{:});
             
             server = p.Results.server;
-
+            
             %Get server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
             [ip,port] = parse_address(this,server);
-        
+            
             if ~p.Results.debug
                 %Creates socket
                 this.socket = MosaikAPI.SimSocket(ip,port,this);
@@ -54,44 +54,44 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
                 t.TimerFcn = @(myTimerObj, thisEvent)exit;
                 start(t);
             end
-           
+            
         end
         
         
         function value = meta(this)
-           value.api_version = this.api_version;
-           value.extra_methods = {};
-           value.models = struct; 
+            value.api_version = this.api_version;
+            value.extra_methods = {};
+            value.models = struct;
         end
-
+        
     end
-
-  
+    
+    
     
     methods
-                
-        function response = simSocketReceivedRequest(this,request) 
+        
+        function response = simSocketReceivedRequest(this,request)
             %Parses request and calls simulator function.
             func = request{1};
             func = str2func(func);
             args = request{2};
             kwargs = request{3};
             if ~isa(args,'cell')
-               args = {args}; 
+                args = {args};
             end
             if numel(request) > 3
-               warning('Request has more than 3 arguments, these will be ignored') 
+                warning('Request has more than 3 arguments, these will be ignored')
             end
             if ~isempty(kwargs)
-               kwargs = [fieldnames(kwargs)';struct2cell(kwargs)'];
+                kwargs = [fieldnames(kwargs)';struct2cell(kwargs)'];
             else
-               kwargs = {}; 
+                kwargs = {};
             end
             response = func(this,args{:},kwargs{:});
         end
-
+        
     end
-
+    
     methods (Access=private)
         
         function null = setup_done(~)
@@ -115,25 +115,29 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
                 error('No server port entered. Check server configuration.')
             end
         end
-
+        
     end
-
+    
     methods
-
+        
         function stop = stop(this, ~, ~)
             this.socket.stop();
             stop = ('stop');
         end
-
+        
         function progress = get_progress(this)
             content{1} = 'get_progress';
             content{2} = [];
             content{3} = {};
             progress = this.socket.send_request(content);
         end
-
+        
     end
-
+    
+    
+    
+    
+    
     %% Mosaik API
     
     methods
@@ -143,7 +147,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             p = inputParser;
             p.KeepUnmatched = true;
             parse(p,varargin{:})
-                       
+            
             if ~isempty(p.Unmatched)
                 prop = fieldnames(p.Unmatched);
                 for i=1:numel(prop)
@@ -158,10 +162,49 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             % Do nothing by default
         end
         
+        function related_entities = as_get_related_entities(this, varargin)        
+            content{1} = 'get_related_entities';        
+            if gt(nargin,1)
+                if ischar(varargin{1})
+                    varargin =  cellstr(varargin{1});
+                end
+                varargin{end+1} = {[]};
+            else
+                varargin{end+1} = {{}};
+            end
+            content{2} = varargin;
+            content{3} = struct;
+            related_entities = this.socket.send_request(content);
+        end
+        
+        function data = as_get_data(sim, varargin)
+            content{1} = 'get_data';
+            if iscell(varargin{1})
+                varargin =  varargin{1};
+            else
+                varargin{end+1} = {[]};
+            end
+            content{2} = varargin;
+            content{3} = struct;
+            data = sim.socket.send_request(content);
+        end
+        
+        function as_set_data(sim, varargin)
+            content{1} = 'set_data';
+            if iscell(varargin{1})
+                varargin =  varargin{1};
+            else
+                varargin{end+1} = {[]};
+            end
+            content{2} = varargin;
+            content{3} = struct;
+            sim.socket.send_request(content);
+        end
+        
     end
     
     
-    methods (Abstract) 
+    methods (Abstract)
         create(this,num,model,varargin)
         step(this,time,varargin);
         get_data(this, outputs);
@@ -171,15 +214,14 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     %% Utilities
     
     methods (Static)
-       
+        
         function value = concentrateInputs(inputs)
             
             value = structfun(@(x) structfun(@(y) sum(cell2mat(struct2cell(y))),x,'UniformOutput',false), ...
                 inputs,'UniformOutput',false);
-             
+            
         end
-         
-               
+        
+        
     end
-      
-end
+    
