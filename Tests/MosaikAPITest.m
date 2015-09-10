@@ -16,7 +16,7 @@ classdef MosaikAPITest < matlab.unittest.TestCase
         function addExampleSimToPath(testCase)
             p = path;
             testCase.addTeardown(@path,p)
-            addpath(fullfile(fileparts(pwd),'Example'))
+            addpath(fullfile(fileparts(pwd),'Example','ExampleSim'))
         end
         
         function createSimulator(testCase)
