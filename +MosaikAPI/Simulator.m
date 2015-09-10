@@ -119,7 +119,8 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
     methods
 
-        function stop = stop(~, ~, ~)
+        function stop = stop(this, ~, ~)
+            this.socket.stop();
             stop = ('stop');
         end
 
