@@ -11,6 +11,7 @@ classdef SimSocket < handle
     properties (Access=private)
         socket
         last_id = 0
+        stopServer = false
     end
     
     %% Constructor and Destructor
@@ -38,6 +39,7 @@ classdef SimSocket < handle
             this.server = p.Results.server;
             this.port = p.Results.port;
             this.delegate = p.Results.delegate;
+            this.socket = tcpclient(this.server,this.port);
                      
         end
         
@@ -51,10 +53,8 @@ classdef SimSocket < handle
     methods (Access=private)
         
         function main_loop(this)
-            this.socket = tcpclient(this.server,this.port);
-            
-            content = {'init'};
-            while ~strcmp(content{1},'stop') 
+                        
+            while ~this.stopServer 
                 try
                     % Wait for bytes
                     while ~this.socket.BytesAvailable
@@ -78,7 +78,7 @@ classdef SimSocket < handle
                     rethrow(exception)
                 end
             end
-            disp('Terminating Socket.');
+            %disp('Terminating Socket.');
         end
         
         function message = serialize(this,content,type,varargin)
@@ -101,7 +101,7 @@ classdef SimSocket < handle
         
         function [type,id,content] = deserialize(this,message)
             
-            disp(char(message(5:end)));
+            %disp(char(message(5:end)));
 
             message = loadjson(char(message(5:end)));
 
@@ -136,6 +136,11 @@ classdef SimSocket < handle
         end
         
         
+        function stop(this)
+            this.stopServer = true;
+        end
+        
+        
         function response = send_request(this,content)
             % Serialize and write the request
             request = this.serialize(content,0);
@@ -148,7 +153,7 @@ classdef SimSocket < handle
             
             % Read and deserialize the response
             response = read(this.socket);
-            [~,~,content] = this.deserialize(this,response);
+            [~,~,content] = this.deserialize(response);
             response = content;            
         end        
     end
