@@ -127,8 +127,8 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         function progress = get_progress(this)
             content{1} = 'get_progress';
-            content{2} = [];
-            content{3} = {};
+            content{2} = {{}};
+            content{3} = struct;
             progress = this.socket.send_request(content);
         end
         
@@ -219,6 +219,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             
             value = structfun(@(x) structfun(@(y) sum(cell2mat(struct2cell(y))),x,'UniformOutput',false), ...
                 inputs,'UniformOutput',false);
+            % TODO does not work when src_ids given in inputs
             
         end
         
