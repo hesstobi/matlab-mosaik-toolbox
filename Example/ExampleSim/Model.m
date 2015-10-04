@@ -9,8 +9,8 @@ classdef Model < MosaikAPI.Model
     
     methods 
        
-        function this = Model(eid,varargin)
-            this = this@MosaikAPI.Model(eid);
+        function this = Model(sim,eid,varargin)
+            this = this@MosaikAPI.Model(sim,eid);
             
             p = inputParser;
             addOptional(p,'init_value',0,@(x)validateattributes(x,{'numeric'},{'scalar'}));

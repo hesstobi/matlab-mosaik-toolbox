@@ -13,8 +13,8 @@ classdef Battery < MosaikAPI.Model
 
 	methods 
 
-		function this = Battery(eid,varargin)
-			this = this@MosaikAPI.Model(eid);
+		function this = Battery(sim,eid,varargin)
+			this = this@MosaikAPI.Model(sim,eid);
             
             p = inputParser;
             addOptional(p,'init_voltage',10,@(x)validateattributes(x,{'numeric'},{'scalar'}));
@@ -27,7 +27,7 @@ classdef Battery < MosaikAPI.Model
             this.capacitance = init_capacitance;
 		end
 
-		function step(this, varargin)
+		function step(this,varargin)
 			p = inputParser;
 			addOptional(p,'consumed_capacitance',struct); %Add validation function
 			parse(p,varargin{:});

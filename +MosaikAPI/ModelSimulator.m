@@ -101,7 +101,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
                                  
             for idx=1:num
                 % Get eid for model and add to entities
-                this.entities{end+1} = modelFunc(this.nextEidForModel(model),varargin{:});
+                this.entities{end+1} = modelFunc(this,this.nextEidForModel(model),varargin{:}); % Model needs simulator to call async requests
             end
             
             % Create dscrList for previously created entities

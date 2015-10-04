@@ -3,12 +3,14 @@ classdef Model < handle
     %   Detailed explanation goes here
     
     properties
-       eid;
+        sim;
+        eid;
     end
     
     methods
-        function this = Model(eid)
-           this.eid = eid; 
+        function this = Model(sim,eid)
+            this.sim = sim;
+            this.eid = eid; 
         end
         
         
