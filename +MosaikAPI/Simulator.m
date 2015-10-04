@@ -59,6 +59,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         
         function value = meta(this)
+            % Creates meta struct with empty mpdels struct and extra methods cell
             value.api_version = this.api_version;
             value.extra_methods = {};
             value.models = struct;
@@ -87,6 +88,8 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             else
                 kwargs = {};
             end
+
+            % Calls simulator function with parsed arguments
             response = func(this,args{:},kwargs{:});
         end
         
