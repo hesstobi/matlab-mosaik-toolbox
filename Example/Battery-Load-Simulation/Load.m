@@ -4,7 +4,6 @@ classdef Load < MosaikAPI.Model
 	%   define the range operating voltages.
 	%   Based on the battery given voltage U, resistance R and time (step.size) t , the load consumes capacitance Q in the form
 	%   Q = (U/R) * t.
-	%   The simulator has the attribute 'val_in', which is the battery voltage U.
 	%   To show the functionality of asynchronous requests, the simulator requests the battery it's connected to via get_related_entities
 	%   and feeds it the consumed capacitance Q via set_data.
 
