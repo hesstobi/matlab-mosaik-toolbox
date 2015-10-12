@@ -20,7 +20,9 @@ classdef Collector < MosaikAPI.Simulator
         
         function value = meta(this)
             value = meta@MosaikAPI.Simulator(this);
-                        
+            
+            value.extra_methods = {'save_results',[]};
+            
             value.models.(this.model).public = true;
             value.models.(this.model).attrs = {};
             value.models.(this.model).params = {};
@@ -52,12 +54,19 @@ classdef Collector < MosaikAPI.Simulator
             
             names = cellfun(@(x) strcat(fieldnames(inputs.(x)),'__',x),fieldnames(inputs),'UniformOutput',false);
             names = vertcat(names{:});
+            names{end+1} = 'Time';
+            
             values = cellfun(@(x) struct2cell(inputs.(x)),fieldnames(inputs),'UniformOutput',false);
             values = vertcat(values{:});
-            t = cell2table(values','VariableNames',names);
+            
+            t = cell2table(values');
             t.time = time;
                     
             this.data = vertcat(this.data,t);
+            if size(this.data,1) == 1
+                this.data.Properties.VariableDescriptions = names;
+            end
+            
             
             new_time = time + this.step_size;
            
@@ -71,7 +80,17 @@ classdef Collector < MosaikAPI.Simulator
                 
         function finalize(this)
            disp(this.data);
-           pause;
+           if ~isempty(this.save_path)
+            this.save_results()
+           else
+               pause
+           end
+        end
+        
+        
+        function save_results(this)
+                results = this.data;
+                save(this.save_path,'results');           
         end
         
     end
