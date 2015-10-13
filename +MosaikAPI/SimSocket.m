@@ -104,6 +104,10 @@ classdef SimSocket < handle
             %disp(char(message(5:end)));
 
             message = loadjson(char(message(5:end)));
+            
+            if ~iscell(message)
+                message = num2cell(message);
+            end
 
             type = message{1};
             id = message{2};
