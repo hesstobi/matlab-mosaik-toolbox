@@ -1,7 +1,10 @@
 classdef Simulator < handle & MosaikAPI.SimSocketDelegate
-    
+    % Simulator   Superclass for simulators.
+    %   Provides socket communication methods and abstract methods the simulator needs to implement.
+
+
     properties (Constant)
-        api_version = 2
+        api_version = 2;    % API version
     end
     
     properties (Access=private)
@@ -9,18 +12,17 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     end
     
     properties
-        sid = 'Matlab'
+        sid = 'Matlab';     % Simulator ID
     end
     
     
     methods
         
         function this = Simulator(server,varargin)
-            % this = Simulator(server)
-            % Constructor of the class Simulator
+            % Constructor of the class Simulator.
             %
             % Parameter:
-            %  - server  : Server IP and port as char, format: 'IP:port'
+            %  - server: Server IP and port as char, format: 'IP:port'
             %  - varargin: Optional Parameter Value List
             %              debug: false|true - Create the Simulator in
             %              debug Mode where no Socket Server is started.
@@ -35,14 +37,14 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             
             server = p.Results.server;
             
-            %Get server from mosaik and start tcpclient at given host and port.
+            % Gets server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
             [ip,port] = parse_address(this,server);
             
             if ~p.Results.debug
-                %Creates socket
+                % Creates socket
                 this.socket = MosaikAPI.SimSocket(ip,port,this);
-                %Starts the socket client and waiting for messages
+                % Starts the socket client and waiting for messages
                 this.socket.start();
                 % Delete the Socket
                 this.socket = [];
@@ -59,7 +61,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         
         function value = meta(this)
-            % Creates meta struct with empty mpdels struct and extra methods cell
+            % Creates meta struct with empty models struct and extra methods cell.
             value.api_version = this.api_version;
             value.extra_methods = {};
             value.models = struct;
@@ -72,7 +74,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     methods
         
         function response = simSocketReceivedRequest(this,request)
-            %Parses request and calls simulator function.
+            % Parses request and calls simulator function.
             func = request{1};
             func = str2func(func);
             args = request{2};
@@ -124,27 +126,13 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     methods
         
         function stop = stop(this, ~, ~)
+            % Closes socket and returns 'stop'.
             this.socket.stop();
             stop = ('stop');
         end
         
-        function progress = get_progress(this)
-            content{1} = 'get_progress';
-            content{2} = {{}};
-            content{3} = struct;
-            progress = this.socket.send_request(content);
-        end
-        
-    end
-    
-    
-    
-    
-    
-    %% Mosaik API
-    
-    methods
         function meta = init(this, sid, varargin)
+            % Sets simulator ID, verifies input arguments. Returns meta struct.
             this.sid = sid;
             
             p = inputParser;
@@ -162,10 +150,19 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         end
         
         function finalize(this)
-            % Do nothing by default
+            % Does nothing by default. Can be overridden.
         end
         
-        function related_entities = as_get_related_entities(this, varargin)        
+        function progress = as_get_progress(this)
+            % Returns 'get_progress' message for MOSAIK. 
+            content{1} = 'get_progress';
+            content{2} = {{}};
+            content{3} = struct;
+            progress = this.socket.send_request(content);
+        end
+        
+        function related_entities = as_get_related_entities(this, varargin)
+            % Returns 'get_related_entities' message for MOSAIK with varargin as arguments.     
             content{1} = 'get_related_entities';        
             if gt(nargin,1)
                 if ischar(varargin{1})
@@ -181,6 +178,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         end
         
         function data = as_get_data(sim, varargin)
+            % Returns 'get_data' message for MOSAIK with varargin as arguments.
             content{1} = 'get_data';
             if iscell(varargin{1})
                 varargin =  varargin{1};
@@ -193,6 +191,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         end
         
         function as_set_data(sim, varargin)
+            % Returns 'set_data' message for MOSAIK with varargin as arguments.
             content{1} = 'set_data';
             if iscell(varargin{1})
                 varargin =  varargin{1};
@@ -209,8 +208,11 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     
     methods (Abstract)
         create(this,num,model,varargin)
+        % Creates num amount of model models. Passes varargin as argument.
         step(this,time,varargin);
-        get_data(this, outputs);
+        % Makes a time wide step. Passes varargin as argument.
+        get_data(this,outputs);
+        % Returns data for outputs.
     end
     
     
@@ -219,7 +221,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     methods (Static)
         
         function value = concentrateInputs(inputs)
-            
+            % Sums up all inputs for each model.
             value = structfun(@(x) structfun(@(y) sum(cell2mat(struct2cell(y))),x,'UniformOutput',false), ...
                 inputs,'UniformOutput',false);
             % TODO does not work when src_ids given in inputs

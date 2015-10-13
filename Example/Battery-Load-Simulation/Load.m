@@ -1,5 +1,5 @@
 classdef Load < MosaikAPI.Model
-	% LOAD electrical load model for MOSAIK ModelSimulator
+	%LOAD  Electrical load model for MOSAIK ModelSimulator.
 	%   Simulates a load with given parameters resistance R, operating voltage U_R and tolerance delta, which together
 	%   define the range operating voltages.
 	%   Based on the battery given voltage U, resistance R and time (step.size) t , the load consumes capacitance Q in the form

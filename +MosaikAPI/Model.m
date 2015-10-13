@@ -1,6 +1,6 @@
 classdef Model < handle
-    %MODELL Summary of this class goes here
-    %   Detailed explanation goes here
+    % MODEL  Model superclass.
+    %   Provides setter and getter methods and defines methodes that models need to implement.
     
     properties
         sim;

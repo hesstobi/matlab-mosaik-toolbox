@@ -1,5 +1,5 @@
 classdef ModelSimulator < MosaikAPI.Simulator
-    %MODELSIMULATOR Summary of this class goes here
+    % MODELSIMULATOR Summary of this class goes here
     %   Detailed explanation goes here
     
     properties (Abstract)
@@ -127,7 +127,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
                 this.setEntitiesData(data);
             end
             
-            % Preform a step with all entities
+            % Perform a step with all entities
             cellfun(@(x) x.step(time),this.entities);
             
             time_next_step = time + this.step_size;
