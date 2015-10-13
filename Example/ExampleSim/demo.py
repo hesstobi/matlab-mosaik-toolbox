@@ -23,9 +23,11 @@ matlab  = world.start('Matlab', step_size=1)
 monitor  = world.start('Monitor', step_size=1)
 
 model = matlab.Model(init_value=2)
-collector = monitor.Collector()
+model2 = matlab.Model(init_value=5)
+collector = monitor.Collector(graphical_output=True)
 
 world.connect(model, collector, 'val', 'delta')
+world.connect(model2, collector, 'val', 'delta')
 
 
 world.run(until=10)
