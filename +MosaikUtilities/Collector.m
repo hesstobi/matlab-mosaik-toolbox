@@ -54,15 +54,18 @@ classdef Collector < MosaikAPI.Simulator
         function new_time = step(this,time,inputs)
             
             inputs = inputs.(this.eid);
+            fn = fieldnames(inputs);
+            for i = 1:numel(fn)
+                disp(fn{i})
+                disp(inputs.(fn{i}));
+            end
             
-            names = cellfun(@(x) strcat(fieldnames(inputs.(x)),'__',x),fieldnames(inputs),'UniformOutput',false);
-            disp(names);
+            names = cellfun(@(x) strcat(fieldnames(inputs.(x)),'_',x),fieldnames(inputs),'UniformOutput',false);
+            names = cellfun(@(x) strrep(x,'_0x2D_','_'),names,'UniformOutput',false);   % Changing hex code to original symbol not allowed. Using '_' instead.
+            names = cellfun(@(x) strrep(x,'_0x2E_','_'),names,'UniformOutput',false);
             names = vertcat(names{:});
-            disp(names);
             values = cellfun(@(x) struct2cell(inputs.(x)),fieldnames(inputs),'UniformOutput',false);
-            disp(values);
             values = vertcat(values{:});
-            disp(values);
             t = cell2table(values','VariableNames',names);
             t.time = time;
                     
@@ -80,14 +83,28 @@ classdef Collector < MosaikAPI.Simulator
                 
         function finalize(this)
             disp(this.data);
+
             if this.graphical_output
                 x = this.data.time;
                 this.data.time = [];
                 names = this.data.Properties.VariableNames;
-                for i = 1:numel(names)
-                    figure;
-                    plot(x,this.data.(names{i}));
-                    set(legend(names(i)), 'Interpreter', 'none');
+                types = cellfun(@(y) y{end},cellfun(@(x) strsplit(x,'_'),names,'UniformOutput',false),'UniformOutput',false);
+                types = unique(types);
+                for i = 1:numel(types)
+                    typ = types{i};
+                    figure('name',typ);
+                    leg = {};
+                    for j = 1:numel(names)
+                        cur_typ = strsplit(names{j},'_');
+                        cur_typ = cur_typ{end};
+                        if strcmp(cur_typ,typ)
+                            hold on;
+                            plot(x,this.data.(names{j}));
+                            name = strrep(names{j},['_' cur_typ],'');
+                            leg(end+1) = {name};
+                        end
+                    end
+                    set(legend(leg),'Interpreter','none');
                 end
             end
             pause;
