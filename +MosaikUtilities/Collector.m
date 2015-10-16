@@ -91,7 +91,6 @@ classdef Collector < MosaikAPI.Simulator
         
                 
         function finalize(this)
-<<<<<<< HEAD
             disp(this.data);
 
             if this.graphical_output
@@ -117,21 +116,22 @@ classdef Collector < MosaikAPI.Simulator
                     set(legend(leg),'Interpreter','none');
                 end
             end
+            
             pause;
-=======
-           disp(this.data);
-           if ~isempty(this.save_path)
-            this.save_results()
-           else
-               pause
-           end
+
+            disp(this.data);
+            if ~isempty(this.save_path)
+                this.save_results()
+            else
+                pause
+            end
+
         end
         
         
         function save_results(this)
                 results = this.data;
-                save(this.save_path,'results');           
->>>>>>> Gitlab_public
+                save(this.save_path,'results');
         end
         
     end
