@@ -1,7 +1,6 @@
 classdef ExampleSim < MosaikAPI.ModelSimulator
 
 	properties
-        step_size = 1
         providedModels = {'Model'};    
     end
      

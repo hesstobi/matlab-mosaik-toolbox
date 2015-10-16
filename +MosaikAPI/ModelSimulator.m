@@ -8,6 +8,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
     
     properties
        entities = {} 
+       step_size
     end
     
     
