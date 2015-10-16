@@ -40,7 +40,7 @@ classdef Load < MosaikAPI.Model
 
 			voltage_in = cell2mat(struct2cell(p.voltage_in));
 			if ge(voltage_in,(this.voltage*(1-this.tolerance))) && le (voltage_in,(this.voltage*(1+this.tolerance)))
-				this.consumed_capacitance = ((voltage_in/this.resistance)*sim.step_size;
+				this.consumed_capacitance = ((voltage_in/this.resistance)*sim.step_size); %#ok<*PROP>
 			end
 
 			rels = sim.as_get_related_entities(this.eid);
@@ -54,8 +54,6 @@ classdef Load < MosaikAPI.Model
 			m = struct;
 			m.([strrep(sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l; % '_0x2D_' is hex for '-'; '_0x2E_' is hex for '.'; JSONLab will convert it, MATLab can not have points in struct fields.
 			sim.as_set_data(m);
-
-			this.data_out.consumed_capacitance = this.consumed_capacitance;
 		end
 
 	end
@@ -64,7 +62,7 @@ classdef Load < MosaikAPI.Model
 
 		function value = meta()
 			value.public = true;
-			value.attrs = {'voltage_in','data_out'};
+			value.attrs = {'voltage_in','consumed_capacitance'};
 			value.params = {'resistance','voltage','tolerance'};
 			value.any_inputs = false;
 		end

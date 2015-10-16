@@ -33,8 +33,8 @@ classdef Battery < MosaikAPI.Model
             
             this.init_voltage = p.Results.init_voltage;
             this.init_capacitance = p.Results.init_capacitance;
-            this.voltage = init_voltage;
-            this.capacitance = init_capacitance;
+            this.voltage = this.init_voltage;
+            this.capacitance = this.init_capacitance;
 		end
 
 		function step(this,varargin)
@@ -43,11 +43,9 @@ classdef Battery < MosaikAPI.Model
 			addOptional(p,'consumed_capacitance',struct); %Add validation function
 			parse(p,varargin{:});
 
-			consumed_capacitance = sum(cell2mat(struct2cell(p.consumed_capacitance)));
+			consumed_capacitance = sum(cell2mat(struct2cell(p.Results.consumed_capacitance)));
 			this.capacitance = this.capacitance - consumed_capacitance;
 			this.voltage = (((this.capacitance / init_capacitance) ^ 0.5) * this.init_voltage); % Battery voltage U
-			this.data_out.voltage = this.voltage;
-			this.data_out.state_of_charge  = capacitance;
 		end
 
 	end
@@ -57,7 +55,7 @@ classdef Battery < MosaikAPI.Model
 		function value = meta()
 			% Adds model meta content to meta struct.
 			value.public = true;
-			value.attrs = {'voltage', 'data_out'};
+			value.attrs = {'voltage', 'capacitance'};
 			value.params = {'init_capacitance', 'init_voltage'};
 			value.any_inputs = false; %CHECK this
 		end
