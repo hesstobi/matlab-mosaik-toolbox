@@ -15,8 +15,8 @@ classdef Model < handle
         
         
         function data = get_data(this,attrs)
+            
             values = cellfun(@(x) this.(x),attrs,'UniformOutput',false);
-            values = unique(values); % If the same value is used as 2 or more outputs.
             data = cell2struct(values,attrs,2);
  
         end
