@@ -16,6 +16,7 @@ classdef Model < handle
         
         function data = get_data(this,attrs)
             
+            attrs = unique(attrs);
             values = cellfun(@(x) this.(x),attrs,'UniformOutput',false);
             data = cell2struct(values,attrs,2);
  
