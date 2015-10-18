@@ -166,7 +166,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             content{1} = 'get_related_entities';        
             if gt(nargin,1)
                 if ischar(varargin{1})
-                    varargin =  [this.sid cellstr(varargin{1})];
+                    varargin =  strcat(this.sid,'.',cellstr(varargin{1}));
                 end
                 varargin{end+1} = {[]};
             else
