@@ -79,10 +79,7 @@ classdef Collector < MosaikAPI.Simulator
             this.data = vertcat(this.data,t);
             if size(this.data,1) == 1
                 this.data.Properties.VariableNames = names;
-            end
-
-            disp(savejson('',names));
-            
+            end            
             
             new_time = time + this.step_size;
            

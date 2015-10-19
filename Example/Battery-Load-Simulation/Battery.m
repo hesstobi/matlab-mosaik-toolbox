@@ -41,8 +41,6 @@ classdef Battery < MosaikAPI.Model
 		function step(this,varargin)
 			% Removes capacitance consumed by connected loads.
 
-			disp(this.capacitance);
-			disp(this.consumed_capacitance);
 			this.capacitance = this.capacitance - this.consumed_capacitance;
 			this.voltage = (((this.capacitance / this.init_capacitance) ^ 0.5) * this.init_voltage); % Battery voltage U
 		end
