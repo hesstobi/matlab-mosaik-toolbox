@@ -1,5 +1,5 @@
 classdef Simulator < handle & MosaikAPI.SimSocketDelegate
-    % Simulator   Superclass for simulators.
+    % SIMULATOR   Superclass for simulators.
     %   Provides socket communication methods and abstract methods the simulator needs to implement.
 
 

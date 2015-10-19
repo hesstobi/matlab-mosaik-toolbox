@@ -28,13 +28,13 @@ monitor = world.start('Monitor', step_size=10)
 # Instantiate models
 battery_set = [matlab1.Battery(init_capacitance=(i+1)*5*3600, init_voltage=10) for i in range(3)]  # 5 Ah at 10V
 load_set = [matlab2.Load(resistance=(i+1)*2, voltage=10, tolerance=0.2) for i in range(3)]
-collector = monitor.Collector(graphical_output=False)
+collector = monitor.Collector(graphical_output=True)
 
 # Connect entities
 for a, b in zip(battery_set, load_set):
     world.connect(a, b, ('voltage', 'voltage_in'), async_requests=True)
 
-mosaik.util.connect_many_to_one(world, load_set, collector, 'voltage', 'consumed_capacitance')
+mosaik.util.connect_many_to_one(world, load_set, collector, 'consumed_capacitance')
 mosaik.util.connect_many_to_one(world, battery_set, collector, 'voltage', 'capacitance')
 # Run simulation
 END = 300

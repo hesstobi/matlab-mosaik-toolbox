@@ -61,13 +61,8 @@ classdef Collector < MosaikAPI.Simulator
         function new_time = step(this,time,inputs)
             % Receives data from all given inputs.
             inputs = inputs.(this.eid);
-            fn = fieldnames(inputs);
-            for i = 1:numel(fn)
-                disp(fn{i})
-                disp(inputs.(fn{i}));
-            end
             
-            names = cellfun(@(x) strcat(fieldnames(inputs.(x)),'_',x),fieldnames(inputs),'UniformOutput',false);
+            names = cellfun(@(x) strcat(fieldnames(inputs.(x)),'_x_',x),fieldnames(inputs),'UniformOutput',false);
             names = cellfun(@(x) strrep(x,'_0x2D_','_'),names,'UniformOutput',false);   % Changing hex code to original symbol not allowed. Using '_' instead.
             names = cellfun(@(x) strrep(x,'_0x2E_','_'),names,'UniformOutput',false);
             names = vertcat(names{:});
@@ -77,12 +72,16 @@ classdef Collector < MosaikAPI.Simulator
             values = vertcat(values{:});
             
             t = cell2table(values');
-            t.time = time;
+            t.Time = time;
+
+            t.Properties.VariableNames = names;
                     
             this.data = vertcat(this.data,t);
             if size(this.data,1) == 1
-                this.data.Properties.VariableDescriptions = names;
+                this.data.Properties.VariableNames = names;
             end
+
+            disp(savejson('',names));
             
             
             new_time = time + this.step_size;
@@ -97,6 +96,7 @@ classdef Collector < MosaikAPI.Simulator
                 
         function finalize(this)
             % Previews data in a table, plots and saves it.
+
             disp(this.data);
 
             if this.graphical_output
@@ -118,29 +118,29 @@ classdef Collector < MosaikAPI.Simulator
     methods (Access=private)
 
         function plot_data(this)
-            x = this.data.time;
-                this.data.time = [];
-                names = this.data.Properties.VariableNames;
-                types = cellfun(@(y) y{end},cellfun(@(x) strsplit(x,'_'),names,'UniformOutput',false),'UniformOutput',false);
-                types = unique(types);
-                for i = 1:numel(types)
-                    typ = types{i};
-                    figure('name',typ);
-                    leg = {};
-                    for j = 1:numel(names)
-                        cur_typ = strsplit(names{j},'_');
-                        cur_typ = cur_typ{end};
-                        if strcmp(cur_typ,typ)
-                            hold on;
-                            plot(x,this.data.(names{j}));
-                            name = strrep(names{j},['_' cur_typ],'');
-                            leg(end+1) = {name};
-                        end
+            x = this.data.Time;
+            this.data.Time = [];
+            names = this.data.Properties.VariableNames;
+            types = cellfun(@(y) y{end},cellfun(@(x) strsplit(x,'_x_'),names,'UniformOutput',false),'UniformOutput',false);
+            types = unique(types);
+            for i = 1:numel(types)
+                typ = types{i};
+                figure('name',typ);
+                leg = {};
+                for j = 1:numel(names)
+                    cur_typ = strsplit(names{j},'_x_');
+                    cur_typ = cur_typ{end};
+                    if strcmp(cur_typ,typ)
+                        hold on;
+                        plot(x,this.data.(names{j}));
+                        name = strrep(names{j},['_x_' cur_typ],'');
+                        leg(end+1) = {name};
                     end
-                    set(legend(leg),'Interpreter','none');
                 end
-
+                set(legend(leg),'Interpreter','none');
             end
+
+        end
         
         function save_results(this)
             results = this.data;
