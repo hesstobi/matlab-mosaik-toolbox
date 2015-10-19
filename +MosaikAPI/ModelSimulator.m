@@ -48,7 +48,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
                 eid = max(str2double(strrep(eids,[model '_'],'')))+1;
             end
 
-            % Create new eid witch new number
+            % Create new eid with new number
             eid = [model '_' num2str(eid)];
             
         end
@@ -102,7 +102,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
                                  
             for idx=1:num
                 % Get eid for model and add to entities
-                this.entities{end+1} = modelFunc(this,this.nextEidForModel(model),varargin{:}); % Model needs simulator to call async requests
+                this.entities{end+1} = modelFunc(this,this.nextEidForModel(model),varargin{:}); % Model needs to receive simulator instance to call async requests
             end
             
             % Create dscrList for previously created entities
@@ -111,7 +111,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
         end
         
         
-        function data = get_data(this, outputs)
+        function data = get_data(this,outputs)
                         
             eids = fieldnames(outputs);
             req_entities = this.entitiesWithEids(eids);

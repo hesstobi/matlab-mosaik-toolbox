@@ -5,11 +5,11 @@ import os.path
 sim_config = {
     'Matlab': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
-		'cmd': 'matlab.exe -r "server=\'%(addr)s\';BatteryLoadSim(\'%(addr)s\')"'
+		'cmd': 'matlab.exe -minimize -nosplash -r "server=\'%(addr)s\';BatteryLoadSim(\'%(addr)s\')"'
 	},
 	'Monitor': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
-		'cmd': 'matlab.exe -r "MosaikUtilities.Collector(\'%(addr)s\')"'
+		'cmd': 'matlab.exe -minimize -nosplash -r "MosaikUtilities.Collector(\'%(addr)s\')"'
 	}
 }
 
@@ -28,14 +28,14 @@ monitor = world.start('Monitor', step_size=10)
 # Instantiate models
 battery_set = [matlab1.Battery(init_capacitance=(i+1)*5*3600, init_voltage=10) for i in range(3)]  # 5 Ah at 10V
 load_set = [matlab2.Load(resistance=(i+1)*2, voltage=10, tolerance=0.2) for i in range(3)]
-collector = monitor.Collector(graphical_output=True)
+collector = monitor.Collector(graphical_output=False)
 
 # Connect entities
 for a, b in zip(battery_set, load_set):
     world.connect(a, b, ('voltage', 'voltage_in'), async_requests=True)
 
-mosaik.util.connect_many_to_one(world, load_set, collector, 'consumed_capacitance')
+mosaik.util.connect_many_to_one(world, load_set, collector, 'voltage', 'consumed_capacitance')
 mosaik.util.connect_many_to_one(world, battery_set, collector, 'voltage', 'capacitance')
 # Run simulation
-END = 3600
+END = 300
 world.run(until=END)

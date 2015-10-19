@@ -4,11 +4,12 @@ classdef Battery < MosaikAPI.Model
 	%   The voltage U drops with decreasing capacitance Q in the form U = U_0 * ((Q/Q_0) ^ 0.5).
 
 	properties
-		init_voltage;		% Initial battery voltage
-		init_capacitance;	% Initial battery capacitance
-		voltage;			% Current battery voltage
-		capacitance;		% Current battery capacitance
-		data_out;			% Struct containing current voltage and current capacitance
+		init_voltage;				% Initial battery voltage
+		init_capacitance;			% Initial battery capacitance
+		voltage;					% Current battery voltage
+		capacitance;				% Current battery capacitance
+		consumed_capacitance = 0;	% Capitance consumed by loads in current step
+		data_out;					% Struct containing current voltage and current capacitance
 	end
 
 	methods 
@@ -33,19 +34,17 @@ classdef Battery < MosaikAPI.Model
             
             this.init_voltage = p.Results.init_voltage;
             this.init_capacitance = p.Results.init_capacitance;
-            this.voltage = this.init_voltage;
             this.capacitance = this.init_capacitance;
+            this.voltage = this.init_voltage;
 		end
 
 		function step(this,varargin)
 			% Removes capacitance consumed by connected loads.
-			p = inputParser;
-			addOptional(p,'consumed_capacitance',struct); %Add validation function
-			parse(p,varargin{:});
 
-			consumed_capacitance = sum(cell2mat(struct2cell(p.Results.consumed_capacitance)));
-			this.capacitance = this.capacitance - consumed_capacitance;
-			this.voltage = (((this.capacitance / init_capacitance) ^ 0.5) * this.init_voltage); % Battery voltage U
+			disp(this.capacitance);
+			disp(this.consumed_capacitance);
+			this.capacitance = this.capacitance - this.consumed_capacitance;
+			this.voltage = (((this.capacitance / this.init_capacitance) ^ 0.5) * this.init_voltage); % Battery voltage U
 		end
 
 	end
@@ -55,7 +54,7 @@ classdef Battery < MosaikAPI.Model
 		function value = meta()
 			% Adds model meta content to meta struct.
 			value.public = true;
-			value.attrs = {'voltage', 'capacitance'};
+			value.attrs = {'voltage','capacitance','consumed_capacitance'};
 			value.params = {'init_capacitance', 'init_voltage'};
 			value.any_inputs = false; %CHECK this
 		end

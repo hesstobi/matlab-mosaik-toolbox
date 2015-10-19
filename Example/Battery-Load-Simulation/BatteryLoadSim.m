@@ -1,7 +1,6 @@
 classdef BatteryLoadSim < MosaikAPI.ModelSimulator
 
 	properties
-        step_size = 1
         providedModels = {'Battery','Load'};    
     end
      

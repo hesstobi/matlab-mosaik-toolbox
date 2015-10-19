@@ -4,7 +4,7 @@ classdef Load < MosaikAPI.Model
 	%   define the range operating voltages.
 	%   Based on the battery given voltage U, resistance R and time (step.size) t , the load consumes capacitance Q in the form
 	%   Q = (U/R) * t.
-	%   To show the functionality of asynchronous requests, the simulator requests the battery it's connected to via get_related_entities
+	%   To show the functionality of asynchronous requests, the simulator requests the battery it is connected to via get_related_entities
 	%   and feeds it the consumed capacitance Q via set_data.
 
 	properties
@@ -34,16 +34,12 @@ classdef Load < MosaikAPI.Model
 		end
 
 		function step(this,varargin)
-			p = inputParser;
-			addOptional(p,'voltage_in',struct); %Add validation (only one voltage_in allowed)
-			parse(p,varargin{:});
 
-			voltage_in = cell2mat(struct2cell(p.voltage_in));
-			if ge(voltage_in,(this.voltage*(1-this.tolerance))) && le (voltage_in,(this.voltage*(1+this.tolerance)))
-				this.consumed_capacitance = ((voltage_in/this.resistance)*sim.step_size); %#ok<*PROP>
+			if ge(this.voltage_in,(this.voltage*(1-this.tolerance))) && le (this.voltage_in,(this.voltage*(1+this.tolerance)))
+				this.consumed_capacitance = ((this.voltage_in/this.resistance)*this.sim.step_size); %#ok<*PROP>
 			end
 
-			rels = sim.as_get_related_entities(this.eid);
+			rels = this.sim.as_get_related_entities(this.eid);
 			fn_src_full_id = fieldnames(rels);
 			l = struct;
 			for j = 1:numel(fn_src_full_id)
@@ -52,8 +48,8 @@ classdef Load < MosaikAPI.Model
 				end			
 			end
 			m = struct;
-			m.([strrep(sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l; % '_0x2D_' is hex for '-'; '_0x2E_' is hex for '.'; JSONLab will convert it, MATLab can not have points in struct fields.
-			sim.as_set_data(m);
+			m.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l; % '_0x2D_' is hex for '-'; '_0x2E_' is hex for '.'; JSONLab will convert it, MATLab can not have dots in struct fields.
+			this.sim.as_set_data(m);
 		end
 
 	end
@@ -62,7 +58,7 @@ classdef Load < MosaikAPI.Model
 
 		function value = meta()
 			value.public = true;
-			value.attrs = {'voltage_in','consumed_capacitance'};
+			value.attrs = {'voltage_in','voltage','consumed_capacitance'};
 			value.params = {'resistance','voltage','tolerance'};
 			value.any_inputs = false;
 		end

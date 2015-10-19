@@ -24,12 +24,13 @@ classdef Model < handle
         
         
         function set_data(this,data)
-            
+
             attrs = fieldnames(data);
+
             values = struct2cell(data);
             
             for idx=1:numel(attrs)
-               this.(attrs{idx}) = values{idx};
+                this.(attrs{idx}) = values{idx};
             end
             
         end

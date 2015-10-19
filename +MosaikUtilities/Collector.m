@@ -1,24 +1,28 @@
 classdef Collector < MosaikAPI.Simulator
-    %COLLECTOR   A simple data collector that prints all data when the simulation finishes.
+    % COLLECTOR   A simple data collector that prints all data when the simulation finishes.
+    %   Shows required data as table, graphical plot and saves it. To capture it, connect
+    %   the required data to the collector.
     
     properties (Constant)
         model = 'Collector';
     end
     
     properties
-        data = [];
-        step_size = 1;
-        save_path = [];
-        eid = [];
-        graphical_output = false;
+        data = [];                  % Data array
+        step_size = 1;              % Interval after which the collector saves data
+        save_path = [];             % Data save path
+        eid = [];                   % Collector eid
+        graphical_output = false;   % Turn on/off graphical output
     end
     
     methods 
 		function this = Collector(varargin)
+            % Constructor of the class Collector.
             this = this@MosaikAPI.Simulator(varargin{:});
         end
         
         function value = meta(this)
+            % Creates meta struct and adds collector meta content.
             value = meta@MosaikAPI.Simulator(this);
             
             value.extra_methods = {'save_results',[]};
@@ -35,6 +39,7 @@ classdef Collector < MosaikAPI.Simulator
     methods
         
         function dscrList = create(this,num,model,varargin)
+            % Creates a collector instance. Only one collector instance possible.
             if num>1 || ~isempty(this.eid)
                 error('Can only create one instance of Collector.')
             end
@@ -54,7 +59,7 @@ classdef Collector < MosaikAPI.Simulator
                
                 
         function new_time = step(this,time,inputs)
-            
+            % Receives data from all given inputs.
             inputs = inputs.(this.eid);
             fn = fieldnames(inputs);
             for i = 1:numel(fn)
@@ -91,10 +96,29 @@ classdef Collector < MosaikAPI.Simulator
         
                 
         function finalize(this)
+            % Previews data in a table, plots and saves it.
             disp(this.data);
 
             if this.graphical_output
-                x = this.data.time;
+                this.plot_data();
+            end
+
+            pause;
+           
+            if ~isempty(this.save_path)
+                this.save_results();
+            else
+                pause
+            end
+
+        end
+
+    end
+
+    methods (Access=private)
+
+        function plot_data(this)
+            x = this.data.time;
                 this.data.time = [];
                 names = this.data.Properties.VariableNames;
                 types = cellfun(@(y) y{end},cellfun(@(x) strsplit(x,'_'),names,'UniformOutput',false),'UniformOutput',false);
@@ -115,23 +139,13 @@ classdef Collector < MosaikAPI.Simulator
                     end
                     set(legend(leg),'Interpreter','none');
                 end
-            end
-            
-            pause;
 
-            disp(this.data);
-            if ~isempty(this.save_path)
-                this.save_results()
-            else
-                pause
             end
-
-        end
-        
         
         function save_results(this)
-                results = this.data;
-                save(this.save_path,'results');
+            results = this.data;
+            save(this.save_path,'results');
+
         end
         
     end
