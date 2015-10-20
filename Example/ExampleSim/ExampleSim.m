@@ -5,17 +5,11 @@ classdef ExampleSim < MosaikAPI.ModelSimulator
     end
      
     
-    methods 
+    methods
+    
 		function sim = ExampleSim(varargin)
  			sim = sim@MosaikAPI.ModelSimulator(varargin{:});
 		end
-	end
-      
-	methods
-
-		
-
-		
 
 	end
 
@@ -32,8 +26,7 @@ classdef ExampleSim < MosaikAPI.ModelSimulator
 			for i = 1:times
 				extra = strcat(extra, word);
 			end
-        end
-       
+        end       
 
 	end
 
