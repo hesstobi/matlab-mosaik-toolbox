@@ -6,8 +6,8 @@ classdef BatteryLoadSim < MosaikAPI.ModelSimulator
      
     
     methods 
-		function sim = BatteryLoadSim(varargin)
- 			sim = sim@MosaikAPI.ModelSimulator(varargin{:});
+		function this = BatteryLoadSim(varargin)
+ 			this = this@MosaikAPI.ModelSimulator(varargin{:});
 		end
 	end
 

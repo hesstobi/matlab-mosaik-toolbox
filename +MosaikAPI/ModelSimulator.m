@@ -7,8 +7,8 @@ classdef ModelSimulator < MosaikAPI.Simulator
     end
     
     properties
-       entities = {} 
-       step_size
+       entities = {};
+       step_size;
     end
     
     

@@ -22,12 +22,12 @@ classdef MosaikProxy < handle
             progress = this.sim.socket.send_request(content);
         end
         
-        function related_entities = get_related_entities(this, varargin)
+        function related_entities = get_related_entities(this,varargin)
             % Returns 'get_related_entities' message for MOSAIK with varargin as arguments.     
             content{1} = 'get_related_entities';        
             if gt(nargin,1)
                 if ischar(varargin{1})
-                    varargin =  strcat(this.sid,'.',cellstr(varargin{1}));
+                    varargin =  strcat(this.sim.sid,'.',cellstr(varargin{1}));
                 end
                 varargin{end+1} = {[]};
             else
@@ -38,7 +38,7 @@ classdef MosaikProxy < handle
             related_entities = this.sim.socket.send_request(content);
         end
         
-        function data = get_data(sim, varargin)
+        function data = get_data(this,varargin)
             % Returns 'get_data' message for MOSAIK with varargin as arguments.
             content{1} = 'get_data';
             if iscell(varargin{1})
@@ -51,7 +51,7 @@ classdef MosaikProxy < handle
             data = this.sim.socket.send_request(content);
         end
         
-        function set_data(sim, varargin)
+        function set_data(this,varargin)
             % Returns 'set_data' message for MOSAIK with varargin as arguments.
             content{1} = 'set_data';
             if iscell(varargin{1})

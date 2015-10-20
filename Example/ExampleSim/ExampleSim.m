@@ -6,14 +6,10 @@ classdef ExampleSim < MosaikAPI.ModelSimulator
      
     
     methods
-    
-		function sim = ExampleSim(varargin)
- 			sim = sim@MosaikAPI.ModelSimulator(varargin{:});
+
+		function this = ExampleSim(varargin)
+ 			this = this@MosaikAPI.ModelSimulator(varargin{:});
 		end
-
-	end
-
-	methods
 
 		function extra = wtimes(~, args, kwargs)
 			word = args;

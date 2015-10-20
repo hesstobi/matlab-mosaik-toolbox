@@ -39,8 +39,7 @@ classdef SimSocket < handle
             this.server = p.Results.server;
             this.port = p.Results.port;
             this.delegate = p.Results.delegate;
-            this.socket = tcpclient(this.server,this.port);
-                     
+            this.socket = tcpclient(this.server,this.port);                     
         end
         
         function delete(this)

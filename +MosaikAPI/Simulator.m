@@ -6,12 +6,9 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         api_version = 2;    % API version
     end
     
-    properties (Access=private)
-        mosaik;
-    end
-    
     properties
         socket;
+        mosaik;
         sid = 'Matlab';     % Simulator ID
     end
     
@@ -59,8 +56,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
                 start(t);
             end
             
-        end
-        
+        end        
         
         function value = meta(this)
             % Creates meta struct with empty models struct and extra methods cell.
@@ -148,7 +144,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
                 end
             end
             
-            meta = this.meta;
+            meta = this.meta();
         end
         
         function finalize(this)
