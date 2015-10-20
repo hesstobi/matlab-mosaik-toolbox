@@ -39,10 +39,12 @@ classdef Battery < MosaikAPI.Model
 		end
 
 		function step(this,varargin)
-			% Removes capacitance consumed by connected loads.
+			%Calculates consumed capacitance and battery voltage.
 
+			% Removes capacitance consumed by connected loads.
 			this.capacitance = this.capacitance - this.consumed_capacitance;
-			this.voltage = (((this.capacitance / this.init_capacitance) ^ 0.5) * this.init_voltage); % Battery voltage U
+			% Calculates battery voltage.
+			this.voltage = (((this.capacitance / this.init_capacitance) ^ 0.5) * this.init_voltage);
 		end
 
 	end
@@ -51,6 +53,7 @@ classdef Battery < MosaikAPI.Model
 
 		function value = meta()
 			% Adds model meta content to meta struct.
+
 			value.public = true;
 			value.attrs = {'voltage','capacitance','consumed_capacitance'};
 			value.params = {'init_capacitance', 'init_voltage'};

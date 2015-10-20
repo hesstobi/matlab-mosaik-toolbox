@@ -19,6 +19,16 @@ classdef Load < MosaikAPI.Model
 	methods 
 
 		function this = Load(sim,eid,varargin)
+			% Constructor of the class Load
+			%
+			% Parameter:
+			%  - sim: Related simulator
+			%  - eid: Model entity ID
+			%  - varargin: Unspecified model parameters.
+			%
+			% Return:
+			%  - this: Load object
+
 			this = this@MosaikAPI.Model(sim,eid);
             
             p = inputParser;
@@ -57,6 +67,8 @@ classdef Load < MosaikAPI.Model
 	methods (Static)
 
 		function value = meta()
+			% Adds model meta content to meta struct.
+
 			value.public = true;
 			value.attrs = {'voltage_in','voltage','consumed_capacitance'};
 			value.params = {'resistance','voltage','tolerance'};

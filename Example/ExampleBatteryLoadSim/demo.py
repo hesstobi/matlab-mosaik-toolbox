@@ -14,7 +14,7 @@ sim_config = {
 }
 
 mosaik_config = {
-    'start_timeout': 300,  # seconds
+    'start_timeout': 600,  # seconds
     'stop_timeout': 10,  # seconds
 }
 
