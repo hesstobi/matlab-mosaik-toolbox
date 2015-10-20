@@ -39,7 +39,7 @@ classdef Load < MosaikAPI.Model
 				this.consumed_capacitance = ((this.voltage_in/this.resistance)*this.sim.step_size); %#ok<*PROP>
 			end
 
-			rels = this.sim.as_get_related_entities(this.eid);
+			rels = this.sim.mosaik.get_related_entities(this.eid);
 			fn_src_full_id = fieldnames(rels);
 			l = struct;
 			for j = 1:numel(fn_src_full_id)
@@ -49,7 +49,7 @@ classdef Load < MosaikAPI.Model
 			end
 			m = struct;
 			m.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l; % '_0x2D_' is hex for '-'; '_0x2E_' is hex for '.'; JSONLab will convert it, MATLab can not have dots in struct fields.
-			this.sim.as_set_data(m);
+			this.sim.mosaik.set_data(m);
 		end
 
 	end
