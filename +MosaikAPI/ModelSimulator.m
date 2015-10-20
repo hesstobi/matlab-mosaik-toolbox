@@ -68,9 +68,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             % Create cell array with model eid and model type for each model as cell
             dscrList = arrayfun(@(x) x,dscrList','UniformOutput',false);
             % Add empty cell at end for JSONLab
-            dscrList{end+1} = [];
-          
-           
+            dscrList{end+1} = [];      
         end
         
         
@@ -92,9 +90,6 @@ classdef ModelSimulator < MosaikAPI.Simulator
     
     %% Mosaik API
     methods
-       
-        
-        
         
         function dscrList = create(this,num,model,varargin)
             % Get model function
@@ -107,20 +102,17 @@ classdef ModelSimulator < MosaikAPI.Simulator
             
             % Create dscrList for previously created entities
             dscrList = this.dscrListForEntities(numel(this.entities)-num+1:numel(this.entities));
-
         end
-        
         
         function data = get_data(this,outputs)
                         
             eids = fieldnames(outputs);
             req_entities = this.entitiesWithEids(eids);
             values = cellfun(@(x,y) x.get_data(y),req_entities,struct2cell(outputs)','UniformOutput',false);
-            data = cell2struct(values,eids',2);  
-          
+            data = cell2struct(values,eids',2);
         end
         
-        function time_next_step = step(this,time,varargin)           
+        function time_next_step = step(this,time,varargin)
             
             if ~isempty(varargin)
                 % Set data to entities
@@ -132,12 +124,11 @@ classdef ModelSimulator < MosaikAPI.Simulator
             cellfun(@(x) x.step(time),this.entities);
             
             time_next_step = time + this.step_size;
-        end
-         
+        end         
                
     end
     
-        %% Utilities
+    %% Utilities
     methods 
         
          function setEntitiesData(this,inputs)
