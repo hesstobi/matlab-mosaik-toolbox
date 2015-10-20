@@ -1,5 +1,5 @@
 classdef Model < handle
-    % MODEL  Model superclass.
+    % MODEL  Superclass for models.
     %   Provides setter and getter methods and defines methodes that models need to implement.
     
     properties
