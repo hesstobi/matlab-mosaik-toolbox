@@ -60,6 +60,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         function value = meta(this)
             % Creates meta struct with empty models struct and extra methods cell.
+
             value.api_version = this.api_version;
             value.extra_methods = {};
             value.models = struct;
@@ -73,6 +74,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         function response = simSocketReceivedRequest(this,request)
             % Parses request and calls simulator function.
+
             func = request{1};
             func = str2func(func);
             args = request{2};
@@ -99,11 +101,13 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         function null = setup_done(~)
             %Returns empty response.
+
             null = [];
         end
         
         function [ip, port] = parse_address(~, server)
             %Parses address string. Returns ip as string and port as integer.
+
             server = strsplit(server,':');
             if ~isempty(server(1))
                 ip = server{1};
@@ -125,12 +129,14 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         function stop = stop(this, ~, ~)
             % Closes socket and returns 'stop'.
+
             this.socket.stop();
             stop = ('stop');
         end
         
         function meta = init(this, sid, varargin)
             % Sets simulator ID, verifies input arguments. Returns meta struct.
+
             this.sid = sid;
             
             p = inputParser;
@@ -149,6 +155,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         function finalize(this)
             % Does nothing by default. Can be overridden.
+
         end
         
     end
@@ -169,6 +176,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         
         function value = concentrateInputs(inputs)
             % Sums up all inputs for each model.
+            
             value = structfun(@(x) structfun(@(y) sum(cell2mat(struct2cell(y))),x,'UniformOutput',false), ...
                 inputs,'UniformOutput',false);
             % TODO does not work when src_ids given in inputs

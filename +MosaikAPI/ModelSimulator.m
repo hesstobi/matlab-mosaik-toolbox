@@ -1,6 +1,6 @@
 classdef ModelSimulator < MosaikAPI.Simulator
-    % MODELSIMULATOR Summary of this class goes here
-    %   Detailed explanation goes here
+    % MODELSIMULATOR   Handles model creation and stepping.
+    %   Provides methods to create models, perform steps and obtain data.
     
     properties (Abstract)
        providedModels 
@@ -15,16 +15,27 @@ classdef ModelSimulator < MosaikAPI.Simulator
     methods 
         
         function this = ModelSimulator(varargin)
+            % Constructor of the class ModelSimulator
+            %
+            % Parameter:
+            %  - varargin: Passes optional arguments to
+            %              simulator superclass.
+            %
+            % Return:
+            %  - this: ModelSimulator object
+
             this = this@MosaikAPI.Simulator(varargin{:});
         end
         
         function value = meta(this)
-           value = meta@MosaikAPI.Simulator(this);
+            % Creates meta struct.
+
+            value = meta@MosaikAPI.Simulator(this);
            
-           % Collect the meta information from the models
-           modelMeta = cellfun(@(x) eval([x '.meta']),this.providedModels,'UniformOutput',false);
-           value.models = cell2struct(modelMeta,this.providedModelsWithoutPackage,2);
-           
+            % Collect the meta information from the models
+            modelMeta = cellfun(@(x) eval([x '.meta']),this.providedModels,'UniformOutput',false);
+            value.models = cell2struct(modelMeta,this.providedModelsWithoutPackage,2);
+        
         end
         
         
@@ -92,6 +103,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
     methods
         
         function dscrList = create(this,num,model,varargin)
+
             % Get model function
             modelFunc = this.functionForModelNameWithoutPackage(model);
                                  
@@ -140,12 +152,14 @@ classdef ModelSimulator < MosaikAPI.Simulator
          end
         
          function value = providedModelsWithoutPackage(this)
+
             % Creates cell array with second part of provided models name
             % Example: providedModels = {'Model.Battery',' Model.Load'}, value = {'Battery', 'Load'}
             value = cellfun(@(y) y{end},cellfun(@(x) strsplit(x,'.'), this.providedModels,'UniformOutput',false),'UniformOutput',false);
          end
             
          function value = fullNameForModelNameWithoutPackage(this,model)
+
             % Compares model second name against given model name
             % Example: model = 'Battery', idx = [true, false], value = 'Model.Battery'
              idx = strcmp(this.providedModelsWithoutPackage,model);
@@ -153,6 +167,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
          end
          
          function func = functionForModelNameWithoutPackage(this,model)
+            
             % Converts full model name to function
             % Warning: Model.function is illegal function name
              func = str2func(this.fullNameForModelNameWithoutPackage(model));

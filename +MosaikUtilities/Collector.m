@@ -18,11 +18,13 @@ classdef Collector < MosaikAPI.Simulator
     methods 
 		function this = Collector(varargin)
             % Constructor of the class Collector.
+
             this = this@MosaikAPI.Simulator(varargin{:});
         end
         
         function value = meta(this)
             % Creates meta struct and adds collector meta content.
+
             value = meta@MosaikAPI.Simulator(this);
             
             value.extra_methods = {'save_results',[]};
@@ -40,6 +42,7 @@ classdef Collector < MosaikAPI.Simulator
         
         function dscrList = create(this,num,model,varargin)
             % Creates a collector instance. Only one collector instance possible.
+
             if num>1 || ~isempty(this.eid)
                 error('Can only create one instance of Collector.')
             end
@@ -58,8 +61,9 @@ classdef Collector < MosaikAPI.Simulator
         
                
                 
-        function new_time = step(this,time,inputs)
+        function new_time = step(this,time,inputs)            
             % Receives data from all given inputs.
+
             inputs = inputs.(this.eid);
             
             names = cellfun(@(x) strcat(fieldnames(inputs.(x)),'_x_',x),fieldnames(inputs),'UniformOutput',false);
@@ -87,6 +91,7 @@ classdef Collector < MosaikAPI.Simulator
         
         
         function get_data(~,~)
+            
             error('The Collector can not return data');           
         end
         
@@ -115,6 +120,7 @@ classdef Collector < MosaikAPI.Simulator
     methods (Access=private)
 
         function plot_data(this)
+
             x = this.data.Time;
             this.data.Time = [];
             names = this.data.Properties.VariableNames;
@@ -140,6 +146,7 @@ classdef Collector < MosaikAPI.Simulator
         end
         
         function save_results(this)
+
             results = this.data;
             save(this.save_path,'results');
 
