@@ -2,16 +2,16 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     % SIMULATOR   Superclass for simulators.
     %   Provides socket communication methods and abstract methods the simulator needs to implement.
 
-
     properties (Constant)
         api_version = 2;    % API version
     end
     
     properties (Access=private)
-        socket;
+        mosaik;
     end
     
     properties
+        socket;
         sid = 'Matlab';     % Simulator ID
     end
     
@@ -40,6 +40,8 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             % Gets server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
             [ip,port] = parse_address(this,server);
+
+            this.mosaik = MosaikAPI.MosaikProxy(this);
             
             if ~p.Results.debug
                 % Creates socket
@@ -153,56 +155,6 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             % Does nothing by default. Can be overridden.
         end
         
-        function progress = as_get_progress(this)
-            % Returns 'get_progress' message for MOSAIK. 
-            content{1} = 'get_progress';
-            content{2} = {{}};
-            content{3} = struct;
-            progress = this.socket.send_request(content);
-        end
-        
-        function related_entities = as_get_related_entities(this, varargin)
-            % Returns 'get_related_entities' message for MOSAIK with varargin as arguments.     
-            content{1} = 'get_related_entities';        
-            if gt(nargin,1)
-                if ischar(varargin{1})
-                    varargin =  strcat(this.sid,'.',cellstr(varargin{1}));
-                end
-                varargin{end+1} = {[]};
-            else
-                varargin{end+1} = {{}};
-            end
-            content{2} = varargin;
-            content{3} = struct;
-            related_entities = this.socket.send_request(content);
-        end
-        
-        function data = as_get_data(sim, varargin)
-            % Returns 'get_data' message for MOSAIK with varargin as arguments.
-            content{1} = 'get_data';
-            if iscell(varargin{1})
-                varargin =  varargin{1};
-            else
-                varargin{end+1} = {[]};
-            end
-            content{2} = varargin;
-            content{3} = struct;
-            data = sim.socket.send_request(content);
-        end
-        
-        function as_set_data(sim, varargin)
-            % Returns 'set_data' message for MOSAIK with varargin as arguments.
-            content{1} = 'set_data';
-            if iscell(varargin{1})
-                varargin =  varargin{1};
-            else
-                varargin{end+1} = {[]};
-            end
-            content{2} = varargin;
-            content{3} = struct;
-            sim.socket.send_request(content);
-        end
-        
     end
     
     
@@ -213,8 +165,7 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         % Makes a time wide step. Passes varargin as argument.
         get_data(this,outputs);
         % Returns data for outputs.
-    end
-    
+    end    
     
     %% Utilities
     
