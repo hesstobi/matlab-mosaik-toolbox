@@ -94,6 +94,7 @@ classdef SimSocket < handle
             message = strrep(message, sprintf('\t'), '');
             message = strrep(message, sprintf('\n'), '');
             message = strrep(message, ',null', '');
+            message = strrep(message, 'null,', '');
 
             message = [this.make_header(message) uint8(message)];
         end
@@ -110,7 +111,11 @@ classdef SimSocket < handle
 
             type = message{1};
             id = message{2};
-            content = message{3};      
+            if ~lt(numel(message),3)
+                content = message{3};
+            else
+                content = struct;
+            end
 
             this.last_id = id;
             
