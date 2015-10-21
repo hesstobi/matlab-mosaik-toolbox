@@ -3,16 +3,19 @@ classdef ExampleMas < MosaikAPI.Simulator
 	%   Demonstrates all asynchronous request methods.
 
 	properties (Access=private)
-		agents = {[]};
+		agents = {};
 		models = struct( ...
-			'models',struct( ...
-				'Agent',struct( ...
-					'public',true, ...
-					'params',{{}}, ...
-					'attrs',{'link','val_in','val_out'} ...
-					) ...
+			'Agent',struct( ...
+				'public',true, ...
+				'params',{{}}, ...
+				'attrs',{{'link','val_in','val_out'}} ...
 				) ...
 			);
+	end
+
+	properties
+		rel;
+		step_size;
 	end
 
 	methods
@@ -38,14 +41,18 @@ classdef ExampleMas < MosaikAPI.Simulator
 
 			% Add all created agent models to agent array.
 			num_agents = numel(this.agents);
-			agents = {[]};
+			agents = {};
 			for i = num_agents:num_agents+num-1
 				l.eid = num2str(i);
 				l.type = model;
 				l.rel = {};
 				agents(end+1) = {l};
 			end
-			this.agents(end+1) = agents;
+
+			this.agents = horzcat(this.agents,agents);
+			if eq(numel(agents),1)
+				agents(end+1) = {[]};
+			end
 		end
 
 		function time_next_step = step(this,time,varargin)
@@ -53,18 +60,22 @@ classdef ExampleMas < MosaikAPI.Simulator
 			disp(strcat('Progress: ',num2str(progress,2)));
 
 			if eq(time,0)
-				agents = cellfun(@(x) strcat(this.sid,x.eid),this.agents,'UniformOutput',false);
-				this.rel = this.as_get_related_entitites(agents);
-				disp(this.rel);
+				agents = cellfun(@(x) strcat(this.sid,'.',x.eid),this.agents,'UniformOutput',false);
+				this.rel = this.mosaik.get_related_entities(agents);
+				disp(savejson('',this.rel));
 			end
 
-			rels = struct2cell(this.rel)';
+			rels = fieldnames(this.rel);
+			disp(savejson('',rels));
 			outputs = struct;
 			for i = 1:numel(rels)
 				rel = rels{i};
-				for j = 1:numel(rel)
-					outputs.(rel{j}) = {'val_out',[]};
-				end
+
+				% Replace unallowed symbols from sid.eid string
+				rel = strrep(rel,'.','_0x2E_');
+				rel = strrep(rel,'-','_0x2D_');
+					
+				outputs.(rel) = {'val_out',[]};
 			end
 			data = this.mosaik.get_data(outputs);
 
@@ -82,6 +93,12 @@ classdef ExampleMas < MosaikAPI.Simulator
 			this.mosaik.set_data(inputs);
 
 			time_next_step = time + this.step_size;
+		end
+
+		function data = get_data(this,outputs)
+			% Returns empty cell array.
+
+			data = {};
 		end
 
 	end

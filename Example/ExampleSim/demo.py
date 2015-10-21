@@ -4,11 +4,11 @@ import os.path
 sim_config = {
 	'Matlab': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
-		'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleSim(\'%(addr)s\')"'
+		'cmd': 'matlab.exe -minimize -nosplash -r "server=\'%(addr)s\';ExampleSim(\'%(addr)s\')"'
 	},
 	'Monitor': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
-		'cmd': 'matlab.exe -r "MosaikUtilities.Collector(\'%(addr)s\')"'
+		'cmd': 'matlab.exe -minimize -nosplash -r "MosaikUtilities.Collector(\'%(addr)s\')"'
 	}
 }
 

@@ -21,6 +21,6 @@ exmas_1 = world.start('Matlab')
 a = exmas_0.Agent()
 b = exmas_1.Agent()
 
-world.connect(a, b, ('link', 'link'))
+world.connect(a,b,('link','link',),async_requests=True)
 
 world.run(until=10)
