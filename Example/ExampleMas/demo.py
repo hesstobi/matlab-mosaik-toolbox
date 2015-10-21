@@ -1,9 +1,10 @@
 import mosaik
+import os.path
 
 sim_config = {
     'Matlab': {
         'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
-        'cmd': 'matlab.exe -r "server=\'%(addr)s\';ExampleMas(\'%(addr)s\')"'
+        'cmd': 'matlab.exe -minimize -nosplash -r "server=\'%(addr)s\';ExampleMas(\'%(addr)s\')"'
     }
 }
 
@@ -14,13 +15,12 @@ mosaik_config = {
 
 world = mosaik.World(sim_config, mosaik_config)
 
-exsim_0 = world.start('Matlab')
-exsim_1 = world.start('Matlab')
+exmas_0 = world.start('Matlab')
+exmas_1 = world.start('Matlab')
 
-a_set = exsim_0.Agent.create(3)
-b_set = exsim_1.Agent.create(3)
+a = exmas_0.Agent()
+b = exmas_1.Agent()
 
-for a, b in zip(a_set, b_set):
-    world.connect(a, b, ('link', 'link'))
+world.connect(a, b, ('link', 'link'))
 
 world.run(until=10)
