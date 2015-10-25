@@ -1,19 +1,20 @@
 classdef ExampleMas < MosaikAPI.Simulator
 	% EXAMPLEMAS   Simulator to demonstrate async requests.
-	%   Demonstrates all asynchronous request methods.
+	%   Demonstrates all asynchronous request methods with ExampleSim model.
 
 	properties (Access=private)
 		agents = {};
 		models = struct( ...
 			'Agent',struct( ...
 				'public',true, ...
-				'params',{{}}, ...
-				'attrs',{{'link','val_in','val_out'}} ...
+				'params',{{'val'}}, ...
+				'attrs',{{'link'}} ...
 				) ...
 			);
 	end
 
 	properties
+		val;
 		rel;
 		step_size;
 	end
@@ -38,6 +39,12 @@ classdef ExampleMas < MosaikAPI.Simulator
 			if ~strcmp(model,'Agent')
 				error('Can only create "Agent" models.');
 			end
+
+			p = inputParser;
+            addOptional(p,'val',10,@(x)validateattributes(x,{'numeric'},{'scalar'}));
+            parse(p,varargin{:});
+
+            this.val = p.Results.val; 
 
 			% Add all created agent models to agent array.
 			num_agents = numel(this.agents);
@@ -66,31 +73,62 @@ classdef ExampleMas < MosaikAPI.Simulator
 			end
 
 			rels = fieldnames(this.rel);
-			disp(savejson('',rels));
+
 			outputs = struct;
-			for i = 1:numel(rels)
-				rel = rels{i};
+			if eq(numel(rels),1)
+				full_id = rels{1};
 
 				% Replace unallowed symbols from sid.eid string
-				rel = strrep(rel,'.','_0x2E_');
-				rel = strrep(rel,'-','_0x2D_');
+				full_id = strrep(full_id,'.','_0x2E_');
+				full_id = strrep(full_id,'-','_0x2D_');
 					
-				outputs.(rel) = {'val_out',[]};
-			end
-			data = this.mosaik.get_data(outputs);
+				outputs.(full_id) = {'val',[]};
+				data = this.mosaik.get_data(outputs);
 
-			disp(savejson('',data));
+				disp(savejson('',data));
 
-			inputs = struct;
-			for i = 1:numel(this.agents)
-				a = this.agents{i};
-				full_id = strcat(this.sid, a.eid);
-				for j = 1:numel(this.rel.(full_id))
-					eid = this.rel.(full_id){i};
-					inputs.(full_id).(this.rel.(full_id){i}).val_in = 23;
+										inputs = struct;
+										full_id = fieldnames(this.rel);
+										for i = 1:numel(full_id)
+											a = this.agents{i};
+											src_full_id = strcat(this.sid,'.',a.eid);
+											src_full_id = strrep(src_full_id,'.','_0x2E_');
+											src_full_id = strrep(src_full_id,'-','_0x2D_');
+											for j = 1:numel(src_full_id)
+												inputs.(this.rel.(full_id){i}).(full_id).val = 23;
+											end
+										end
+										this.mosaik.set_data(inputs);
+			else
+				for i = 1:numel(rels)
+					rel = this.rel.(rels{i});
+					full_ids = fieldnames(rel);
+					for j = 1:numel(full_ids)
+						full_id = full_ids{j};
+
+						% Replace unallowed symbols from sid.eid string
+						full_id = strrep(full_id,'.','_0x2E_');
+						full_id = strrep(full_id,'-','_0x2D_');
+						
+						outputs.(full_id) = {'val',[]};
+					end
 				end
+				data = this.mosaik.get_data(outputs);
+
+				disp(savejson('',data));
+
+				inputs = struct;
+				for i = 1:numel(rels)
+					src_full_id = rels{i};
+					src_full_id = strrep(src_full_id,'.','_0x2E_');
+					src_full_id = strrep(src_full_id,'-','_0x2D_');
+					dest_full_ids = fieldnames(this.rel.(src_full_id));
+					for j = 1:numel(full_ids)
+						inputs.(src_full_id).(dest_full_ids{j}).val = 23;
+					end
+				end
+				this.mosaik.set_data(inputs);
 			end
-			this.mosaik.set_data(inputs);
 
 			time_next_step = time + this.step_size;
 		end
