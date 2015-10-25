@@ -4,13 +4,10 @@ classdef ExampleMas < MosaikAPI.Simulator
 
 	properties (Access=private)
 		agents = {};
-		models = struct( ...
-			'Agent',struct( ...
-				'public',true, ...
-				'params',{{'val'}}, ...
-				'attrs',{{'link'}} ...
-				) ...
-			);
+	end
+
+	properties (Constant)
+		model = 'Agent';
 	end
 
 	properties
@@ -26,13 +23,18 @@ classdef ExampleMas < MosaikAPI.Simulator
 		end
 
 		function value = meta(this)
-			% Creates meta struct.
+            % Creates meta struct and adds collector meta content.
 
-			value = meta@MosaikAPI.Simulator(this);
-
-			% Add agent model
-			value.models = this.models;
-		end
+            value = meta@MosaikAPI.Simulator(this);
+            
+            value.extra_methods = {};
+            
+            value.models.(this.model).public = true;
+            value.models.(this.model).attrs = {'link',[]};
+            value.models.(this.model).params = {'val',[]};
+            value.models.(this.model).any_inputs = true;
+            
+        end
 
 		function agents = create(this,num,model,varargin)
 
@@ -44,8 +46,6 @@ classdef ExampleMas < MosaikAPI.Simulator
             addOptional(p,'val',10,@(x)validateattributes(x,{'numeric'},{'scalar'}));
             parse(p,varargin{:});
 
-            this.val = p.Results.val; 
-
 			% Add all created agent models to agent array.
 			num_agents = numel(this.agents);
 			agents = {};
@@ -53,6 +53,7 @@ classdef ExampleMas < MosaikAPI.Simulator
 				l.eid = num2str(i);
 				l.type = model;
 				l.rel = {};
+				l.val = p.Results.val; 
 				agents(end+1) = {l};
 			end
 
@@ -95,7 +96,7 @@ classdef ExampleMas < MosaikAPI.Simulator
 											src_full_id = strrep(src_full_id,'.','_0x2E_');
 											src_full_id = strrep(src_full_id,'-','_0x2D_');
 											for j = 1:numel(src_full_id)
-												inputs.(this.rel.(full_id){i}).(full_id).val = 23;
+												inputs.(this.rel.(full_id){i}).(full_id).val = this.val;
 											end
 										end
 										this.mosaik.set_data(inputs);
@@ -124,7 +125,7 @@ classdef ExampleMas < MosaikAPI.Simulator
 					src_full_id = strrep(src_full_id,'-','_0x2D_');
 					dest_full_ids = fieldnames(this.rel.(src_full_id));
 					for j = 1:numel(full_ids)
-						inputs.(src_full_id).(dest_full_ids{j}).val = 23;
+						inputs.(src_full_id).(dest_full_ids{j}).val = this.val;
 					end
 				end
 				this.mosaik.set_data(inputs);
