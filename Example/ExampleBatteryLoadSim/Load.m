@@ -8,12 +8,14 @@ classdef Load < MosaikAPI.Model
 	%   and feeds it the consumed capacitance Q via set_data.
 
 	properties
-		resistance;
-		voltage;
-		tolerance;
-		voltage_in;
-		consumed_capacitance;
-		data_out;
+
+		resistance
+		voltage
+		tolerance
+		voltage_in
+		consumed_capacitance
+		data_out
+
 	end
 
 	methods 
@@ -41,6 +43,7 @@ classdef Load < MosaikAPI.Model
             this.voltage = p.Results.voltage;
             this.tolerance = p.Results.tolerance;
             this.consumed_capacitance  = 0;
+
 		end
 
 		function step(this,varargin)
@@ -60,6 +63,7 @@ classdef Load < MosaikAPI.Model
 			m = struct;
 			m.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l; % '_0x2D_' is hex for '-'; '_0x2E_' is hex for '.'; JSONLab will convert it, MATLab can not have dots in struct fields.
 			this.sim.mosaik.set_data(m);
+
 		end
 
 	end
@@ -73,7 +77,9 @@ classdef Load < MosaikAPI.Model
 			value.attrs = {'voltage_in','voltage','consumed_capacitance'};
 			value.params = {'resistance','voltage','tolerance'};
 			value.any_inputs = false;
+
 		end
 
 	end
+	
 end

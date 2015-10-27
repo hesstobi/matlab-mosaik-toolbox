@@ -3,16 +3,21 @@ classdef Model < handle
     %   Provides setter and getter methods and defines methodes that models need to implement.
     
     properties
-        sim;
-        eid;
+
+        sim
+        eid
+
     end
     
     methods
+
         function this = Model(sim,eid)
+            % Constructor of the class Model.
+
             this.sim = sim;
-            this.eid = eid; 
-        end
-        
+            this.eid = eid;
+
+        end        
         
         function data = get_data(this,attrs)
             
@@ -20,8 +25,7 @@ classdef Model < handle
             values = cellfun(@(x) this.(x),attrs,'UniformOutput',false);
             data = cell2struct(values,attrs,2);
  
-        end
-        
+        end        
         
         function set_data(this,data)
 
@@ -33,16 +37,14 @@ classdef Model < handle
                 this.(attrs{idx}) = values{idx};
             end
             
-        end
-        
+        end        
         
         function value = get_attrs(this)
            
             value = this.meta().attrs;
             value = value(~cellfun(@isempty,value));
             
-        end
-        
+        end        
         
         function value = modelName(this)
             value = strsplit(class(this),'.');
@@ -52,9 +54,9 @@ classdef Model < handle
     end
  
     methods (Static,Abstract)
-        value = meta();
-    end
-    
-    
-end
 
+        value = meta();
+
+    end
+        
+end

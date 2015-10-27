@@ -29,9 +29,11 @@ collector = monitor.Collector(graphical_output=True)
 world.connect(model, collector, 'val', 'delta')
 world.connect(model2, collector, 'val', 'delta')
 
-
+# Run simulation
 world.run(until=10)
 
-#exsim_0.wtimes('Hallo', times=23)
-
+# Optional extra function
+'''
+exsim_0.wtimes('Hallo', times=23)
 world.shutdown()
+'''

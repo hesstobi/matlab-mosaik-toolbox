@@ -3,26 +3,32 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     %   Provides socket communication methods and abstract methods the simulator needs to implement.
 
     properties (Constant)
-        api_version = 2;    % API version
+
+        api_version = 2    % API version
+
     end
     
     properties
-        socket;
-        mosaik;
-        sid = 'Matlab';     % Simulator ID
+
+        socket
+        mosaik
+        sid = 'Matlab'     % Simulator ID
+
     end
     
     
     methods
         
         function this = Simulator(server,varargin)
-            % Constructor of the class Simulator.
+            % Constructor of the class Simulator
             %
             % Parameter:
             %  - server: Server IP and port as char, format: 'IP:port'
-            %  - varargin: Optional Parameter Value List
-            %              debug: false|true - Create the Simulator in
-            %              debug Mode where no Socket Server is started.
+            %  - varargin: Optional parameter value list
+            %              debug: false (default)|true - Create the simulator in
+            %              debug mode where no socket server is started.
+            %              message:output: false (default)|true - Shows socket
+            %              communication messages. 
             %
             % Return:
             %  - this: Simulator Object
@@ -64,13 +70,8 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             value.api_version = this.api_version;
             value.extra_methods = {};
             value.models = struct;
+
         end
-        
-    end
-    
-    
-    
-    methods
         
         function response = simSocketReceivedRequest(this,request)
             % Parses request and calls simulator function.
@@ -93,16 +94,52 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
 
             % Calls simulator function with parsed arguments
             response = func(this,args{:},kwargs{:});
+
+        end
+        
+        function stop = stop(this, ~, ~)
+            % Closes socket and returns 'stop'.
+
+            this.socket.stop();
+            stop = ('stop');
+
+        end
+        
+        function meta = init(this, sid, varargin)
+            % Sets simulator ID, verifies input arguments. Returns meta struct.
+
+            this.sid = sid;
+            
+            p = inputParser;
+            p.KeepUnmatched = true;
+            parse(p,varargin{:})
+            
+            % TODO step_size must be defined
+            if ~isempty(p.Unmatched)
+                prop = fieldnames(p.Unmatched);
+                for i=1:numel(prop)
+                    this.(prop{i}) = p.Unmatched.(prop{i});
+                end
+            end
+            
+            meta = this.meta();
+            
+        end
+        
+        function finalize(this)
+            % Does nothing by default. Can be overridden.
+
         end
         
     end
-    
+
     methods (Access=private)
         
         function null = setup_done(~)
             %Returns empty response.
 
             null = [];
+
         end
         
         function [ip, port] = parse_address(~, server)
@@ -121,53 +158,22 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
             else
                 error('No server port entered. Check server configuration.')
             end
-        end
-        
-    end
-    
-    methods
-        
-        function stop = stop(this, ~, ~)
-            % Closes socket and returns 'stop'.
-
-            this.socket.stop();
-            stop = ('stop');
-        end
-        
-        function meta = init(this, sid, varargin)
-            % Sets simulator ID, verifies input arguments. Returns meta struct.
-
-            this.sid = sid;
-            
-            p = inputParser;
-            p.KeepUnmatched = true;
-            parse(p,varargin{:})
-            
-            if ~isempty(p.Unmatched)
-                prop = fieldnames(p.Unmatched);
-                for i=1:numel(prop)
-                    this.(prop{i}) = p.Unmatched.(prop{i});
-                end
-            end
-            
-            meta = this.meta();
-        end
-        
-        function finalize(this)
-            % Does nothing by default. Can be overridden.
 
         end
         
-    end
-    
+    end    
     
     methods (Abstract)
+
         create(this,num,model,varargin)
         % Creates num amount of model models. Passes varargin as argument.
+
         step(this,time,varargin);
         % Makes a time wide step. Passes varargin as argument.
+        
         get_data(this,outputs);
         % Returns data for outputs.
+
     end    
     
     %% Utilities
@@ -177,12 +183,14 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
         function value = concentrateInputs(inputs)
             % Sums up all inputs for each model.
             
+            % BUG: does not properly read structs sometimes
+            % Workaround
+            inputs = loadjson(savejson('',inputs));
             value = structfun(@(x) structfun(@(y) sum(cell2mat(struct2cell(y))),x,'UniformOutput',false), ...
                 inputs,'UniformOutput',false);
-            % TODO does not work when src_ids given in inputs
             
-        end
-        
+        end        
         
     end
+
 end

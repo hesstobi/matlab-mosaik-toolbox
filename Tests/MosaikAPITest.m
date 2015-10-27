@@ -1,7 +1,6 @@
 classdef MosaikAPITest < matlab.unittest.TestCase
-    %MOSAIKAPITEST Unit Test Class for Testing the Matlab High Level Mosiak
-    % API
-    %
+    %MOSAIKAPITEST   Unit Test Class for Testing the Matlab High Level Mosaik
+    %   API
     
     properties (Constant)
         simConstructorArgs = {'127.0.0.1:1234','debug',true}

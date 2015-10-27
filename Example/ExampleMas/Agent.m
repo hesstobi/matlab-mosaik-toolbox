@@ -3,9 +3,11 @@ classdef Agent < MosaikAPI.Model
     %   Simple agent model that defines other models input value.
     
     properties
-        rel;
-        val = 0;
-        link;
+
+        rel
+        val
+        link
+
     end
 
     methods 
@@ -83,4 +85,3 @@ classdef Agent < MosaikAPI.Model
     end
 
 end
-

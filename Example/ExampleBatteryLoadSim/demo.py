@@ -34,8 +34,10 @@ collector = monitor.Collector(graphical_output=True)
 for a, b in zip(battery_set, load_set):
     world.connect(a, b, ('voltage', 'voltage_in'), async_requests=True)
 
+# Connect monitor
 mosaik.util.connect_many_to_one(world, load_set, collector, 'consumed_capacitance')
 mosaik.util.connect_many_to_one(world, battery_set, collector, 'voltage', 'capacitance')
+
 # Run simulation
 END = 300
 world.run(until=END)

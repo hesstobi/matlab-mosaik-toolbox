@@ -1,27 +1,37 @@
 classdef ExampleSim < MosaikAPI.ModelSimulator
+	% EXAMPLESIM   Simple example simulator.
+	%   Simulator to demonstrate the basic functions of MOSAIK.
 
 	properties
-        providedModels = {'Model'};    
+
+        providedModels = {'Model'}
+
     end
      
     
     methods
 
 		function this = ExampleSim(varargin)
+			% Constructor of the class ExampleSim
+
  			this = this@MosaikAPI.ModelSimulator(varargin{:});
+
 		end
 
-		function extra = wtimes(~, args, kwargs)
-			word = args;
+		function extra = wtimes(~,word,varargin)
+			% Method to show extra functions in simulators. Cats given string a given amount of times.
+
+			p = inputParser;
+            addOptional(p,'amount',2,@(x)validateattributes(x,{'numeric'},{'scalar'}));
+            parse(p,varargin{:});
+
+            amount = p.Results.amount;
+
 			extra = '';
-			if ~isfield(kwargs, 'times')
-				times = 1;
-			else
-				times = kwargs.times;
-			end
-			for i = 1:times
+			for i = 1:amount
 				extra = strcat(extra, word);
 			end
+			
         end       
 
 	end

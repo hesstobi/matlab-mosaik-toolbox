@@ -3,12 +3,16 @@ classdef ModelSimulator < MosaikAPI.Simulator
     %   Provides methods to create models, perform steps and obtain data.
     
     properties (Abstract)
+
        providedModels 
+
     end
     
     properties
-       entities = {};
-       step_size;
+
+       entities = {}
+       step_size
+
     end
     
     
@@ -25,6 +29,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             %  - this: ModelSimulator object
 
             this = this@MosaikAPI.Simulator(varargin{:});
+            
         end
         
         function value = meta(this)
@@ -79,9 +84,9 @@ classdef ModelSimulator < MosaikAPI.Simulator
             % Create cell array with model eid and model type for each model as cell
             dscrList = arrayfun(@(x) x,dscrList','UniformOutput',false);
             % Add empty cell at end for JSONLab
-            dscrList{end+1} = [];      
-        end
-        
+            dscrList{end+1} = [];     
+
+        end        
         
         function entities = entitiesWithEids(this,eids)
            
@@ -96,10 +101,10 @@ classdef ModelSimulator < MosaikAPI.Simulator
             entities = this.entities(idx);
            
         end
-        
+
     end
     
-    %% Mosaik API
+    % Mosaik API
     methods
         
         function dscrList = create(this,num,model,varargin)
@@ -114,6 +119,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             
             % Create dscrList for previously created entities
             dscrList = this.dscrListForEntities(numel(this.entities)-num+1:numel(this.entities));
+        
         end
         
         function data = get_data(this,outputs)
@@ -122,6 +128,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             req_entities = this.entitiesWithEids(eids);
             values = cellfun(@(x,y) x.get_data(y),req_entities,struct2cell(outputs)','UniformOutput',false);
             data = cell2struct(values,eids',2);
+
         end
         
         function time_next_step = step(this,time,varargin)
@@ -136,48 +143,43 @@ classdef ModelSimulator < MosaikAPI.Simulator
             cellfun(@(x) x.step(time),this.entities);
             
             time_next_step = time + this.step_size;
-        end         
-               
-    end
+
+        end
     
-    %% Utilities
-    methods 
+    % Utilities
         
          function setEntitiesData(this,inputs)
             
-             eids = fieldnames(inputs);
-             req_entities = this.entitiesWithEids(eids);
-             cellfun(@(x,y) x.set_data(y),req_entities,struct2cell(inputs)','UniformOutput',false);
+            eids = fieldnames(inputs);
+            req_entities = this.entitiesWithEids(eids);
+            cellfun(@(x,y) x.set_data(y),req_entities,struct2cell(inputs)','UniformOutput',false);
                                 
-         end
+        end
         
          function value = providedModelsWithoutPackage(this)
 
             % Creates cell array with second part of provided models name
             % Example: providedModels = {'Model.Battery',' Model.Load'}, value = {'Battery', 'Load'}
             value = cellfun(@(y) y{end},cellfun(@(x) strsplit(x,'.'), this.providedModels,'UniformOutput',false),'UniformOutput',false);
-         end
+        
+        end
             
          function value = fullNameForModelNameWithoutPackage(this,model)
 
             % Compares model second name against given model name
             % Example: model = 'Battery', idx = [true, false], value = 'Model.Battery'
-             idx = strcmp(this.providedModelsWithoutPackage,model);
-             value = this.providedModels{idx};
-         end
+            idx = strcmp(this.providedModelsWithoutPackage,model);
+            value = this.providedModels{idx};
+        end
          
          function func = functionForModelNameWithoutPackage(this,model)
             
             % Converts full model name to function
             % Warning: Model.function is illegal function name
-             func = str2func(this.fullNameForModelNameWithoutPackage(model));
-         end
-         
+            func = str2func(this.fullNameForModelNameWithoutPackage(model));
+        
+        end         
         
     end
     
-    
-    
-    
 end
-

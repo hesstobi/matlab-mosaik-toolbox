@@ -4,12 +4,14 @@ classdef Battery < MosaikAPI.Model
 	%   The voltage U drops with decreasing capacitance Q in the form U = U_0 * ((Q/Q_0) ^ 0.5).
 
 	properties
-		init_voltage;				% Initial battery voltage
-		init_capacitance;			% Initial battery capacitance
-		voltage;					% Current battery voltage
-		capacitance;				% Current battery capacitance
-		consumed_capacitance = 0;	% Capitance consumed by loads in current step
-		data_out;					% Struct containing current voltage and current capacitance
+
+		init_voltage				% Initial battery voltage
+		init_capacitance			% Initial battery capacitance
+		voltage						% Current battery voltage
+		capacitance 				% Current battery capacitance
+		consumed_capacitance = 0	% Capitance consumed by loads in current step
+		data_out					% Struct containing current voltage and current capacitance
+
 	end
 
 	methods 
@@ -36,6 +38,7 @@ classdef Battery < MosaikAPI.Model
             this.init_capacitance = p.Results.init_capacitance;
             this.capacitance = this.init_capacitance;
             this.voltage = this.init_voltage;
+
 		end
 
 		function step(this,varargin)
@@ -45,6 +48,7 @@ classdef Battery < MosaikAPI.Model
 			this.capacitance = this.capacitance - this.consumed_capacitance;
 			% Calculates battery voltage.
 			this.voltage = (((this.capacitance / this.init_capacitance) ^ 0.5) * this.init_voltage);
+
 		end
 
 	end
@@ -58,6 +62,7 @@ classdef Battery < MosaikAPI.Model
 			value.attrs = {'voltage','capacitance','consumed_capacitance'};
 			value.params = {'init_capacitance', 'init_voltage'};
 			value.any_inputs = false; %CHECK this
+			
 		end
 
 	end
