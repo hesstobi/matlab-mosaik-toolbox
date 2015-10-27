@@ -1,4 +1,4 @@
-classdef BatteryLoadSim < MosaikAPI.ModelSimulator
+classdef ExampleBatteryLoadSim < MosaikAPI.ModelSimulator
 
 	properties
         providedModels = {'Battery','Load'};    
@@ -6,7 +6,7 @@ classdef BatteryLoadSim < MosaikAPI.ModelSimulator
      
     
     methods 
-		function this = BatteryLoadSim(varargin)
+		function this = ExampleBatteryLoadSim(varargin)
  			this = this@MosaikAPI.ModelSimulator(varargin{:});
 		end
 	end
