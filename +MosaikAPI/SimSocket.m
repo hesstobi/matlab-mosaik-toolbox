@@ -6,6 +6,7 @@ classdef SimSocket < handle
         server
         port
         delegate
+        message_output = false
     end
     
     properties (Access=private)
@@ -96,12 +97,13 @@ classdef SimSocket < handle
             message = strrep(message, ',null', '');
             message = strrep(message, 'null,', '');
 
+            this.outp(message);
             message = [this.make_header(message) uint8(message)];
         end
         
         function [type,id,content] = deserialize(this,message)
             
-            %disp(char(message(5:end)));
+            this.outp(char(message(5:end)));
 
             message = loadjson(char(message(5:end)));
             
@@ -124,7 +126,6 @@ classdef SimSocket < handle
         function header = make_header(~, message)
             sizeMessage = numel(message);
             header = typecast(swapbytes(uint32(sizeMessage)),'uint8');
-            %disp(header);
         end
         
         function value = next_request_id(this)
@@ -132,6 +133,11 @@ classdef SimSocket < handle
             value = this.last_id;
         end
         
+        function outp(this,message)
+
+            if this.message_output
+                disp(message);
+            end
         
     end
     
