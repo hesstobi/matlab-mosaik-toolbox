@@ -16,7 +16,7 @@ classdef ExampleMas < MosaikAPI.ModelSimulator
 			progress = this.mosaik.get_progress;
 			disp(strcat('Progress: ',num2str(progress,2)));
 
-			time_next_step = step@MosaikAPI.ModelSimulator(this,time,varargin);
+			time_next_step = step@MosaikAPI.ModelSimulator(this,time,varargin{1});
 		end
 
 	end
