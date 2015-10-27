@@ -4,22 +4,27 @@ classdef Collector < MosaikAPI.Simulator
     %   the required data to the collector.
     
     properties (Constant)
-        model = 'Collector';
+
+        model = 'Collector'
+
     end
     
     properties
-        data = [];                  % Data array
-        step_size = 1;              % Interval after which the collector saves data
-        save_path = [];             % Data save path
-        eid = [];                   % Collector eid
-        graphical_output = false;   % Turn on/off graphical output
+
+        data = []                  % Data array
+        step_size = 1              % Interval after which the collector saves data
+        save_path = []             % Data save path
+        eid = []                   % Collector eid
+        graphical_output = false   % Turn on/off graphical output
+
     end
     
     methods 
 		function this = Collector(varargin)
-            % Constructor of the class Collector.
+            % Constructor of the class Collector
 
             this = this@MosaikAPI.Simulator(varargin{:});
+
         end
         
         function value = meta(this)
@@ -35,10 +40,6 @@ classdef Collector < MosaikAPI.Simulator
             value.models.(this.model).any_inputs = true;
             
         end
-        
-    end
-    
-    methods
         
         function dscrList = create(this,num,model,varargin)
             % Creates a collector instance. Only one collector instance possible.
@@ -57,45 +58,45 @@ classdef Collector < MosaikAPI.Simulator
             s.eid = this.eid;
             s.type = this.model;
             dscrList = horzcat({s},{[]});
+
         end
-        
-               
-                
-        function new_time = step(this,time,inputs)            
+
+        function new_time = step(this,time,varargin)            
             % Receives data from all given inputs.
 
-            inputs = inputs.(this.eid);
-            
-            names = cellfun(@(x) strcat(fieldnames(inputs.(x)),'_x_',x),fieldnames(inputs),'UniformOutput',false);
-            names = cellfun(@(x) strrep(x,'_0x2D_','_'),names,'UniformOutput',false);   % Changing hex code to original symbol not allowed. Using '_' instead.
-            names = cellfun(@(x) strrep(x,'_0x2E_','_'),names,'UniformOutput',false);
-            names = vertcat(names{:});
-            names{end+1} = 'Time';
-            
-            values = cellfun(@(x) struct2cell(inputs.(x)),fieldnames(inputs),'UniformOutput',false);
-            values = vertcat(values{:});
-            
-            t = cell2table(values');
-            t.Time = time;
+            if ~isempty(varargin)
+                inputs = varargin{1};
+                inputs = inputs.(this.eid);
+                
+                names = cellfun(@(x) strcat(fieldnames(inputs.(x)),'_x_',x),fieldnames(inputs),'UniformOutput',false);
+                names = cellfun(@(x) strrep(x,'_0x2D_','_'),names,'UniformOutput',false);   % Changing hex code to original symbol not allowed. Using '_' instead.
+                names = cellfun(@(x) strrep(x,'_0x2E_','_'),names,'UniformOutput',false);
+                names = vertcat(names{:});
+                names{end+1} = 'Time';
+                
+                values = cellfun(@(x) struct2cell(inputs.(x)),fieldnames(inputs),'UniformOutput',false);
+                values = vertcat(values{:});
+                
+                t = cell2table(values');
+                t.Time = time;
 
-            t.Properties.VariableNames = names;
-                    
-            this.data = vertcat(this.data,t);
-            if size(this.data,1) == 1
-                this.data.Properties.VariableNames = names;
-            end            
+                t.Properties.VariableNames = names;
+                        
+                this.data = vertcat(this.data,t);
+                if size(this.data,1) == 1
+                    this.data.Properties.VariableNames = names;
+                end
+            end 
             
             new_time = time + this.step_size;
            
         end
-        
-        
+
         function get_data(~,~)
             
             error('The Collector can not return data');           
         end
-        
-                
+          
         function finalize(this)
             % Previews data in a table, plots and saves it.
 
@@ -155,4 +156,3 @@ classdef Collector < MosaikAPI.Simulator
     end
     
 end
-
