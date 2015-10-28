@@ -4,9 +4,9 @@ classdef Agent < MosaikAPI.Model
     
     properties
 
-        rel
-        val
-        link
+        rel		% Related models
+        val		% Constant output value
+        link	% Connecting attribute
 
     end
 

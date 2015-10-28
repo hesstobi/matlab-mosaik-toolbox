@@ -4,17 +4,17 @@ classdef ExampleSim < MosaikAPI.ModelSimulator
 
 	properties
 
-        providedModels = {'Model'}
+		providedModels = {'Model'}	% Models which are provided by the simulator
 
-    end
-     
-    
-    methods
+	end
+
+
+	methods
 
 		function this = ExampleSim(varargin)
 			% Constructor of the class ExampleSim
 
- 			this = this@MosaikAPI.ModelSimulator(varargin{:});
+			this = this@MosaikAPI.ModelSimulator(varargin{:});
 
 		end
 
@@ -22,17 +22,17 @@ classdef ExampleSim < MosaikAPI.ModelSimulator
 			% Method to show extra functions in simulators. Cats given string a given amount of times.
 
 			p = inputParser;
-            addOptional(p,'amount',2,@(x)validateattributes(x,{'numeric'},{'scalar'}));
-            parse(p,varargin{:});
+			addOptional(p,'amount',2,@(x)validateattributes(x,{'numeric'},{'scalar'}));
+			parse(p,varargin{:});
 
-            amount = p.Results.amount;
+			amount = p.Results.amount;
 
 			extra = '';
 			for i = 1:amount
 				extra = strcat(extra, word);
 			end
 			
-        end       
+		end
 
 	end
 

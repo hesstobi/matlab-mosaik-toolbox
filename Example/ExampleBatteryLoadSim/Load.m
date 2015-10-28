@@ -1,5 +1,5 @@
 classdef Load < MosaikAPI.Model
-	%LOAD  Electrical load model for MOSAIK ModelSimulator.
+	% LOAD  Electrical load model for MOSAIK ModelSimulator.
 	%   Simulates a load with given parameters resistance R, operating voltage U_R and tolerance delta, which together
 	%   define the range operating voltages.
 	%   Based on the battery given voltage U, resistance R and time (step.size) t , the load consumes capacitance Q in the form
@@ -9,12 +9,11 @@ classdef Load < MosaikAPI.Model
 
 	properties
 
-		resistance
-		voltage
-		tolerance
-		voltage_in
-		consumed_capacitance
-		data_out
+		resistance				% Load resistance
+		voltage					% Load voltage
+		tolerance				% Load voltage tolerance
+		voltage_in				% Supplied battery voltage
+		consumed_capacitance	% By load consumed battery capacitance
 
 	end
 
@@ -47,6 +46,7 @@ classdef Load < MosaikAPI.Model
 		end
 
 		function step(this,varargin)
+			% Checks if supplied voltage is within voltage tolerance margin. Calculates consumed capacitance in this step based on supplied voltage.
 
 			if ge(this.voltage_in,(this.voltage*(1-this.tolerance))) && le (this.voltage_in,(this.voltage*(1+this.tolerance)))
 				this.consumed_capacitance = ((this.voltage_in/this.resistance)*this.sim.step_size); %#ok<*PROP>

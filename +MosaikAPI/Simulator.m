@@ -1,5 +1,5 @@
-classdef Simulator < handle & MosaikAPI.SimSocketDelegate
-    % SIMULATOR   Superclass for simulators.
+classdef Simulator < MosaikAPI.SimSocketDelegate
+    % SIMULATOR   Simulator superclass.
     %   Provides socket communication methods and abstract methods the simulator needs to implement.
 
     properties (Constant)
@@ -10,8 +10,8 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     
     properties
 
-        socket
-        mosaik
+        socket             % Associated socket client
+        mosaik             % Assiciated mosaik proxy
         sid = 'Matlab'     % Simulator ID
 
     end
@@ -165,18 +165,16 @@ classdef Simulator < handle & MosaikAPI.SimSocketDelegate
     
     methods (Abstract)
 
+        % Abstract model creation method.
         create(this,num,model,varargin)
-        % Creates num amount of model models. Passes varargin as argument.
 
+        % Abstract simulator step method.    
         step(this,time,varargin);
-        % Makes a time wide step. Passes varargin as argument.
         
-        get_data(this,outputs);
-        % Returns data for outputs.
+        % Abstract data return method.    
+        get_data(this,outputs);        
 
-    end    
-    
-    %% Utilities
+    end
     
     methods (Static)
         

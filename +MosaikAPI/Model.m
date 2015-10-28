@@ -1,11 +1,11 @@
-classdef Model < handle
-    % MODEL  Superclass for models.
+classdef Model < MosaikAPI.Handle
+    % MODEL  Model superclass.
     %   Provides setter and getter methods and defines methodes that models need to implement.
     
     properties
 
-        sim
-        eid
+        sim    % Associated simulator
+        eid    % Models entitiy id
 
     end
     
@@ -20,6 +20,7 @@ classdef Model < handle
         end        
         
         function data = get_data(this,attrs)
+            % Returns values for given attributes.
             
             attrs = unique(attrs);
             values = cellfun(@(x) this.(x),attrs,'UniformOutput',false);
@@ -28,6 +29,7 @@ classdef Model < handle
         end        
         
         function set_data(this,data)
+            % Sets given values for given attributes.
 
             attrs = fieldnames(data);
 
@@ -40,6 +42,7 @@ classdef Model < handle
         end        
         
         function value = get_attrs(this)
+            % Returns all attributes of a model.
            
             value = this.meta().attrs;
             value = value(~cellfun(@isempty,value));
@@ -47,8 +50,11 @@ classdef Model < handle
         end        
         
         function value = modelName(this)
+            % Returns model name.
+
             value = strsplit(class(this),'.');
             value = value{end};
+
         end
         
     end
@@ -56,6 +62,7 @@ classdef Model < handle
     methods (Static,Abstract)
 
         value = meta();
+        % Abstract model meta creation method.
 
     end
         

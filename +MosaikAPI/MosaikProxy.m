@@ -4,7 +4,7 @@ classdef MosaikProxy < handle
 
 	properties
 
-		sim
+		sim  % Associated simulator.
 
 	end
 

@@ -4,15 +4,15 @@ classdef Model < MosaikAPI.Model
     
     properties
 
-       delta = 1
-       val = 0
+       delta = 1	% Constant increment value
+       val			% Increasing value
 
     end
     
     methods 
        
         function this = Model(sim,eid,varargin)
-            % Constructor of the class Model
+            % Constructor of the class Model.
 
             this = this@MosaikAPI.Model(sim,eid);
             

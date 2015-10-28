@@ -4,7 +4,7 @@ classdef ExampleBatteryLoadSim < MosaikAPI.ModelSimulator
 
 	properties
 
-        providedModels = {'Battery','Load'}    
+        providedModels = {'Battery','Load'}	% Models which are provided by the simulator
 
     end
      

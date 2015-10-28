@@ -1,25 +1,24 @@
-classdef SimSocket < handle
+classdef SimSocket < MosaikAPI.handle_light
     % SIMSOCKET  TCP socket client for MOSAIK.
     %   Provides the basic TCP socket comunication for MOSAIK.
     
     properties
 
-        server
-        port
-        delegate
-        message_output = false
+        server					% Server IP
+        port					% Server Port
+        delegate				% Associated delegate
+        message_output = false	% Socket message output toggle
 
     end
     
     properties (Access=private)
 
-        socket
-        last_id = 0
-        stopServer = false
+        socket					% Associated tcpclient
+        last_id = 0				% Last socket message id
+        stopServer = false		% Server shutdown trigger
 
     end
-    
-    %% Constructor and Destructor
+
     methods
         
         function this = SimSocket(server,port,varargin)
@@ -49,6 +48,7 @@ classdef SimSocket < handle
         end
         
         function delete(this)
+        	% Remove associated delegate.
 
             this.delegate = [];
 
@@ -56,10 +56,10 @@ classdef SimSocket < handle
         
     end
     
-    %% Private Methods
     methods (Access=private)
         
         function main_loop(this)
+        	% Waits for message, deserializes it, sends request to delegate, receives answer from delegate, serializes it, sends it socket.
                         
             while ~this.stopServer 
                 try
@@ -85,11 +85,11 @@ classdef SimSocket < handle
                     rethrow(exception)
                 end
             end
-            %disp('Terminating Socket.');
 
         end
         
         function message = serialize(this,content,type,varargin)
+        	% Converts response from Matlab data types to JSON.
 
             % if no id is given it is set automaticaly
             if nargin < 4
@@ -113,6 +113,7 @@ classdef SimSocket < handle
         end
         
         function [type,id,content] = deserialize(this,message)
+        	% Converts request from JSON to Matlab data types.
             
             this.outp(char(message(5:end)));
 
@@ -135,6 +136,7 @@ classdef SimSocket < handle
         end
 
         function header = make_header(~,message)
+        	% Creates byte header for socket message.
 
             sizeMessage = numel(message);
             header = typecast(swapbytes(uint32(sizeMessage)),'uint8');
@@ -142,6 +144,7 @@ classdef SimSocket < handle
         end
         
         function value = next_request_id(this)
+        	% Creates next message id.
 
             this.last_id = this.last_id+1;
             value = this.last_id;
@@ -149,6 +152,7 @@ classdef SimSocket < handle
         end
         
         function outp(this,message)
+        	% If toggled, prints socket messages.
 
             if this.message_output
                 disp(message);
@@ -158,10 +162,10 @@ classdef SimSocket < handle
         
     end
     
-    % Public Methods
     methods
         
         function start(this)
+        	% Starts main loop.
 
             assert(~isempty(this.delegate),'You need to specify a delegate before starting the socket');
             this.main_loop();
@@ -170,6 +174,7 @@ classdef SimSocket < handle
         
         
         function stop(this)
+        	% Activates server stop trigger.
 
             this.stopServer = true;
         end
@@ -177,6 +182,7 @@ classdef SimSocket < handle
         
         
         function response = send_request(this,content)
+        	% Sends request to socket server.
 
             % Serialize and write the request
             request = this.serialize(content,0);

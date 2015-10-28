@@ -1,10 +1,10 @@
 classdef ExampleMas < MosaikAPI.ModelSimulator
-	% EXAMPLEMAS   Simulator to demonstrate async requests.
-	%   Demonstrates all asynchronous request methods with ExampleSim model.
+	% EXAMPLEMAS   Basic example simulator.
+	%   Demonstrates all asynchronous request methods with ExampleSim.
 
 	properties
 
-        providedModels = {'Agent'}
+        providedModels = {'Agent'}	% Models which are provided by the simulator
 
     end
 

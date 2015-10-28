@@ -4,14 +4,14 @@ classdef ModelSimulator < MosaikAPI.Simulator
     
     properties (Abstract)
 
-       providedModels 
+       providedModels   % Models which are provided by the simulator
 
     end
     
     properties
 
-       entities = {}
-       step_size
+       entities = {}    % Entities from all created model
+       step_size        % Simulator step size
 
     end
     
@@ -37,7 +37,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
 
             value = meta@MosaikAPI.Simulator(this);
            
-            % Collect the meta information from the models
+            % Collect the meta information from the models.
             modelMeta = cellfun(@(x) eval([x '.meta']),this.providedModels,'UniformOutput',false);
             value.models = cell2struct(modelMeta,this.providedModelsWithoutPackage,2);
         
@@ -49,46 +49,49 @@ classdef ModelSimulator < MosaikAPI.Simulator
     methods (Access=protected)
         
         function eid = nextEidForModel(this,model)
+            % Returns next unique entitiy id for model.
             
-            % Create cell with model types from current entities
+            % Creates cell with model types from current entities.
             modelsIdx = cellfun(@(x) x.modelName,this.entities,'UniformOutput',false);
-            % Get cells that match given model type
+            % Gets cells that match given model type.
             modelsIdx = strcmp(modelsIdx,model);
             
-            % Create cell with eids from all matching model types
+            % Creates cell with eids from all matching model types.
             eids = cellfun(@(x) x.eid,this.entities(modelsIdx),'UniformOutput',false);
             
             eid = 0;
             if ~isempty(eids)
-                % Gets highest eid number from all matching model types and increase by one
+                % Gets highest eid number from all matching model types and increase by one.
                 eid = max(str2double(strrep(eids,[model '_'],'')))+1;
             end
 
-            % Create new eid with new number
+            % Creates new eid with new number.
             eid = [model '_' num2str(eid)];
             
         end
         
         function dscrList = dscrListForEntities(this,varargin)
+            % Returns entitiy id and corrsponding model type for given models.
 
-            % Get selected entities
+            % Gets selected entities.
             e = this.entities(varargin{:});
 
-            % Create cell array with model eids
+            % Creates cell array with model eids.
             eids = cellfun(@(x) x.eid,e,'UniformOutput',false);
-            % Create cell array with model types
+            % Creates cell array with model types
             types = cellfun(@(x) x.modelName,e,'UniformOutput',false);
 
-            % Create struct with fields 'eid' and 'type' and values eids and types           
+            % Creates struct with fields 'eid' and 'type' and values eids and types.
             dscrList = cell2struct(vertcat(eids,types),{'eid','type'},1);
-            % Create cell array with model eid and model type for each model as cell
+            % Creates cell array with model eid and model type for each model as cell.
             dscrList = arrayfun(@(x) x,dscrList','UniformOutput',false);
-            % Add empty cell at end for JSONLab
+            % Adds empty cell at end for JSONLab.
             dscrList{end+1} = [];     
 
         end        
         
         function entities = entitiesWithEids(this,eids)
+            % Returns model entities for given entitiy ids.
            
             if isa(eids,'char')
                 eids = {eids};
@@ -104,25 +107,26 @@ classdef ModelSimulator < MosaikAPI.Simulator
 
     end
     
-    % Mosaik API
     methods
         
         function dscrList = create(this,num,model,varargin)
+            % Creates a given model a given time. Passes unspecified amount of arguments.
 
-            % Get model function
+            % Get model function.
             modelFunc = this.functionForModelNameWithoutPackage(model);
                                  
             for idx=1:num
-                % Get eid for model and add to entities
-                this.entities{end+1} = modelFunc(this,this.nextEidForModel(model),varargin{:}); % Model needs to receive simulator instance to call async requests
+                % Get eid for model and add to entities.
+                this.entities{end+1} = modelFunc(this,this.nextEidForModel(model),varargin{:});
             end
             
-            % Create dscrList for previously created entities
+            % Create dscrList for previously created entities.
             dscrList = this.dscrListForEntities(numel(this.entities)-num+1:numel(this.entities));
         
         end
         
         function data = get_data(this,outputs)
+            % Returns values for given attributes of given models.
                         
             eids = fieldnames(outputs);
             req_entities = this.entitiesWithEids(eids);
@@ -132,23 +136,24 @@ classdef ModelSimulator < MosaikAPI.Simulator
         end
         
         function time_next_step = step(this,time,varargin)
+            % Performs a step with given values for given attributes.
             
             if ~isempty(varargin)
-                % Set data to entities
+                % Set data to entities.
                 data = this.concentrateInputs(varargin{1});
                 this.setEntitiesData(data);
             end
             
-            % Perform a step with all entities
+            % Perform a step with all entities.
             cellfun(@(x) x.step(time),this.entities);
             
             time_next_step = time + this.step_size;
 
         end
     
-    % Utilities
         
-         function setEntitiesData(this,inputs)
+        function setEntitiesData(this,inputs)
+            % Calls model 'set_data' method for given model entities and given values for given attributes.
             
             eids = fieldnames(inputs);
             req_entities = this.entitiesWithEids(eids);
@@ -156,7 +161,8 @@ classdef ModelSimulator < MosaikAPI.Simulator
                                 
         end
         
-         function value = providedModelsWithoutPackage(this)
+        function value = providedModelsWithoutPackage(this)
+            % Returns models name.
 
             % Creates cell array with second part of provided models name
             % Example: providedModels = {'Model.Battery',' Model.Load'}, value = {'Battery', 'Load'}
@@ -164,7 +170,8 @@ classdef ModelSimulator < MosaikAPI.Simulator
         
         end
             
-         function value = fullNameForModelNameWithoutPackage(this,model)
+        function value = fullNameForModelNameWithoutPackage(this,model)
+            % Returns package and models name.
 
             % Compares model second name against given model name
             % Example: model = 'Battery', idx = [true, false], value = 'Model.Battery'
@@ -172,10 +179,9 @@ classdef ModelSimulator < MosaikAPI.Simulator
             value = this.providedModels{idx};
         end
          
-         function func = functionForModelNameWithoutPackage(this,model)
-            
-            % Converts full model name to function
-            % Warning: Model.function is illegal function name
+        function func = functionForModelNameWithoutPackage(this,model)
+            % Returns full model name as function.
+
             func = str2func(this.fullNameForModelNameWithoutPackage(model));
         
         end         

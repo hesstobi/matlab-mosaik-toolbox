@@ -5,17 +5,17 @@ classdef Collector < MosaikAPI.Simulator
     
     properties (Constant)
 
-        model = 'Collector'
+        model = 'Collector'         % Model name
 
     end
     
     properties
 
-        data = []                  % Data array
-        step_size = 1              % Interval after which the collector saves data
-        save_path = []             % Data save path
-        eid = []                   % Collector eid
-        graphical_output = false   % Turn on/off graphical output
+        data = []					% Data array
+        step_size = 1				% Interval after which the collector saves data
+        save_path = []              % Data save path
+        eid = []                    % Collector eid
+        graphical_output = false    % Turn on/off graphical output
 
     end
     

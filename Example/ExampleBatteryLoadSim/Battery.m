@@ -10,7 +10,6 @@ classdef Battery < MosaikAPI.Model
 		voltage						% Current battery voltage
 		capacitance 				% Current battery capacitance
 		consumed_capacitance = 0	% Capitance consumed by loads in current step
-		data_out					% Struct containing current voltage and current capacitance
 
 	end
 
@@ -42,7 +41,7 @@ classdef Battery < MosaikAPI.Model
 		end
 
 		function step(this,varargin)
-			%Calculates consumed capacitance and battery voltage.
+			% Calculates consumed capacitance and battery voltage.
 
 			% Removes capacitance consumed by connected loads.
 			this.capacitance = this.capacitance - this.consumed_capacitance;
