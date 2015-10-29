@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="77487042-a0ea-4c13-812c-b2c56a635a8f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Example/ExampleBatteryLoadSim/Battery.m" afterPath="$PROJECT_DIR$/Example/ExampleBatteryLoadSim/Battery.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/+MosaikUtilities/Collector.m" afterPath="$PROJECT_DIR$/+MosaikUtilities/Collector.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Example/ExampleMas/ExampleMas.m" afterPath="$PROJECT_DIR$/Example/ExampleMas/ExampleMas.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Example/ExampleBatteryLoadSim/Load.m" afterPath="$PROJECT_DIR$/Example/ExampleBatteryLoadSim/Load.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/+MosaikAPI/Model.m" afterPath="$PROJECT_DIR$/+MosaikAPI/Model.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/+MosaikAPI/ModelSimulator.m" afterPath="$PROJECT_DIR$/+MosaikAPI/ModelSimulator.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/+MosaikAPI/MosaikProxy.m" afterPath="$PROJECT_DIR$/+MosaikAPI/MosaikProxy.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/+MosaikAPI/SimSocket.m" afterPath="$PROJECT_DIR$/+MosaikAPI/SimSocket.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/+MosaikAPI/SimSocketDelegate.m" afterPath="$PROJECT_DIR$/+MosaikAPI/SimSocketDelegate.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/+MosaikAPI/Simulator.m" afterPath="$PROJECT_DIR$/+MosaikAPI/Simulator.m" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="77487042-a0ea-4c13-812c-b2c56a635a8f" name="Default" comment="" />
     <ignored path="IEEHMosaikToolbox.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -430,7 +418,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3273495" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3273495" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
