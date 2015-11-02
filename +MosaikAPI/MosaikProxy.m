@@ -1,4 +1,4 @@
-classdef MosaikProxy < handle
+classdef MosaikProxy < MosaikAPI.Handle
 	% MOSAIKPROXY   Asynchronous request proxy for MOSAIK.
 	%   Provides asynchronous communication between simulator and MOSAIK. 
 

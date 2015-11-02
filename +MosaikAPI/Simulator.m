@@ -166,7 +166,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
     methods (Abstract)
 
         % Abstract model creation method.
-        create(this,num,model,varargin)
+        create(this,num,model,varargin);
 
         % Abstract simulator step method.    
         step(this,time,varargin);

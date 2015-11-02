@@ -1,4 +1,4 @@
-classdef SimSocket < MosaikAPI.handle_light
+classdef SimSocket < MosaikAPI.Handle
     % SIMSOCKET  TCP socket client for MOSAIK.
     %   Provides the basic TCP socket comunication for MOSAIK.
     
