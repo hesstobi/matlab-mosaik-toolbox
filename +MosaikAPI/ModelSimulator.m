@@ -11,7 +11,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
     properties
 
        entities = {}    % Entities from all created model
-       step_size        % Simulator step size
+       step_size = 1    % Simulator step size
 
     end
     
