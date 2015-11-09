@@ -34,6 +34,15 @@ classdef Controller < MosaikAPI.Simulator
 
 		end
 
+		function value = getValue(this,id,attr)
+			%
+
+			output.(id) = attr;
+			data = this.mosaik.get_data(output);
+			val = data.(id).resistance;
+            
+        end
+
 	end
 
 	methods (Abstract)
