@@ -61,7 +61,7 @@ classdef Collector < MosaikAPI.Simulator
 
         end
 
-        function new_time = step(this,time,varargin)            
+        function time_next_step = step(this,time,varargin)            
             % Receives data from all given inputs.
 
             if ~isempty(varargin)
@@ -88,7 +88,7 @@ classdef Collector < MosaikAPI.Simulator
                 end
             end 
             
-            new_time = time + this.step_size;
+            time_next_step = time + this.step_size;
            
         end
 

@@ -1,10 +1,10 @@
 classdef Controller < MosaikAPI.Simulator
 	% CONTROLLER   Controller Superclass
-	%   Provides data fetching and controlling schedulíng methods
+	%   Provides data fetching and controlling scheduling methods
 
 	properties
 
-		step_size	% Simulator step size
+		step_size = 1	% Simulator step size
 
 	end
 
@@ -14,17 +14,14 @@ classdef Controller < MosaikAPI.Simulator
 			% Constructor of the class Controller
             %
             % Parameter:
-            %  - varargin: Passes optional arguments to
-            %              simulator superclass.
+            %  - varargin: Optional arguments.
             %
             % Return:
             %  - this: Controller object
 
-            p = inputParser;
-
+            this = this@MosaikAPI.Simulator(varargin{:});
+            
 		end
-
-		function controller_entity = create(this,num,model)
 
 		function time_next_step = step(this,time,varargin)
 			%
@@ -35,14 +32,17 @@ classdef Controller < MosaikAPI.Simulator
 
 			time_next_step = this.step_size + time;
 
+		end
+
 	end
 
 	methods (Abstract)
 
-		% Abstract scheduling method
-		makeSchedule(inputs);
+		% Abstract creation method.
+		create(this,num,model,varargin);
 
-		end
+		% Abstract scheduling method.
+		makeSchedule(this,inputs);
 
 	end
 
