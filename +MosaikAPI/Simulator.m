@@ -187,8 +187,17 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             value = structfun(@(x) structfun(@(y) sum(cell2mat(struct2cell(y))),x,'UniformOutput',false), ...
                 inputs,'UniformOutput',false);
             
-        end        
-        
+        end
+
+        function names = properFieldnames(this,struct)
+            % Removes hard encoding from struct fieldnames.
+
+            names = fieldnames(struct);
+            names = cellfun(@(x) strrep(x, '_0x2E_','.'),names,'UniformOutput',false);
+            names = cellfun(@(x) strrep(x, '_0x2D_','-'),names,'UniformOutput',false);
+
+        end
+
     end
 
 end
