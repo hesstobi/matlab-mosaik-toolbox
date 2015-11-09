@@ -51,9 +51,12 @@ classdef Controller < MosaikUtilities.Controller
 		function time_next_step = step(this,time,varargin)
 			%
 
-			data = this.concentrateInputs(inputs);
-			schedule = this.makeSchedule(data);
-			this.mosaik.set_data(schedule);
+			disp(savejson('',varargin{1}));
+
+			if ~isempty(varargin)
+				schedule = this.makeSchedule(varargin{1});
+				this.mosaik.set_data(schedule);
+			end
 
 			time_next_step = this.step_size + time;
 
@@ -65,12 +68,44 @@ classdef Controller < MosaikUtilities.Controller
 		end
 
 		function schedule = makeSchedule(this,inputs)
-			%
+			% For now only one battery connected
 
-			batteries = fieldnames(inputs.Controller.battery_cap);
+			batteries = {fieldnames(inputs.Controller.battery_cap),[]};
+			disp(numel(batteries));
+
 			rels = this.mosaik.get_related_entities(batteries);
+			outputs = [];
+
+			for i = 1:numel(batteries)-1;
+				outputs{end} = fieldnames.rels.(batteries{i});
+				disp(savejson('',outputs));
+				outputs = cellfun(@(x) x{end},cellfun(@(y) strsplit(y,'_0x2E_'),rels,'UniformOutput',false), ...
+                	'UniformOutput',false);
+				disp(savejson('',outputs));
+
+				for i = 1:numel(outputs)
+					if strcmp(outputs{i}{j},'Controller')
+						outputs{i}{j} = [];
+					else
+						outputs{i}{j} = strrep(outputs{i}{j}, '_0x2E_','.');
+						outputs{i}{j} = strrep(outputs{i}{j}, '_0x2D_','-');
+						resistance = this.getResistance(outputs{i}{j});
+					
+					end
+
+				end
+
+			end
+
 			disp(savejson('',rels));
 		end
+
+		function resistance = getResistance(this,id)
+			output.(id) = 'resistance';
+			data = this.mosaik.get_data(output);
+			resistance = data.(id).resistance;
+		end
+
 
 
 	end

@@ -55,7 +55,7 @@ classdef Battery < MosaikAPI.Model
 			% Adds model meta content to meta struct.
 
 			value.public = true;
-			value.attrs = {'capacitance','link'};
+			value.attrs = {'capacitance'};
 			value.params = {'init_capacitance',[]};
 			value.any_inputs = false; %CHECK this
 			
