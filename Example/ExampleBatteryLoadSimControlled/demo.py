@@ -38,7 +38,7 @@ controller = controller.Controller(init_voltage=10,shutdown_voltage=8)
 
 # Connect entities
 world.connect(battery, load, async_requests=True)
-world.connect(battery, controller, ('capacitance', 'battery_cap'), async_requests=True)
+world.connect(battery, controller, 'capacitance', async_requests=True)
 
 # Connect monitor
 #mosaik.util.connect_many_to_one(world, load_set, collector, 'consumed_capacitance')

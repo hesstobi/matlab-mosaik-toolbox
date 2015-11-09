@@ -4,6 +4,12 @@ classdef Controller < MosaikUtilities.Controller
 
 	properties
 
+		amount = 0
+		eid
+		init_voltage = 10
+		voltage
+		shutdown_voltage = 5
+
 	end
 
 	methods
@@ -29,7 +35,8 @@ classdef Controller < MosaikUtilities.Controller
             % Add controller meta data
             value.models.Controller.public = true;
             value.models.Controller.params = {'init_voltage','shutdown_voltage'};
-            value.models.Controller.attrs = {'battery_cap','load_res','voltage'};
+            value.models.Controller.attrs = {'voltage'};
+            value.models.Controller.any_inputs = true;
         
         end
 
@@ -37,13 +44,26 @@ classdef Controller < MosaikUtilities.Controller
 			%
 
 			if ~strcmp(model,'Controller')
-				error('Can only create controller.');
+				error('Can only create controllers.');
 			end
 
-			ctrl_list.eid = 'Controller';
-			ctrl_list.type = 'Controller';
-			ctrl_list.rel = {};
-			ctrl_list = {ctrl_list,[]};
+			ctrl_list = [];
+
+			for i = this.amount:this.amount+num-1
+
+				this.eid = ['Controller','_',num2str(i)];
+				ctrl.eid = this.eid;
+				ctrl.type = 'Controller';
+				ctrl.rel = {};
+				ctrl_list{end+1} = ctrl;
+
+			end
+
+			ctrl_list{end+1} = [];
+
+			disp(this.amount);
+			this.amount = this.amount + num;
+			disp(this.amount);
 
 		end
 
@@ -65,48 +85,67 @@ classdef Controller < MosaikUtilities.Controller
 		function data = get_data(this)
 			%
 
+			if isfield(inputs.(this.eid))
+
+				for i = 1:numel(fieldnames(inputs.(this.eid)))
+
+					data.(this.eid).(fieldnames(inputs.(this.eid){i})) = this.(fieldnames(inputs.(this.eid){i}));
+
+				end
+
+			end
+
 		end
 
 		function schedule = makeSchedule(this,inputs)
-			% For now only one battery connected
+			% 
 
-			batteries = {fieldnames(inputs.Controller.battery_cap),[]};
-			disp(numel(batteries));
+			batteries = [fieldnames(inputs.(this.eid)),[]];
 
 			rels = this.mosaik.get_related_entities(batteries);
 			outputs = [];
+			loads = [];
 
 			for i = 1:numel(batteries)-1;
-				outputs{end} = fieldnames.rels.(batteries{i});
-				disp(savejson('',outputs));
-				outputs = cellfun(@(x) x{end},cellfun(@(y) strsplit(y,'_0x2E_'),rels,'UniformOutput',false), ...
-                	'UniformOutput',false);
-				disp(savejson('',outputs));
 
-				for i = 1:numel(outputs)
-					if strcmp(outputs{i}{j},'Controller')
-						outputs{i}{j} = [];
-					else
-						outputs{i}{j} = strrep(outputs{i}{j}, '_0x2E_','.');
-						outputs{i}{j} = strrep(outputs{i}{j}, '_0x2D_','-');
-						resistance = this.getResistance(outputs{i}{j});
-					
+				loads = fieldnames(rels.(batteries{i}));
+				loads = cellfun(@(x) x{end},cellfun(@(y) strsplit(y,'_0x2E_'),loads,'UniformOutput',false), ...
+                	'UniformOutput',false);
+
+				capacitance = inputs.Controller.(batteries{i});
+				init_capacitance = this.getValue(batteries{i},'init_capacitance');
+				this.voltage = (capacitance / init_capacitance)^2 * this.init_voltage;
+
+				if ge(this.voltage,this.shutdown_voltage)
+
+					total_consumed_cap = 0;
+
+					for j= 1:numel(loads)
+
+						if strcmp(loads{j},'Controller')
+
+						else
+
+							resistance = this.getValue(loads{j},'resistance');
+							consumed_capacitance = (voltage / resistance) * this.step_size;
+
+							outputs.(loads{j}).consumed_capacitance = consumed_capacitance;
+						
+						end
+
+						total_consumed_cap = total_consumed_cap + consumed_capacitance;
+
+						outputs.(batteries{i}).consumed_capacitance = total_consumed_cap;
+
 					end
 
 				end
 
 			end
 
-			disp(savejson('',rels));
+			schedule.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = outputs;
+
 		end
-
-		function resistance = getResistance(this,id)
-			output.(id) = 'resistance';
-			data = this.mosaik.get_data(output);
-			resistance = data.(id).resistance;
-		end
-
-
 
 	end
 

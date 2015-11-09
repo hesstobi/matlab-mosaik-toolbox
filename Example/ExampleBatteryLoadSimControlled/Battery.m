@@ -1,13 +1,10 @@
 classdef Battery < MosaikAPI.Model
 	% BATTERY   Battery model for MOSAIK ModelSimulator
-	%   Models a battery with given parameters initial capacitance Q_0 and voltage at that capacitance U_0.
-	%   The voltage U drops with decreasing capacitance Q in the form U = U_0 * ((Q/Q_0) ^ 0.5).
+	%   Models a battery with given parameters initial capacitance Q_0.
 
 	properties
 
-		init_voltage				% Initial battery voltage
 		init_capacitance			% Initial battery capacitance
-		voltage						% Current battery voltage
 		capacitance 				% Current battery capacitance
 		consumed_capacitance = 0	% Capitance consumed by loads in current step
 
@@ -29,14 +26,11 @@ classdef Battery < MosaikAPI.Model
 			this = this@MosaikAPI.Model(sim,eid);
             
             p = inputParser;
-            addOptional(p,'init_voltage',10,@(x)validateattributes(x,{'numeric'},{'scalar'}));
             addOptional(p,'init_capacitance',1000,@(x)validateattributes(x,{'numeric'},{'scalar'}));
             parse(p,varargin{:});
             
-            this.init_voltage = p.Results.init_voltage;
             this.init_capacitance = p.Results.init_capacitance;
             this.capacitance = this.init_capacitance;
-            this.voltage = this.init_voltage;
 
 		end
 
@@ -55,7 +49,7 @@ classdef Battery < MosaikAPI.Model
 			% Adds model meta content to meta struct.
 
 			value.public = true;
-			value.attrs = {'capacitance'};
+			value.attrs = {'init_capacitance','capacitance'};
 			value.params = {'init_capacitance',[]};
 			value.any_inputs = false; %CHECK this
 			
