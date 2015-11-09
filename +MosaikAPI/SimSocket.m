@@ -101,6 +101,8 @@ classdef SimSocket < MosaikAPI.Handle
             message{2}=varargin{1};            
             
             message = savejson('',message,'ParseLogical',1,'Compact',1);
+            message = strrep(message, '_0x2D_','-');
+            message = strrep(message, '_0x2E_','.');
             message = strrep(message, sprintf('\t'), '');
             message = strrep(message, sprintf('\n'), '');
             message = strrep(message, ',null', '');
