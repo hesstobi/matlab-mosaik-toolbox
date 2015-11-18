@@ -1,4 +1,4 @@
-classdef SimSocketDelegate < MosaikAPI.Handle
+classdef SimSocketDelegate < handle
     % SIMSOCKETDELEGATE   Abstract delegate class for SimSocket
     %   Required delegate methods are:
     %    - response = simSocketReceivedRequest(this,simSocket,request);

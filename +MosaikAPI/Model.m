@@ -1,4 +1,4 @@
-classdef Model < MosaikAPI.Handle
+classdef Model < handle
     % MODEL  Model superclass.
     %   Provides setter and getter methods and defines methodes that models need to implement.
     
