@@ -60,9 +60,9 @@ classdef Load < MosaikAPI.Model
 					l.(fn_src_full_id{j}) = struct('consumed_capacitance', this.consumed_capacitance);
 				end			
 			end
-			output = struct;
-			output.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l; % '_0x2D_' is hex for '-'; '_0x2E_' is hex for '.'; JSONLab will convert it, MATLab can not have dots in struct fields.
-			this.sim.mosaik.set_data(output);
+			m = struct;
+			m.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l; % '_0x2D_' is hex for '-'; '_0x2E_' is hex for '.'; JSONLab will convert it, MATLab can not have dots in struct fields.
+			this.sim.mosaik.set_data(m);
 
 		end
 

@@ -10,10 +10,8 @@ classdef Load < MosaikAPI.Model
 	properties
 
 		resistance				% Load resistance
-		voltage					% Load voltage
-		tolerance				% Load voltage tolerance
-		voltage_in				% Supplied battery voltage
 		consumed_capacitance	% By load consumed battery capacitance
+		total_consumed_cap		% Total by load consumed battery capaciance
 
 	end
 
@@ -34,35 +32,18 @@ classdef Load < MosaikAPI.Model
             
             p = inputParser;
             addOptional(p,'resistance',1000,@(x)validateattributes(x,{'numeric'},{'scalar'}));
-            addOptional(p,'voltage',10,@(x)validateattributes(x,{'numeric'},{'scalar'}));
-            addOptional(p,'tolerance',0.1,@(x)validateattributes(x,{'numeric'},{'scalar'}));
             parse(p,varargin{:});
             
             this.resistance = p.Results.resistance;
-            this.voltage = p.Results.voltage;
-            this.tolerance = p.Results.tolerance;
+            this.consumed_capacitance  = 0;
             this.consumed_capacitance  = 0;
 
 		end
 
 		function step(this,varargin)
-			% Checks if supplied voltage is within voltage tolerance margin. Calculates consumed capacitance in this step based on supplied voltage.
+			%
 
-			if ge(this.voltage_in,(this.voltage*(1-this.tolerance))) && le (this.voltage_in,(this.voltage*(1+this.tolerance)))
-				this.consumed_capacitance = ((this.voltage_in/this.resistance)*this.sim.step_size); %#ok<*PROP>
-			end
-
-			rels = this.sim.mosaik.get_related_entities(this.eid);
-			fn_src_full_id = fieldnames(rels);
-			l = struct;
-			for j = 1:numel(fn_src_full_id)
-				if strcmp(rels.(fn_src_full_id{j}).type, 'Battery')
-					l.(fn_src_full_id{j}) = struct('consumed_capacitance', this.consumed_capacitance);
-				end			
-			end
-			output = struct;
-			output.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l; % '_0x2D_' is hex for '-'; '_0x2E_' is hex for '.'; JSONLab will convert it, MATLab can not have dots in struct fields.
-			this.sim.mosaik.set_data(output);
+			this.total_consumed_cap = this.total_consumed_cap + this.consumed_capacitance;
 
 		end
 
@@ -74,8 +55,8 @@ classdef Load < MosaikAPI.Model
 			% Adds model meta content to meta struct.
 
 			value.public = true;
-			value.attrs = {'voltage_in','voltage','consumed_capacitance'};
-			value.params = {'resistance','voltage','tolerance'};
+			value.attrs = {'resistance','consumed_capacitance','total_consumed_cap'};
+			value.params = {'resistance',[]};
 			value.any_inputs = false;
 
 		end
