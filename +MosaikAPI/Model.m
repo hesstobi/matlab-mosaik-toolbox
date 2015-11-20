@@ -13,6 +13,18 @@ classdef Model < handle
 
         function this = Model(sim,eid)
             % Constructor of the class Model.
+            %
+            % Parameter:
+            %
+            %  - sim: String argument containing
+            %         associated simulator instance.
+            %
+            %  - eid: String argument containing
+            %         model entitiy id.
+            %
+            % Return:
+            %
+            %  - this: Model object.
 
             this.sim = sim;
             this.eid = eid;
@@ -21,6 +33,16 @@ classdef Model < handle
         
         function data = get_data(this,attrs)
             % Returns values for given attributes.
+            %
+            % Parameter:
+            %
+            %  - attrs: Cell argument containing
+            %           required attributes.
+            %
+            % Return:
+            %
+            %  - data: Struct object containing
+            %          required data.
             
             attrs = unique(attrs);
             values = cellfun(@(x) this.(x),attrs,'UniformOutput',false);
@@ -30,6 +52,16 @@ classdef Model < handle
         
         function set_data(this,data)
             % Sets given values for given attributes.
+            %
+            % Parameter:
+            %
+            %  - data: Struct argument containing
+            %          target attributes and its
+            %          new values.
+            %
+            % Return:
+            %
+            %  - none
 
             attrs = fieldnames(data);
 
@@ -43,6 +75,15 @@ classdef Model < handle
         
         function value = get_attrs(this)
             % Returns all attributes of a model.
+            %
+            % Parameter:
+            %
+            %  - none:
+            %
+            % Return:
+            %
+            %  - value: Cell object containing
+            %           requested attributes.
            
             value = this.meta().attrs;
             value = value(~cellfun(@isempty,value));
@@ -51,6 +92,15 @@ classdef Model < handle
         
         function value = modelName(this)
             % Returns model name.
+            %
+            % Parameter:
+            %
+            %  - none:
+            %
+            % Return:
+            %
+            %  - func: String object containing
+            %          model name.
 
             value = strsplit(class(this),'.');
             value = value{end};
