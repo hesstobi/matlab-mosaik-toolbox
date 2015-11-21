@@ -37,9 +37,9 @@ classdef Controller < MosaikAPI.Simulator
 		function value = getValue(this,id,attr)
 			%
 
-			output.(id) = attr;
+			output.(id) = {attr,[]};
 			data = this.mosaik.get_data(output);
-			val = data.(id).resistance;
+			value = data.(id).(attr);
             
         end
 

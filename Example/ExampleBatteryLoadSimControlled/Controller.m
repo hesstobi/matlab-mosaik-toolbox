@@ -100,19 +100,17 @@ classdef Controller < MosaikUtilities.Controller
 		function schedule = makeSchedule(this,inputs)
 			% 
 
-			batteries = [fieldnames(inputs.(this.eid)),[]];
+			batteries = [fieldnames(inputs.(this.eid).capacitance),[]];
 
 			rels = this.mosaik.get_related_entities(batteries);
 			outputs = [];
 			loads = [];
 
-			for i = 1:numel(batteries)-1;
+			for i = 1:numel(batteries);
 
-				loads = fieldnames(rels.(batteries{i}));
-				loads = cellfun(@(x) x{end},cellfun(@(y) strsplit(y,'_0x2E_'),loads,'UniformOutput',false), ...
-                	'UniformOutput',false);
+				loads = fieldnames(rels);
 
-				capacitance = inputs.Controller.(batteries{i});
+				capacitance = inputs.(this.eid).capacitance.(batteries{i});
 				init_capacitance = this.getValue(batteries{i},'init_capacitance');
 				this.voltage = (capacitance / init_capacitance)^2 * this.init_voltage;
 
@@ -122,28 +120,25 @@ classdef Controller < MosaikUtilities.Controller
 
 					for j= 1:numel(loads)
 
-						if strcmp(loads{j},'Controller')
-
-						else
+						if ~strcmp(rels.(loads{j}).type,'Controller')
 
 							resistance = this.getValue(loads{j},'resistance');
-							consumed_capacitance = (voltage / resistance) * this.step_size;
+							consumed_capacitance = (this.voltage / resistance) * this.step_size;
 
 							outputs.(loads{j}).consumed_capacitance = consumed_capacitance;
+							total_consumed_cap = total_consumed_cap + consumed_capacitance;
 						
 						end
 
-						total_consumed_cap = total_consumed_cap + consumed_capacitance;
-
-						outputs.(batteries{i}).consumed_capacitance = total_consumed_cap;
-
 					end
+
+					outputs.(batteries{i}).consumed_capacitance = total_consumed_cap;
 
 				end
 
 			end
 
-			schedule.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = outputs;
+			schedule.([strrep(this.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = outputs;
 
 		end
 
