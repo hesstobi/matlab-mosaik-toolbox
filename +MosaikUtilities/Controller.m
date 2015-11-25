@@ -26,9 +26,10 @@ classdef Controller < MosaikAPI.Simulator
 		function time_next_step = step(this,time,varargin)
 			%
 
-			data = this.concentrateInputs(inputs);
-			schedule = this.makeSchedule(data);
-			this.mosaik.set_data(schedule);
+			if ~isempty(varargin)
+				schedule = this.makeSchedule(varargin{1});
+				this.mosaik.set_data(schedule);
+			end
 
 			time_next_step = this.step_size + time;
 
@@ -41,6 +42,24 @@ classdef Controller < MosaikAPI.Simulator
 			data = this.mosaik.get_data(output);
 			value = data.(id).(attr);
             
+        end
+
+        function entities = getRelatedWithoutUtility(this,entities)
+        	%
+
+        	rels = this.mosaik.get_related_entities(entities);
+        	rel  = fieldnames(rels);
+
+        	for i = 1:numel(rel)
+
+        		if ~strcmp(rels.(rel{i}).type,'Controller') && ~strcmp(rels.(rel{i}).type,'Collector')
+
+        			entities.(rel{i}) = rels.(rel{i});
+
+        		end
+
+        	end
+
         end
 
 	end
