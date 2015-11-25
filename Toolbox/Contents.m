@@ -1,3 +1,0 @@
-% IEEHMOSAIKTOOLBOX_GITLAB
-%
-% Files
