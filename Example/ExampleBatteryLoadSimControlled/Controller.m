@@ -67,21 +67,6 @@ classdef Controller < MosaikUtilities.Controller
 
 		end
 
-
-		function time_next_step = step(this,time,varargin)
-			%
-
-			disp(savejson('',varargin{1}));
-
-			if ~isempty(varargin)
-				schedule = this.makeSchedule(varargin{1});
-				this.mosaik.set_data(schedule);
-			end
-
-			time_next_step = this.step_size + time;
-
-		end
-
 		function data = get_data(this)
 			%
 
@@ -102,7 +87,7 @@ classdef Controller < MosaikUtilities.Controller
 
 			batteries = [fieldnames(inputs.(this.eid).capacitance),[]];
 
-			rels = this.mosaik.get_related_entities(batteries);
+			rels = this.getRelatedWithoutUtility(batteries);
 			outputs = [];
 			loads = [];
 
@@ -120,18 +105,15 @@ classdef Controller < MosaikUtilities.Controller
 
 					for j= 1:numel(loads)
 
-						if ~strcmp(rels.(loads{j}).type,'Controller')
+						resistance = this.getValue(loads{j},'resistance');
+						consumed_capacitance = (this.voltage / resistance) * this.step_size;
 
-							resistance = this.getValue(loads{j},'resistance');
-							consumed_capacitance = (this.voltage / resistance) * this.step_size;
-
-							outputs.(loads{j}).consumed_capacitance = consumed_capacitance;
-							total_consumed_cap = total_consumed_cap + consumed_capacitance;
-						
-						end
+						outputs.(loads{j}).consumed_capacitance = consumed_capacitance;
+						total_consumed_cap = total_consumed_cap + consumed_capacitance;
 
 					end
 
+					outputs.(batteries{i}).voltage = this.voltage;
 					outputs.(batteries{i}).consumed_capacitance = total_consumed_cap;
 
 				end

@@ -36,7 +36,7 @@ classdef Load < MosaikAPI.Model
             
             this.resistance = p.Results.resistance;
             this.consumed_capacitance  = 0;
-            this.consumed_capacitance  = 0;
+            this.total_consumed_cap  = 0;
 
 		end
 

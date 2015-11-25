@@ -6,6 +6,7 @@ classdef Battery < MosaikAPI.Model
 
 		init_capacitance			% Initial battery capacitance
 		capacitance 				% Current battery capacitance
+		voltage						% Current battery voltage
 		consumed_capacitance = 0	% Capitance consumed by loads in current step
 
 	end
@@ -49,7 +50,7 @@ classdef Battery < MosaikAPI.Model
 			% Adds model meta content to meta struct.
 
 			value.public = true;
-			value.attrs = {'init_capacitance','capacitance'};
+			value.attrs = {'init_capacitance','capacitance','voltage'};
 			value.params = {'init_capacitance',[]};
 			value.any_inputs = false; %CHECK this
 			

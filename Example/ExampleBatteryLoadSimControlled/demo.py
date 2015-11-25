@@ -28,13 +28,13 @@ world = mosaik.World(sim_config, mosaik_config)
 matlab1 = world.start('Matlab', step_size=10)
 matlab2 = world.start('Matlab', step_size=10)
 controller= world.start('Controller', step_size=10)
-#monitor = world.start('Monitor', step_size=10)
+monitor = world.start('Monitor', step_size=10)
 
 # Instantiate models
 battery = matlab1.Battery(init_capacitance=5*3600) # 5 Ah at 10V
 load = matlab2.Load(resistance=2)
 controller = controller.Controller(init_voltage=10,shutdown_voltage=8)
-#collector = monitor.Collector(graphical_output=True)
+collector = monitor.Collector(graphical_output=True)
 
 # Connect entities
 world.connect(battery, load, async_requests=True)
@@ -42,8 +42,8 @@ world.connect(battery, controller, 'capacitance', async_requests=True)
 world.connect(load, controller, async_requests=True)
 
 # Connect monitor
-#mosaik.util.connect_many_to_one(world, load_set, collector, 'consumed_capacitance')
-#mosaik.util.connect_many_to_one(world, battery_set, collector, 'voltage', 'capacitance')
+world.connect(battery, collector, 'voltage', 'capacitance')
+world.connect(load, collector, 'total_consumed_cap')
 
 # Run simulation
 END = 300
