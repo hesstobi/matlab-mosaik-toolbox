@@ -13,6 +13,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
         socket             % Associated socket client
         mosaik             % Assiciated mosaik proxy
         sid = 'Matlab'     % Simulator ID
+        shutdown = false   % Instance shutdown toggle
 
     end
     
@@ -56,10 +57,12 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
                 % Call the finalize methode()
                 this.finalize();
                 % Close Matlab with timer
-                t = timer();
-                t.StartDelay = 1;
-                t.TimerFcn = @(myTimerObj, thisEvent)exit;
-                start(t);
+                if this.shutdown
+                    t = timer();
+                    t.StartDelay = 1;
+                    t.TimerFcn = @(myTimerObj, thisEvent)exit;
+                    start(t);
+                end
             end
             
         end        
