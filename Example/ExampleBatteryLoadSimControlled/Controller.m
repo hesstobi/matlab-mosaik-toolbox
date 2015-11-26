@@ -40,32 +40,7 @@ classdef Controller < MosaikUtilities.Controller
         
         end
 
-		function ctrl_list = create(this,num,model,varargin)
-			%
 
-			if ~strcmp(model,'Controller')
-				error('Can only create controllers.');
-			end
-
-			ctrl_list = [];
-
-			for i = this.amount:this.amount+num-1
-
-				this.eid = ['Controller','_',num2str(i)];
-				ctrl.eid = this.eid;
-				ctrl.type = 'Controller';
-				ctrl.rel = {};
-				ctrl_list{end+1} = ctrl;
-
-			end
-
-			ctrl_list{end+1} = [];
-
-			disp(this.amount);
-			this.amount = this.amount + num;
-			disp(this.amount);
-
-		end
 
 		function data = get_data(this)
 			%
