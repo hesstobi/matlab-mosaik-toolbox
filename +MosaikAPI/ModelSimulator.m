@@ -43,7 +43,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             %
             % Return:
             %
-            %  - value: struct object containing meta.
+            %  - value: struct object containing meta information.
 
             value = meta@MosaikAPI.Simulator(this);
            
