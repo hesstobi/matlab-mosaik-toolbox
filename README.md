@@ -91,40 +91,44 @@ The collector plots all attributes with the same name in one figure.
 
 This is the base that you need to inherit from when developing simulators.
 
-`meta()`
+```
+meta()
+```
 
 **Description:**
 Creates meta information struct.  
 
 **Return:**  
 **_Name:_**  
-value
+`value`  
 **_Type:_**  
 *Struct*  
 **_Description:_**  
 Meta information in the form `attribute = value`.  
-Required attributes: *api_version*, *extra_methods*, *models*
+Required attributes: `api_version`, `extra_methods`, `models`
 
-`create(num,model,varargin)`
+```
+create(num,model,varargin)
+```
 
 **Description:**  
 Creates models of specified amount, type and initial parameters. Returns information about created models.
 
 **Parameters:**  
 **_Name:_**  
-num  
+`num`  
 **_Type:_**  
 *Double*  
 **_Description:_**  
 Amount of models to be created.  
 **_Name:_**  
-model  
+`model`  
 **_Type:_**  
 *String*  
 **_Description:_**  
 Type of model to be created.  
 **_Name:_**  
-model_params  
+`model_params`  
 **_Type:_**  
 *Keyword arguments*  
 **_Description:_**  
@@ -132,13 +136,13 @@ Model creation parameters.
 
 **Return:**  
 **_Name:_**  
-entity_list  
+`entity_list`  
 **_Type:_**  
 *Cell*  
 **_Description:_**
 Contains information structs about created models in the form `attribute = value`.  
-Required attributes: *eid*, *type*  
-Optional attributes: *rel*, *children*
+Required attributes: `eid`, `type`  
+Optional attributes: `rel`, `children`
 
 `step(time,varargin)`
 
