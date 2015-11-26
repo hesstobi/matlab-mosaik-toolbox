@@ -97,11 +97,15 @@ This is the base that you need to inherit from when developing simulators.
 
 **Parameters:**  
 **_Type:_**  
+   *none*  
 **_Description:_**
 
 **Return:**  
 **_Type:_**  
-**_Description:_**
+   *Struct*  
+**_Description:_**  
+   Meta information in the form `attribute = value`.  
+   Required attributes: *api_version*, *extra_methods*, *models*
 
 `create(num,model,varargin)`
 
@@ -141,7 +145,7 @@ This is the base that you need to inherit from when developing simulators.
 
 #### MosaikUtilites
 
-##### class MosaikAPI.Model
+**class MosaikAPI.Model**
 
 This is the base that you need to inherit from when just defining models. The simulator used in this case is `MosaikAPI.ModelSimulator`.
 
@@ -169,7 +173,7 @@ This is the base that you need to inherit from when just defining models. The si
 **_Type:_**  
 **_Description:_**
 
-##### class MosaikAPI.Controller
+**class MosaikAPI.Controller**
 
 This is the base that you need to inherit from when developing controllers.
 
