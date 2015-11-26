@@ -93,55 +93,116 @@ This is the base that you need to inherit from when developing simulators.
 
 `meta()`
 
-**Description:**  
-
-**Parameters:**  
-**_Type:_**  
-   *none*  
-**_Description:_**
+**Description:**
+Creates meta information struct.  
 
 **Return:**  
+**_Name:_**  
+value
 **_Type:_**  
-   *Struct*  
+*Struct*  
 **_Description:_**  
-   Meta information in the form `attribute = value`.  
-   Required attributes: *api_version*, *extra_methods*, *models*
+Meta information in the form `attribute = value`.  
+Required attributes: *api_version*, *extra_methods*, *models*
 
 `create(num,model,varargin)`
 
 **Description:**  
+Creates models of specified amount, type and initial parameters. Returns information about created models.
 
 **Parameters:**  
+**_Name:_**  
+num  
 **_Type:_**  
-**_Description:_**
+*Double*  
+**_Description:_**  
+Amount of models to be created.  
+**_Name:_**  
+model  
+**_Type:_**  
+*String*  
+**_Description:_**  
+Type of model to be created.  
+**_Name:_**  
+model_params  
+**_Type:_**  
+*Keyword arguments*  
+**_Description:_**  
+Model creation parameters.
 
 **Return:**  
+**_Name:_**  
+entity_list  
 **_Type:_**  
+*Cell*  
 **_Description:_**
+Contains information structs about created models in the form `attribute = value`.  
+Required attributes: *eid*, *type*  
+Optional attributes: *rel*, *children*
 
 `step(time,varargin)`
 
 **Description:**  
+Creates models of specified amount, type and initial parameters. Returns information about created models.
 
 **Parameters:**  
+**_Name:_**  
+time  
 **_Type:_**  
-**_Description:_**
+*Double*  
+**_Description:_**  
+Simulation time of last step.  
+**_Name:_**  
+inputs  
+**_Type:_**  
+*Keyword arguments*  
+**_Description:_**  
+Input values in the form `destination_full_id.attributes.source_full_id = value`.
 
 **Return:**  
+**_Name:_**  
+time_next_step  
 **_Type:_**  
+*Cell*  
 **_Description:_**
+Contains information structs about created models in the form `attribute = value`.  
+Required attributes: *eid*, *type*  
+Optional attributes: *rel*, *children*
 
 `get_data(outputs)`
 
 **Description:**  
+Creates models of specified amount, type and initial parameters. Returns information about created models.
 
 **Parameters:**  
+**_Name:_**  
+num  
 **_Type:_**  
-**_Description:_**
+*Double*  
+**_Description:_**  
+Amount of models to be created.  
+**_Name:_**  
+model  
+**_Type:_**  
+*String*  
+**_Description:_**  
+Type of model to be created.  
+**_Name:_**  
+varargin  
+**_Type:_**  
+*Keyword arguments*  
+**_Description:_**  
+Various arguments regarding model creation.
 
 **Return:**  
+**_Name:_**  
+entity_list  
 **_Type:_**  
+*Cell*  
 **_Description:_**
+Contains information structs about created models in the form `attribute = value`.  
+Required attributes: *eid*, *type*  
+Optional attributes: *rel*, *children*
 
 #### MosaikUtilites
 
@@ -152,26 +213,72 @@ This is the base that you need to inherit from when just defining models. The si
 `meta()`
 
 **Description:**  
+Creates models of specified amount, type and initial parameters. Returns information about created models.
 
 **Parameters:**  
+**_Name:_**  
+num  
 **_Type:_**  
-**_Description:_**
+*Double*  
+**_Description:_**  
+Amount of models to be created.  
+**_Name:_**  
+model  
+**_Type:_**  
+*String*  
+**_Description:_**  
+Type of model to be created.  
+**_Name:_**  
+varargin  
+**_Type:_**  
+*Keyword arguments*  
+**_Description:_**  
+Various arguments regarding model creation.
 
 **Return:**  
+**_Name:_**  
+entity_list  
 **_Type:_**  
+*Cell*  
 **_Description:_**
+Contains information structs about created models in the form `attribute = value`.  
+Required attributes: *eid*, *type*  
+Optional attributes: *rel*, *children*
 
 `step(varargin)`
 
 **Description:**  
+Creates models of specified amount, type and initial parameters. Returns information about created models.
 
 **Parameters:**  
+**_Name:_**  
+num  
 **_Type:_**  
-**_Description:_**
+*Double*  
+**_Description:_**  
+Amount of models to be created.  
+**_Name:_**  
+model  
+**_Type:_**  
+*String*  
+**_Description:_**  
+Type of model to be created.  
+**_Name:_**  
+varargin  
+**_Type:_**  
+*Keyword arguments*  
+**_Description:_**  
+Various arguments regarding model creation.
 
 **Return:**  
+**_Name:_**  
+entity_list  
 **_Type:_**  
+*Cell*  
 **_Description:_**
+Contains information structs about created models in the form `attribute = value`.  
+Required attributes: *eid*, *type*  
+Optional attributes: *rel*, *children*
 
 **class MosaikAPI.Controller**
 
@@ -183,12 +290,20 @@ This is the base that you need to inherit from when developing controllers.
 Creates output values for controlled models based on input values and controller function.
 
 **Parameters:**  
-**_Type:_** *Struct*  
-**_Description:_** Input values in the form `destination_full_id.attributes.source_full_id = value`.
+**_Name:_**  
+inputs
+**_Type:_**  
+*Struct*  
+**_Description:_**  
+Input values in the form `destination_full_id.attributes.source_full_id = value`.
 
 **Return:**  
-**_Type:_** *Struct*  
-**_Description:_** Output values in the form `source_full_id._destination_full_id.attribute = value`.
+**_Name:_**  
+schedule  
+**_Type:_**  
+*Struct*  
+**_Description:_**  
+Output values in the form `source_full_id._destination_full_id.attribute = value`.
 
 
 ### Example Demos
