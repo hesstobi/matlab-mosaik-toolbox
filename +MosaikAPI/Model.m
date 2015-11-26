@@ -111,8 +111,15 @@ classdef Model < handle
  
     methods (Static,Abstract)
 
-        value = meta();
         % Abstract model meta creation method.
+        value = meta();
+
+    end
+
+    methods (Abstract)
+
+        % Abstract step method.
+        step(varargin);
 
     end
         
