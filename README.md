@@ -139,7 +139,7 @@ Model creation parameters.
 `entity_list`  
 **_Type:_**  
 *Cell*  
-**_Description:_**
+**_Description:_**  
 Contains information structs about created models in the form `attribute = value`.  
 Required attributes: `eid`, `type`  
 Optional attributes: `rel`, `children`
