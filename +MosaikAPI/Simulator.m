@@ -69,6 +69,12 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
         
         function value = meta(this)
             % Creates meta struct with empty models struct and extra methods cell.
+            %
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - value: Struct object containing meta information.
 
             value.api_version = this.api_version;
             value.extra_methods = {};
@@ -169,13 +175,13 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
     methods (Abstract)
 
         % Abstract model creation method.
-        create(this,num,model,varargin);
+        entity_list = create(this,num,model,varargin);
 
         % Abstract simulator step method.    
-        step(this,time,varargin);
+        time_next_step = step(this,time,varargin);
         
         % Abstract data return method.    
-        get_data(this,outputs);        
+        data = get_data(this,outputs);        
 
     end
     
