@@ -7,7 +7,7 @@ classdef SimSocket < handle
         server					% Server IP
         port					% Server Port
         delegate				% Associated delegate
-        message_output = false	% Socket message output toggle
+        message_output = true	% Socket message output toggle
 
     end
     
@@ -120,7 +120,12 @@ classdef SimSocket < handle
             this.outp(char(message(5:end)));
 
             message = loadjson(char(message(5:end)));
-            
+            message = savejson('',message)
+            message = strrep(message, ',null', '');
+            message = strrep(message, 'null,', '');
+            disp(message);
+            loadjson(message);
+
             if ~iscell(message)
                 message = num2cell(message);
             end
