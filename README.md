@@ -87,7 +87,9 @@ The collector plots all attributes with the same name in one figure.
 
 #### MosaikAPI
 
-##### class MosaikAPI.Simulator
+```
+class MosaikAPI.Simulator
+```
 
 This is the base that you need to inherit from when developing simulators.
 
