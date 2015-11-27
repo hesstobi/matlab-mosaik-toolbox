@@ -179,25 +179,6 @@ classdef ModelSimulator < MosaikAPI.Simulator
         
         end
         
-        function data = get_data(this,outputs)
-            % Returns values for given attributes of given models.
-            %
-            % Parameter:
-            %  - outputs: Struct argument containing
-            %             requested eids and its
-            %             attributes.
-            %
-            % Return:
-            %  - data: Struct object containing eids
-            %          and values of requested data.
-                        
-            eids = fieldnames(outputs);
-            req_entities = this.entitiesWithEids(eids);
-            values = cellfun(@(x,y) x.get_data(y),req_entities,struct2cell(outputs)','UniformOutput',false);
-            data = cell2struct(values,eids',2);
-
-        end
-        
         function time_next_step = step(this,time,varargin)
             % Performs a step with given values for given attributes.
             %
@@ -223,7 +204,25 @@ classdef ModelSimulator < MosaikAPI.Simulator
             time_next_step = time + this.step_size;
 
         end
-    
+        
+        function data = get_data(this,outputs)
+            % Returns values for given attributes of given models.
+            %
+            % Parameter:
+            %  - outputs: Struct argument containing
+            %             requested eids and its
+            %             attributes.
+            %
+            % Return:
+            %  - data: Struct object containing eids
+            %          and values of requested data.
+                        
+            eids = fieldnames(outputs);
+            req_entities = this.entitiesWithEids(eids);
+            values = cellfun(@(x,y) x.get_data(y),req_entities,struct2cell(outputs)','UniformOutput',false);
+            data = cell2struct(values,eids',2);
+
+        end    
         
         function setEntitiesData(this,inputs)
             % Calls model 'set_data' method for given model entities and given values for given attributes.
