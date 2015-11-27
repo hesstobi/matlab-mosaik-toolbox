@@ -87,7 +87,7 @@ The collector plots all attributes with the same name in one figure.
 
 #### MosaikAPI
 
-**class MosaikAPI.Simulator**
+##### class MosaikAPI.Simulator
 
 This is the base that you need to inherit from when developing simulators.
 
@@ -112,7 +112,7 @@ create(num,model,varargin)
 ```
 
 **Description:**  
-Creates models of specified amount, type and initial parameters. Returns information about created models.
+Creates models of specified amount, type and initial parameters.
 
 **Parameters:**  
 **_Name:_**  
@@ -126,7 +126,7 @@ Amount of models to be created.
 **_Type:_**  
 *String*  
 **_Description:_**  
-Type of model to be created.  
+Type of models to be created.  
 **_Name:_**  
 `model_params`  
 **_Type:_**  
@@ -140,24 +140,26 @@ Model creation parameters.
 **_Type:_**  
 *Cell*  
 **_Description:_**  
-Contains information structs about created models in the form `attribute = value`.  
+Structs with information about created models in the form `attribute = value`.  
 Required attributes: `eid`, `type`  
 Optional attributes: `rel`, `children`
 
-`step(time,varargin)`
+```
+step(time,varargin)
+```
 
 **Description:**  
-Creates models of specified amount, type and initial parameters. Returns information about created models.
+Performs simulation step.
 
 **Parameters:**  
 **_Name:_**  
-time  
+`time`  
 **_Type:_**  
 *Double*  
 **_Description:_**  
-Simulation time of last step.  
+Time of this simulation step.  
 **_Name:_**  
-inputs  
+`inputs`  
 **_Type:_**  
 *Keyword arguments*  
 **_Description:_**  
@@ -165,56 +167,63 @@ Input values in the form `destination_full_id.attributes.source_full_id = value`
 
 **Return:**  
 **_Name:_**  
-time_next_step  
-**_Type:_**  
-*Cell*  
-**_Description:_**
-Contains information structs about created models in the form `attribute = value`.  
-Required attributes: *eid*, *type*  
-Optional attributes: *rel*, *children*
-
-`get_data(outputs)`
-
-**Description:**  
-Creates models of specified amount, type and initial parameters. Returns information about created models.
-
-**Parameters:**  
-**_Name:_**  
-num  
+`time_next_step`  
 **_Type:_**  
 *Double*  
 **_Description:_**  
-Amount of models to be created.  
+Time of next simulation step.
+
+```
+get_data(outputs)
+```
+
+**Description:**  
+Receives data for requested attributes.
+
+**Parameters:**  
 **_Name:_**  
-model  
+`outputs`  
 **_Type:_**  
-*String*  
+
+*Struct*  
 **_Description:_**  
-Type of model to be created.  
-**_Name:_**  
-varargin  
-**_Type:_**  
-*Keyword arguments*  
-**_Description:_**  
-Various arguments regarding model creation.
+Requested attributes in the form `eid = {attribute}`.
 
 **Return:**  
 **_Name:_**  
-entity_list  
+`data`
+
 **_Type:_**  
-*Cell*  
-**_Description:_**
-Contains information structs about created models in the form `attribute = value`.  
-Required attributes: *eid*, *type*  
-Optional attributes: *rel*, *children*
+*Struct*  
+**_Description:_**  
+Requested values in the form `eid.attribute = value`.
 
-#### MosaikUtilites
+#### MosaikUtilities
 
-**class MosaikAPI.Model**
+##### class MosaikAPI.Model
 
 This is the base that you need to inherit from when just defining models. The simulator used in this case is `MosaikAPI.ModelSimulator`.
 
-`meta()`
+```
+meta()
+```
+
+**Description:**
+Creates meta information struct.  
+
+**Return:**  
+**_Name:_**  
+`value`  
+**_Type:_**  
+*Struct*  
+**_Description:_**  
+Meta information in the form `attribute = value`.  
+Required attributes: `public`, `attrs`, `params`  
+Optional attributes: `any_inputs`
+
+```
+step(varargin)
+```
 
 **Description:**  
 Creates models of specified amount, type and initial parameters. Returns information about created models.
@@ -249,42 +258,7 @@ Contains information structs about created models in the form `attribute = value
 Required attributes: *eid*, *type*  
 Optional attributes: *rel*, *children*
 
-`step(varargin)`
-
-**Description:**  
-Creates models of specified amount, type and initial parameters. Returns information about created models.
-
-**Parameters:**  
-**_Name:_**  
-num  
-**_Type:_**  
-*Double*  
-**_Description:_**  
-Amount of models to be created.  
-**_Name:_**  
-model  
-**_Type:_**  
-*String*  
-**_Description:_**  
-Type of model to be created.  
-**_Name:_**  
-varargin  
-**_Type:_**  
-*Keyword arguments*  
-**_Description:_**  
-Various arguments regarding model creation.
-
-**Return:**  
-**_Name:_**  
-entity_list  
-**_Type:_**  
-*Cell*  
-**_Description:_**
-Contains information structs about created models in the form `attribute = value`.  
-Required attributes: *eid*, *type*  
-Optional attributes: *rel*, *children*
-
-**class MosaikAPI.Controller**
+##### class MosaikAPI.Controller
 
 This is the base that you need to inherit from when developing controllers.
 
