@@ -13,7 +13,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
         socket				% Associated socket client
         mosaik				% Assiciated mosaik proxy
         sid = 'Matlab'		% Simulator ID
-        verbose				% Instance shutdown toggle
+        verbose				% Verbose mode
 
     end
     
@@ -42,8 +42,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             
             server = p.Results.server;
 
-            this.verbose = p.Results.verbose;            
-            disp(this.verbose);
+            this.verbose = p.Results.verbose;
 
             % Gets server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')

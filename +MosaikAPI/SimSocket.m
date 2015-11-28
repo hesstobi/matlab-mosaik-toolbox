@@ -7,7 +7,7 @@ classdef SimSocket < handle
         server					% Server IP
         port					% Server Port
         delegate				% Associated delegate
-        verbose 				% Socket message output toggle
+        verbose 				% Verbose mode
 
     end
     
@@ -37,9 +37,9 @@ classdef SimSocket < handle
             p = inputParser;
             addRequired(p,'server',@ischar);
             addRequired(p,'port',@(x)validateattributes(x,{'numeric'},{'scalar','integer','positive'}));
-            addRequired(p,'verbose',false,@islogical);
+            addRequired(p,'verbose',@islogical);
             addOptional(p,'delegate',[],@(x)isa(x,'MosaikAPI.SimSocketDelegate'));
-            parse(p,server,port,varargin{:});
+            parse(p,server,port,verbose,varargin{:});
             
             this.server = p.Results.server;
             this.port = p.Results.port;
