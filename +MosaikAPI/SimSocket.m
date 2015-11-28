@@ -66,7 +66,7 @@ classdef SimSocket < handle
     
     methods (Access=private)
         
-        function main_loop(this)
+        function mainLoop(this)
         	% Waits for message, deserializes it, sends request to delegate,
         	% receives answer from delegate, serializes it, sends it socket.
         	%
@@ -85,7 +85,7 @@ classdef SimSocket < handle
                     
                     % Read and deserialize the request
                     request = read(this.socket);
-                    [type,id,content] = this.deserialize(request);
+                    [~,id,content] = this.deserialize(request);
 
                     % Forward the request to the Delegate
                     %response = content;
@@ -116,7 +116,7 @@ classdef SimSocket < handle
 
             % if no id is given it is set automaticaly
             if nargin < 4
-                varargin{1}=next_request_id(this);
+                varargin{1}=nextRequestID(this);
             end
             
             message{3}=content;
@@ -209,10 +209,9 @@ classdef SimSocket < handle
             %  - none
 
             assert(~isempty(this.delegate),'You need to specify a delegate before starting the socket');
-            this.main_loop();
+            this.mainLoop();
 
-        end
-        
+        end        
         
         function stop(this)
         	% Activates server stop toggle.
@@ -224,11 +223,9 @@ classdef SimSocket < handle
             %  - none
 
             this.stopServer = true;
-        end
-
+        end        
         
-        
-        function response = send_request(this,content)
+        function response = sendRequest(this,content)
         	% Sends request to socket server.
         	%
             % Parameter:
@@ -256,7 +253,7 @@ classdef SimSocket < handle
 
     methods (Static)
 
-        function header = make_header(~,message)
+        function header = makeHeader(message)
         	% Creates byte header for socket message.
         	%
             % Parameter:

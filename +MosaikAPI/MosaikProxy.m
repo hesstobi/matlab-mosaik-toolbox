@@ -40,7 +40,7 @@ classdef MosaikProxy < handle
 			content{1} = 'get_progress';
 			content{2} = {{}};
 			content{3} = struct;
-			progress = this.sim.socket.send_request(content);
+			progress = this.sim.socket.sendRequest(content);
 
 		end
 		
@@ -66,7 +66,7 @@ classdef MosaikProxy < handle
 			end
 			content{2} = varargin;
 			content{3} = struct;
-			related_entities = this.sim.socket.send_request(content);
+			related_entities = this.sim.socket.sendRequest(content);
 
 		end
 		
@@ -91,7 +91,7 @@ classdef MosaikProxy < handle
 			end
 			content{2} = varargin;
 			content{3} = struct;
-			data = this.sim.socket.send_request(content);
+			data = this.sim.socket.sendRequest(content);
 
 		end
 		
@@ -115,7 +115,7 @@ classdef MosaikProxy < handle
 			end
 			content{2} = varargin;
 			content{3} = struct;
-			this.sim.socket.send_request(content);
+			this.sim.socket.sendRequest(content);
 			
 		end
 

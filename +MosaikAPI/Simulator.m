@@ -230,32 +230,6 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             names = cellfun(@(x) strrep(x, '_0x2D_','-'),names,'UniformOutput',false);
 
         end
-        
-        function [ip, port] = parse_address(server)
-            % Parses address string. Returns ip as string and port as integer.
-            %
-            % Parameter:
-            %  - server: String argument; server ip and port; format: 'ip:port'
-            %
-            % Return:
-            %  - ip: String object; socket ip adress.
-            %  - port: Double object; socket port.
-
-            server = strsplit(server,':');
-            if ~isempty(server(1))
-                ip = server{1};
-            else
-                error('No server IP entered. Check server configuration.')
-            end
-            if ~isempty(server(2))
-                port = server(2);
-                port = str2double(port{:});
-                assert(isnumeric(port), 'Wrong server port. Check server configuration.')
-            else
-                error('No server port entered. Check server configuration.')
-            end
-
-        end
 
         function finalize()
             % Does nothing by default. Can be overridden.
@@ -278,6 +252,32 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             %  - none
 
             null = [];
+
+        end
+
+        function [ip, port] = parseAddress(server)
+            % Parses address string. Returns ip as string and port as integer.
+            %
+            % Parameter:
+            %  - server: String argument; server ip and port; format: 'ip:port'
+            %
+            % Return:
+            %  - ip: String object; socket ip adress.
+            %  - port: Double object; socket port.
+
+            server = strsplit(server,':');
+            if ~isempty(server(1))
+                ip = server{1};
+            else
+                error('No server IP entered. Check server configuration.')
+            end
+            if ~isempty(server(2))
+                port = server(2);
+                port = str2double(port{:});
+                assert(isnumeric(port), 'Wrong server port. Check server configuration.')
+            else
+                error('No server port entered. Check server configuration.')
+            end
 
         end
 
