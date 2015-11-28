@@ -57,7 +57,7 @@ classdef Collector < MosaikAPI.Simulator
             
         end
         
-        function dscrList = create(this,num,model,varargin)
+        function dscr_list = create(this,num,model,varargin)
             % Creates a collector instance. Only one collector instance possible.
             %
             % Parameter:
@@ -68,7 +68,7 @@ classdef Collector < MosaikAPI.Simulator
             %
             % Return:
             %
-            %  - dscrList: Cell object; structs with created collector
+            %  - dscr_list: Cell object; structs with created collector
 	        %                           information.
 
             if num>1 || ~isempty(this.eid)
@@ -84,7 +84,7 @@ classdef Collector < MosaikAPI.Simulator
            
             s.eid = this.eid;
             s.type = this.model;
-            dscrList = horzcat({s},{[]});
+            dscr_list = horzcat({s},{[]});
 
         end
 
