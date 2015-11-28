@@ -5,11 +5,11 @@ import os.path
 sim_config = {
     'Matlab': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
-		'cmd': 'matlab.exe -minimize -nosplash -r "server=\'%(addr)s\';ExampleBatteryLoadSim(\'%(addr)s\')"'
+		'cmd': 'matlab.exe -minimize -nosplash -r "ExampleBatteryLoadSim(\'%(addr)s\')"'
 	},
 	'Controller': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator
-		'cmd': 'matlab.exe -minimize -nosplash -r "server=\'%(addr)s\';Controller(\'%(addr)s\')"'
+		'cmd': 'matlab.exe -minimize -nosplash -r "Controller(\'%(addr)s\')"'
 	},
 	'Monitor': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)), # Set here the path of your Matlab Simulator

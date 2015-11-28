@@ -6,11 +6,11 @@ examplepath = os.path.split((os.path.dirname(os.path.realpath(__file__))))[0]
 sim_config = {
     'MatlabMas': {
         'cwd': examplepath + '\ExampleMas',  # Set here the path of your Matlab Simulator
-        'cmd': 'matlab.exe -minimize -nosplash -r "server=\'%(addr)s\';ExampleMas(\'%(addr)s\')"'
+        'cmd': 'matlab.exe -minimize -nosplash -r "ExampleMas(\'%(addr)s\')"'
     },
     'MatlabSim': {
         'cwd': examplepath + '\ExampleSim',  # Set here the path of your Matlab Simulator
-        'cmd': 'matlab.exe -minimize -nosplash -r "server=\'%(addr)s\';ExampleSim(\'%(addr)s\')"'
+        'cmd': 'matlab.exe -minimize -nosplash -r "ExampleSim(\'%(addr)s\')"'
     },
     'Monitor': {
         'cwd': os.path.dirname(os.path.realpath(__file__)),  # Set here the path of your Matlab Simulator
