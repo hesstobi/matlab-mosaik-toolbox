@@ -21,7 +21,15 @@ classdef Collector < MosaikAPI.Simulator
     
     methods 
 		function this = Collector(varargin)
-            % Constructor of the class Collector
+            % Constructor of the class Collector.
+            %
+            % Parameter:
+            %
+            %  - varargin: Optional arguments.
+            %
+            % Return:
+            %
+            %  - this: Collector object.
 
             this = this@MosaikAPI.Simulator(varargin{:});
 
@@ -29,6 +37,14 @@ classdef Collector < MosaikAPI.Simulator
         
         function value = meta(this)
             % Creates meta struct and adds collector meta content.
+            %
+            % Parameter:
+            %
+            %  - none
+            %
+            % Return:
+            %
+            %  - value: Struct object; meta information.
 
             value = meta@MosaikAPI.Simulator(this);
             
@@ -43,6 +59,17 @@ classdef Collector < MosaikAPI.Simulator
         
         function dscrList = create(this,num,model,varargin)
             % Creates a collector instance. Only one collector instance possible.
+            %
+            % Parameter:
+            %
+            %  - num:      Double argument; must be 1.
+            %  - model:    String argument; collector eid.
+            %  - varargin: Optional arguments; graphical output, save path.
+            %
+            % Return:
+            %
+            %  - dscrList: Cell object; structs with created collector
+	        %                           information.
 
             if num>1 || ~isempty(this.eid)
                 error('Can only create one instance of Collector.')
@@ -63,6 +90,14 @@ classdef Collector < MosaikAPI.Simulator
 
         function time_next_step = step(this,time,varargin)            
             % Receives data from all given inputs.
+            %
+            % Parameter:
+            %  - time:     Double argument; time of this simulation step.
+            %  - varargin: Optional arguments; input values.
+            %              
+            %
+            % Return:
+            %  - time_next_step: Double object; time of next simulation step.
 
             if ~isempty(varargin)
                 inputs = varargin{1};
@@ -93,12 +128,25 @@ classdef Collector < MosaikAPI.Simulator
         end
 
         function get_data(~,~)
+        	% Does nothing.
+            %
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
             
             error('The Collector can not return data');           
         end
           
         function finalize(this)
             % Previews data in a table, plots and saves it.
+            %
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
 
             disp(this.data);
 
@@ -121,6 +169,13 @@ classdef Collector < MosaikAPI.Simulator
     methods (Access=private)
 
         function plot_data(this)
+        	% Graphically plots results.
+        	%
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
 
             x = this.data.Time;
             this.data.Time = [];
@@ -147,6 +202,13 @@ classdef Collector < MosaikAPI.Simulator
         end
         
         function save_results(this)
+        	% Saves results.
+        	%
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
 
             results = this.data;
             save(this.save_path,'results');
