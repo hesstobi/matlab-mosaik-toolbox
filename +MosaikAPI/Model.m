@@ -111,14 +111,26 @@ classdef Model < handle
  
     methods (Static,Abstract)
 
-        % Abstract model meta creation method.
+        % Creates meta struct with models information.
+        %
+        % Parameter:
+        %  - none
+        %
+        % Return:
+        %  - value: Struct object containing meta information.
         value = meta();
 
     end
 
     methods (Abstract)
 
-        % Abstract step method.
+        % Performs models simulation step.
+        %
+        % Parameter:
+        %  - varargin: Struct object containing optional parameters.
+        %
+        % Return:
+        %  - none
         step(varargin);
 
     end
