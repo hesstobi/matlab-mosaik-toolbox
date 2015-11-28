@@ -1,12 +1,17 @@
 classdef SimSocketDelegate < handle
     % SIMSOCKETDELEGATE   Abstract delegate class for SimSocket
-    %   Required delegate methods are:
-    %    - response = simSocketReceivedRequest(this,simSocket,request);
+    %   Provides methods for simulator superclasses to implement.
     
     methods (Abstract)
 
-    	% Abstract request parse and call method.
-        simSocketReceivedRequest(this,request);
+    	% Parses request and calls simulator function.
+        %
+        % Parameter:
+        %  - request: String argument; request message.
+        %
+        % Return:
+        %  - response: Cell object; simulator functions response.
+        response = simSocketReceivedRequest(this,request);
 
     end
     
