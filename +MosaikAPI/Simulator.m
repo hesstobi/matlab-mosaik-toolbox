@@ -153,62 +153,8 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             meta = this.meta();
             
         end
-        
-        function finalize(this)
-            % Does nothing by default. Can be overridden.
-            %
-            % Parameter:
-            %  - none
-            %
-            % Return:
-            %  - none
 
-        end
-        
     end
-
-    methods (Access=private)
-        
-        function null = setup_done(this)
-            % Returns empty response.
-            %
-            % Parameter:
-            %  - none
-            %
-            % Return:
-            %  - none
-
-            null = [];
-
-        end
-        
-        function [ip, port] = parse_address(this, server)
-            % Parses address string. Returns ip as string and port as integer.
-            %
-            % Parameter:
-            %  - server: String argument; server ip and port; format: 'ip:port'
-            %
-            % Return:
-            %  - ip: String object; socket ip adress.
-            %  - port: Double object; socket port.
-
-            server = strsplit(server,':');
-            if ~isempty(server(1))
-                ip = server{1};
-            else
-                error('No server IP entered. Check server configuration.')
-            end
-            if ~isempty(server(2))
-                port = server(2);
-                port = str2double(port{:});
-                assert(isnumeric(port), 'Wrong server port. Check server configuration.')
-            else
-                error('No server port entered. Check server configuration.')
-            end
-
-        end
-        
-    end    
     
     methods (Abstract)
 
@@ -278,6 +224,56 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             names = fieldnames(struct);
             names = cellfun(@(x) strrep(x, '_0x2E_','.'),names,'UniformOutput',false);
             names = cellfun(@(x) strrep(x, '_0x2D_','-'),names,'UniformOutput',false);
+
+        end
+        
+        function [ip, port] = parse_address(server)
+            % Parses address string. Returns ip as string and port as integer.
+            %
+            % Parameter:
+            %  - server: String argument; server ip and port; format: 'ip:port'
+            %
+            % Return:
+            %  - ip: String object; socket ip adress.
+            %  - port: Double object; socket port.
+
+            server = strsplit(server,':');
+            if ~isempty(server(1))
+                ip = server{1};
+            else
+                error('No server IP entered. Check server configuration.')
+            end
+            if ~isempty(server(2))
+                port = server(2);
+                port = str2double(port{:});
+                assert(isnumeric(port), 'Wrong server port. Check server configuration.')
+            else
+                error('No server port entered. Check server configuration.')
+            end
+
+        end
+
+        function finalize()
+            % Does nothing by default. Can be overridden.
+            %
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
+
+        end
+
+        function null = setup_done()
+            % Returns empty response.
+            %
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
+
+            null = [];
 
         end
 
