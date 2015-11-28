@@ -19,7 +19,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
     methods 
         
         function this = ModelSimulator(varargin)
-            % Constructor of the class ModelSimulator
+            % Constructor of the class ModelSimulator.
             %
             % Parameter:
             %
@@ -27,7 +27,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             %
             % Return:
             %
-            %  - this: ModelSimulator object
+            %  - this: ModelSimulator object.
 
             this = this@MosaikAPI.Simulator(varargin{:});
             
@@ -143,13 +143,13 @@ classdef ModelSimulator < MosaikAPI.Simulator
     methods
         
         function dscrList = create(this,num,model,varargin)
-            % Creates a given model a given time. Passes unspecified amount of arguments.
+            % Creates a given model a given time. Passes unspecified
+            % amount of arguments.
             %
             % Parameter:
             %
             %  - num:      Double argument; amount of models.
-            %  - model:    String argument containing
-            %              models name.
+            %  - model:    String argument; models name.
             %  - varargin: Optional arguments.
             %
             % Return:
@@ -198,7 +198,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             %
             % Parameter:
             %  - outputs: Struct argument; requested eids and its
-            %             attributes.
+            %                              attributes.
             %
             % Return:
             %  - data: Struct object; eids and values of requested data.
@@ -217,7 +217,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             % Parameter:
             %
             %  - inputs: Struct argument; target eids, its attributes
-            %            and new values.
+            %                             and new values.
             %
             % Return:
             %
@@ -239,7 +239,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             % Return:
             %
             %  - value: Cell object; model name without package
-            %           prefix.
+            %                        prefix.
 
             % Creates cell array with second part of provided models name
             % Example: providedModels = {'Model.Battery',' Model.Load'}, value = {'Battery', 'Load'}
@@ -252,12 +252,12 @@ classdef ModelSimulator < MosaikAPI.Simulator
             %
             % Parameter:
             %
-            %  - model: String argument;  specified model.
+            %  - model: String argument; specified model.
             %
             % Return:
             %
             %  - value: String object; package prefix and
-            %           model name.
+            %                          model name.
 
             % Compares model second name against given model name
             % Example: model = 'Battery', idx = [true, false], value = 'Model.Battery'

@@ -21,18 +21,18 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
     methods
         
         function this = Simulator(server,varargin)
-            % Constructor of the class Simulator
+            % Constructor of the class Simulator.
             %
             % Parameter:
             %  - server: String argument; server ip and port; format: 'ip:port'.
-            %  - varargin: Optional arguments
+            %  - varargin: Optional arguments.
             %              debug: false (default)|true - Create the simulator in
             %              debug mode where no socket server is started.
             %              message:output: false (default)|true - Shows socket
             %              communication messages. 
             %
             % Return:
-            %  - this: Simulator object
+            %  - this: Simulator object.
             
             p = inputParser;
             addRequired(p,'server',@ischar);

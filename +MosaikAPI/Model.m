@@ -17,7 +17,7 @@ classdef Model < handle
             % Parameter:
             %
             %  - sim: String argument; associated simulator
-            %         instance.
+            %                          instance.
             %
             %  - eid: String argument; model entitiy id.
             %
@@ -53,7 +53,7 @@ classdef Model < handle
             % Parameter:
             %
             %  - data: Struct argument; target attributes
-            %          and its new values.
+            %                           and its new values.
             %
             % Return:
             %
