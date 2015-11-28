@@ -10,10 +10,10 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
     
     properties
 
-        socket             % Associated socket client
-        mosaik             % Assiciated mosaik proxy
-        sid = 'Matlab'     % Simulator ID
-        shutdown = false   % Instance shutdown toggle
+        socket				% Associated socket client
+        mosaik				% Assiciated mosaik proxy
+        sid = 'Matlab'		% Simulator ID
+        verbose				% Instance shutdown toggle
 
     end
     
@@ -37,19 +37,23 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             p = inputParser;
             addRequired(p,'server',@ischar);
             addOptional(p,'debug',false,@islogical);
+            addParameter(p,'verbose',false,@islogical);
             parse(p,server,varargin{:});
             
             server = p.Results.server;
-            
+
+            this.verbose = p.Results.verbose;            
+            disp(this.verbose);
+
             % Gets server from mosaik and start tcpclient at given host and port.
             assert(~isempty(strfind(server,':')), 'Wrong server configuration. Check server configuration.')
-            [ip,port] = parse_address(this,server);
+            [ip,port] = this.parseAddress(server);
 
             this.mosaik = MosaikAPI.MosaikProxy(this);
             
             if ~p.Results.debug
                 % Creates socket
-                this.socket = MosaikAPI.SimSocket(ip,port,this);
+                this.socket = MosaikAPI.SimSocket(ip,port,this.verbose,this);
                 % Starts the socket client and waiting for messages
                 this.socket.start();
                 % Delete the Socket
@@ -57,7 +61,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
                 % Call the finalize methode()
                 this.finalize();
                 % Close Matlab with timer
-                if this.shutdown
+                if ~this.verbose
                     t = timer();
                     t.StartDelay = 1;
                     t.TimerFcn = @(myTimerObj, thisEvent)exit;

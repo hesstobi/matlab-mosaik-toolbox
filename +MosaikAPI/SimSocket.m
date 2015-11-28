@@ -7,7 +7,7 @@ classdef SimSocket < handle
         server					% Server IP
         port					% Server Port
         delegate				% Associated delegate
-        message_output = true	% Socket message output toggle
+        verbose 				% Socket message output toggle
 
     end
     
@@ -21,7 +21,7 @@ classdef SimSocket < handle
 
     methods
         
-        function this = SimSocket(server,port,varargin)
+        function this = SimSocket(server,port,verbose,varargin)
             % Constructor of the class SimSocket.
             %
             % Parameter:
@@ -37,11 +37,13 @@ classdef SimSocket < handle
             p = inputParser;
             addRequired(p,'server',@ischar);
             addRequired(p,'port',@(x)validateattributes(x,{'numeric'},{'scalar','integer','positive'}));
+            addRequired(p,'verbose',false,@islogical);
             addOptional(p,'delegate',[],@(x)isa(x,'MosaikAPI.SimSocketDelegate'));
             parse(p,server,port,varargin{:});
             
             this.server = p.Results.server;
             this.port = p.Results.port;
+            this.verbose = p.Results.verbose;
             this.delegate = p.Results.delegate;
             this.socket = tcpclient(this.server,this.port);
 
@@ -129,9 +131,11 @@ classdef SimSocket < handle
             message = strrep(message, ',null', '');
             message = strrep(message, 'null,', '');
 
-            this.outp(message);
+            if this.verbose
+                disp(message(5:end));
+            end
 
-            message = [this.make_header(message) uint8(message)];
+            message = [this.makeHeader(message) uint8(message)];
 
         end
         
@@ -146,32 +150,37 @@ classdef SimSocket < handle
             %  - id: Double object; message id;
             %  - content: String object; message content.
             
-            this.outp(char(message(5:end)));
+            if this.verbose
+                disp(char(message(5:end)));
+            end
 
-            message = loadjson(char(message(5:end)));
-            message = savejson('',message)
+            message = char(message(5:end));
             message = strrep(message, ',null', '');
             message = strrep(message, 'null,', '');
-            disp(message);
-            loadjson(message);
+            message = strrep(message, '\",', '"');
+            message = loadjson(message);
 
             if ~iscell(message)
                 message = num2cell(message);
             end
 
             type = message{1};
+            disp(type);
             id = message{2};
+            disp(id);
             if ~lt(numel(message),3)
                 content = message{3};
             else
                 content = struct;
             end
 
+            disp(content);
+
             this.last_id = id;
             
         end
         
-        function value = next_request_id(this)
+        function value = nextRequestID(this)
         	% Creates next message id.
 
         	%
@@ -183,21 +192,6 @@ classdef SimSocket < handle
 
             this.last_id = this.last_id+1;
             value = this.last_id;
-
-        end
-        
-        function outp(this,message)
-        	% If toggled, prints socket messages.
-        	%
-            % Parameter:
-            %  - message: String argument; socket message.
-            %
-            % Return:
-            %  - none
-
-            if this.message_output
-                disp(message);
-            end
 
         end
         
