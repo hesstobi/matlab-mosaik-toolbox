@@ -22,18 +22,18 @@ classdef SimSocket < handle
     methods
         
         function this = SimSocket(server,port,varargin)
-            % Constructor of the class SimSocket
+            % Constructor of the class SimSocket.
             %
             % Parameter:
-            %  - server  : Server IP as char
-            %  - port    : Server port as numeric
-            %  - delegate: the delegate as SimSocketDelegate (optional)
+            %  - server: String argument; server ip.
+            %  - port: Double argument; server port.
+            %  - varargin: Optional arguments; associated delegate
+            %                                  instance.
             %
             % Return:
-            %  - this: SimSocket Object
+            %  - this: SimSocket object.
             
             % Validate und parse the input
-
             p = inputParser;
             addRequired(p,'server',@ischar);
             addRequired(p,'port',@(x)validateattributes(x,{'numeric'},{'scalar','integer','positive'}));
@@ -49,6 +49,12 @@ classdef SimSocket < handle
         
         function delete(this)
         	% Remove associated delegate.
+        	%
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
 
             this.delegate = [];
 
@@ -59,7 +65,14 @@ classdef SimSocket < handle
     methods (Access=private)
         
         function main_loop(this)
-        	% Waits for message, deserializes it, sends request to delegate, receives answer from delegate, serializes it, sends it socket.
+        	% Waits for message, deserializes it, sends request to delegate,
+        	% receives answer from delegate, serializes it, sends it socket.
+        	%
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
                         
             while ~this.stopServer 
                 try
@@ -70,7 +83,7 @@ classdef SimSocket < handle
                     
                     % Read and deserialize the request
                     request = read(this.socket);
-                    [~,id,content] = this.deserialize(request);
+                    [type,id,content] = this.deserialize(request);
 
                     % Forward the request to the Delegate
                     %response = content;
@@ -90,6 +103,14 @@ classdef SimSocket < handle
         
         function message = serialize(this,content,type,varargin)
         	% Converts response from Matlab data types to JSON.
+        	%
+            % Parameter:
+            %  - content: String argument; message content.
+            %  - type: Double argument; message type.
+            %  - varargin: Double argument; message id.
+            %
+            % Return:
+            %  - message: Bytes object; socket message.
 
             % if no id is given it is set automaticaly
             if nargin < 4
@@ -116,6 +137,14 @@ classdef SimSocket < handle
         
         function [type,id,content] = deserialize(this,message)
         	% Converts request from JSON to Matlab data types.
+        	%
+            % Parameter:
+            %  - message: Byte argument; socket message.
+            %
+            % Return:
+            %  - type: Double object; message type;
+            %  - id: Double object; message id;
+            %  - content: String object; message content.
             
             this.outp(char(message(5:end)));
 
@@ -142,8 +171,14 @@ classdef SimSocket < handle
             
         end
 
-        function header = make_header(~,message)
+        function header = make_header(this,message)
         	% Creates byte header for socket message.
+        	%
+            % Parameter:
+            %  - message: String argument; socket message.
+            %
+            % Return:
+            %  - header: Byte object; message size;
 
             sizeMessage = numel(message);
             header = typecast(swapbytes(uint32(sizeMessage)),'uint8');
@@ -153,6 +188,13 @@ classdef SimSocket < handle
         function value = next_request_id(this)
         	% Creates next message id.
 
+        	%
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - value: Double object; message id.
+
             this.last_id = this.last_id+1;
             value = this.last_id;
 
@@ -160,6 +202,12 @@ classdef SimSocket < handle
         
         function outp(this,message)
         	% If toggled, prints socket messages.
+        	%
+            % Parameter:
+            %  - message: String argument; socket message.
+            %
+            % Return:
+            %  - none
 
             if this.message_output
                 disp(message);
@@ -173,6 +221,12 @@ classdef SimSocket < handle
         
         function start(this)
         	% Starts main loop.
+        	%
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
 
             assert(~isempty(this.delegate),'You need to specify a delegate before starting the socket');
             this.main_loop();
@@ -181,7 +235,13 @@ classdef SimSocket < handle
         
         
         function stop(this)
-        	% Activates server stop trigger.
+        	% Activates server stop toggle.
+        	%
+            % Parameter:
+            %  - none
+            %
+            % Return:
+            %  - none
 
             this.stopServer = true;
         end
@@ -190,6 +250,12 @@ classdef SimSocket < handle
         
         function response = send_request(this,content)
         	% Sends request to socket server.
+        	%
+            % Parameter:
+            %  - content: Struct argument; socket request message.
+            %
+            % Return:
+            %  - response: Struct argument; socket return message.
 
             % Serialize and write the request
             request = this.serialize(content,0);
