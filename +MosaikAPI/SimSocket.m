@@ -170,20 +170,6 @@ classdef SimSocket < handle
             this.last_id = id;
             
         end
-
-        function header = make_header(this,message)
-        	% Creates byte header for socket message.
-        	%
-            % Parameter:
-            %  - message: String argument; socket message.
-            %
-            % Return:
-            %  - header: Byte object; message size;
-
-            sizeMessage = numel(message);
-            header = typecast(swapbytes(uint32(sizeMessage)),'uint8');
-
-        end
         
         function value = next_request_id(this)
         	% Creates next message id.
@@ -270,6 +256,24 @@ classdef SimSocket < handle
             response = read(this.socket);
             [~,~,content] = this.deserialize(response);
             response = content;
+        end
+
+    end
+
+    methods (Static)
+
+        function header = make_header(~,message)
+        	% Creates byte header for socket message.
+        	%
+            % Parameter:
+            %  - message: String argument; socket message.
+            %
+            % Return:
+            %  - header: Byte object; message size;
+
+            sizeMessage = numel(message);
+            header = typecast(swapbytes(uint32(sizeMessage)),'uint8');
+
         end
 
     end
