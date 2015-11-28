@@ -16,11 +16,10 @@ classdef Model < handle
             %
             % Parameter:
             %
-            %  - sim: String argument containing
-            %         associated simulator instance.
+            %  - sim: String argument; associated simulator
+            %         instance.
             %
-            %  - eid: String argument containing
-            %         model entitiy id.
+            %  - eid: String argument; model entitiy id.
             %
             % Return:
             %
@@ -36,13 +35,11 @@ classdef Model < handle
             %
             % Parameter:
             %
-            %  - attrs: Cell argument containing
-            %           required attributes.
+            %  - attrs: Cell argument; required attributes.
             %
             % Return:
             %
-            %  - data: Struct object containing
-            %          required data.
+            %  - data: Struct object; requested data.
             
             attrs = unique(attrs);
             values = cellfun(@(x) this.(x),attrs,'UniformOutput',false);
@@ -55,9 +52,8 @@ classdef Model < handle
             %
             % Parameter:
             %
-            %  - data: Struct argument containing
-            %          target attributes and its
-            %          new values.
+            %  - data: Struct argument; target attributes
+            %          and its new values.
             %
             % Return:
             %
@@ -82,8 +78,7 @@ classdef Model < handle
             %
             % Return:
             %
-            %  - value: Cell object containing
-            %           requested attributes.
+            %  - value: Cell object; requested attributes.
            
             value = this.meta().attrs;
             value = value(~cellfun(@isempty,value));
@@ -99,8 +94,7 @@ classdef Model < handle
             %
             % Return:
             %
-            %  - func: String object containing
-            %          model name.
+            %  - func: String object; model name.
 
             value = strsplit(class(this),'.');
             value = value{end};
@@ -117,7 +111,7 @@ classdef Model < handle
         %  - none
         %
         % Return:
-        %  - value: Struct object containing meta information.
+        %  - value: Struct object; meta information.
         value = meta();
 
     end
@@ -127,7 +121,7 @@ classdef Model < handle
         % Performs models simulation step.
         %
         % Parameter:
-        %  - varargin: Struct object containing optional parameters.
+        %  - varargin: Optional arguments.
         %
         % Return:
         %  - none

@@ -24,8 +24,8 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             % Constructor of the class Simulator
             %
             % Parameter:
-            %  - server: String object containing server IP and port, format: 'IP:port'.
-            %  - varargin: Optional parameter value list
+            %  - server: String argument; server ip and port; format: 'ip:port'.
+            %  - varargin: Optional arguments
             %              debug: false (default)|true - Create the simulator in
             %              debug mode where no socket server is started.
             %              message:output: false (default)|true - Shows socket
@@ -74,7 +74,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             %  - none
             %
             % Return:
-            %  - value: Struct object containing meta information.
+            %  - value: Struct object; meta information.
 
             value.api_version = this.api_version;
             value.extra_methods = {};
@@ -86,10 +86,10 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             % Parses request and calls simulator function.
             %
             % Parameter:
-            %  - request: String object containing request message.
+            %  - request: String argument; request message.
             %
             % Return:
-            %  - response: Cell object containing simulator functions response.
+            %  - response: Cell object; simulator functions response.
 
             func = request{1};
             func = str2func(func);
@@ -112,11 +112,11 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
 
         end
         
-        function stop = stop(this, ~, ~)
+        function stop = stop(this, varargin)
             % Closes socket and returns 'stop'.
             %
             % Parameter:
-            %  - none
+            %  - varargin: Empty arguments.
             %
             % Return:
             %  - none
@@ -130,11 +130,11 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             % Sets simulator ID, verifies input arguments. Returns meta struct.
             %
             % Parameter:
-            %  - sid: String object containing simulator id.
-            %  - varargin: Struct object containing optional initial parameters.
+            %  - sid: String argument; simulator id.
+            %  - varargin: Optional arguments; initial parameters.
             %
             % Return:
-            %  - this: Struct object containing simulators meta information.
+            %  - this: Struct object; simulators meta information.
 
             this.sid = sid;
             
@@ -169,7 +169,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
 
     methods (Access=private)
         
-        function null = setup_done(~)
+        function null = setup_done(this)
             % Returns empty response.
             %
             % Parameter:
@@ -182,15 +182,15 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
 
         end
         
-        function [ip, port] = parse_address(~, server)
+        function [ip, port] = parse_address(this, server)
             % Parses address string. Returns ip as string and port as integer.
             %
             % Parameter:
-            %  - server: Server IP and port as char, format: 'IP:port'
+            %  - server: String argument; server ip and port; format: 'ip:port'
             %
             % Return:
-            %  - ip: String object containing socket ip adress.
-            %  - port: Double object containing socket port.
+            %  - ip: String object; socket ip adress.
+            %  - port: Double object; socket port.
 
             server = strsplit(server,':');
             if ~isempty(server(1))
@@ -215,28 +215,29 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
         % Creates models of specified amount, type and initial parameters.
         %
         % Parameter:
-        %  - num: Double object containing amount of model to be created.
-        %  - model: String object containing type of models to be created.
-        %  - varargin: Struct object containing optional model parameters.
+        %  - num: Double argument; amount of model to be created.
+        %  - model: String argument; type of models to be created.
+        %  - varargin: Optional arguments; model parameters.
         %
         % Return:
-        %  - entity_list: Cell object containing structs containing model information.
+        %  - entity_list: Cell object; structs with model information.
         entity_list = create(this,num,model,varargin);
 
         % Performs simulation step.
         %
         % Parameter:
-        %  - time: Double object containing time of this simulation step.
-        %  - varargin: Struct object containing input values.
+        %  - time: Double argument; time of this simulation step.
+        %  - varargin: Struct argument; input values.
+        %              Optional arguments.
         %
         % Return:
-        %  - time_next_step: double objectcontaining time of next simulation step.
+        %  - time_next_step: Double object; time of next simulation step.
         time_next_step = step(this,time,varargin);
         
         % Receives data for requested attributes.
         %
         % Parameter:
-        %  - outputs: Struct object containing requested attributes.
+        %  - outputs: Struct argument; requested attributes.
         %
         % Return:
         %  - data: Struct object containing requested values.
@@ -250,10 +251,10 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             % Sums up all inputs for each model.
             %
             % Parameter:
-            %  - inputs: Struct object containing input values.
+            %  - inputs: Struct argument; input values.
             %
             % Return:
-            %  - value: Struct object containing summed up input values.
+            %  - value: Struct object; summed up input values.
 
             
             % BUG: does not properly read structs sometimes
@@ -268,10 +269,10 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             % Removes hard encoding from struct fieldnames.
             %
             % Parameter:
-            %  - struct: Struct object.
+            %  - struct: Struct argument.
             %
             % Return:
-            %  - names: Cell object containing struct fieldnames.
+            %  - names: Cell object; struct fieldnames.
 
             names = fieldnames(struct);
             names = cellfun(@(x) strrep(x, '_0x2E_','.'),names,'UniformOutput',false);
