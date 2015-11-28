@@ -17,7 +17,7 @@ To initiate a simulator, add the following to your `sim_config`:
 sim_config = {
     'Matlab': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)),
-		'cmd': 'matlab.exe -minimize -nosplash -r "server=\'%(addr)s\';Simulator(\'%(addr)s\')"'
+		'cmd': 'matlab.exe -minimize -nosplash -r "Simulator(\'%(addr)s\')"'
 	}
 }
 ```
@@ -269,7 +269,7 @@ Creates output values for controlled models based on input values and controller
 
 **Parameters:**  
 **_Name:_**  
-inputs
+inputs  
 **_Type:_**  
 *Struct*  
 **_Description:_**  
