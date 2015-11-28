@@ -49,11 +49,11 @@ classdef MosaikProxy < handle
 			%
 			% Parameter:
 			%
-			%  - varargin: String argument; model eid.
+			%  - varargin: String or cell argument; model eid or model eids.
 			%
 			% Return:
 			%
-			%  - related_entities: String object; related entities.
+			%  - related_entities: Struct object; (source entitiy and) related entities.
 			
 			content{1} = 'get_related_entities';        
 			if gt(nargin,1)

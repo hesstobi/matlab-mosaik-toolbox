@@ -42,7 +42,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             %
             % Return:
             %
-            %  - value: struct object; meta information.
+            %  - value: Struct object; meta information.
 
             value = meta@MosaikAPI.Simulator(this);
            
@@ -142,19 +142,19 @@ classdef ModelSimulator < MosaikAPI.Simulator
     
     methods
         
-        function dscrList = create(this,num,model,varargin)
+        function dscr_list = create(this,num,model,varargin)
             % Creates a given model a given time. Passes unspecified
             % amount of arguments.
             %
             % Parameter:
             %
-            %  - num:      Double argument; amount of models to be created.
-            %  - model:    String argument; type of models to be created.
+            %  - num: Double argument; amount of models to be created.
+            %  - model: String argument; type of models to be created.
             %  - varargin: Optional arguments.
             %
             % Return:
             %
-            %  - dscrList: Cell object; structs with created model
+            %  - dscr_list: Cell object; structs with created model
 	        %                           information.
 
             % Get model function.
@@ -165,8 +165,8 @@ classdef ModelSimulator < MosaikAPI.Simulator
                 this.entities{end+1} = modelFunc(this,this.nextEidForModel(model),varargin{:});
             end
             
-            % Create dscrList for previously created entities.
-            dscrList = this.dscrListForEntities(numel(this.entities)-num+1:numel(this.entities));
+            % Create dscr_list for previously created entities.
+            dscr_list = this.dscrListForEntities(numel(this.entities)-num+1:numel(this.entities));
         
         end
         
@@ -174,7 +174,7 @@ classdef ModelSimulator < MosaikAPI.Simulator
             % Performs a step with given values for given attributes.
             %
             % Parameter:
-            %  - time:     Double argument; time of this simulation step.
+            %  - time: Double argument; time of this simulation step.
             %  - varargin: Struct argument; input values.
             %              Optional arguments.
             %
