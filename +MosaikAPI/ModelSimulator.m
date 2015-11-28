@@ -148,13 +148,14 @@ classdef ModelSimulator < MosaikAPI.Simulator
             %
             % Parameter:
             %
-            %  - num:      Double argument; amount of models.
-            %  - model:    String argument; models name.
+            %  - num:      Double argument; amount of models to be created.
+            %  - model:    String argument; type of models to be created.
             %  - varargin: Optional arguments.
             %
             % Return:
             %
-            %  - dscrList: Cell object; all created model objects.
+            %  - dscrList: Cell object; structs with created model
+	        %                           information.
 
             % Get model function.
             modelFunc = this.functionForModelNameWithoutPackage(model);
@@ -173,12 +174,12 @@ classdef ModelSimulator < MosaikAPI.Simulator
             % Performs a step with given values for given attributes.
             %
             % Parameter:
-            %  - time:     Double argument; last simulated time.
-            %  - varargin: Struct argument; Input values.
+            %  - time:     Double argument; time of this simulation step.
+            %  - varargin: Struct argument; input values.
             %              Optional arguments.
             %
             % Return:
-            %  - time_next_step: Double object; new simulated time.
+            %  - time_next_step: Double object; time of next simulation step.
             
             if ~isempty(varargin)
                 % Set data to entities.

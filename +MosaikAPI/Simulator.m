@@ -220,7 +220,8 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
         %  - varargin: Optional arguments; model parameters.
         %
         % Return:
-        %  - entity_list: Cell object; structs with model information.
+        %  - entity_list: Cell object; structs with created model
+        %                              information.
         entity_list = create(this,num,model,varargin);
 
         % Performs simulation step.
@@ -237,10 +238,10 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
         % Receives data for requested attributes.
         %
         % Parameter:
-        %  - outputs: Struct argument; requested attributes.
-        %
+        %  - outputs: Struct argument; requested eids and its
+        %                              attributes.
         % Return:
-        %  - data: Struct object containing requested values.
+        %  - data: Struct object; eids and values of requested data.
         data = get_data(this,outputs);        
 
     end
