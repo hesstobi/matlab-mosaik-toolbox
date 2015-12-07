@@ -1,19 +1,19 @@
 classdef Agent < MosaikAPI.Model
-    % AGENT   Example agent model for ExampleMas
-    %   Simple agent model that defines other models input value.
-    
-    properties
+	% AGENT   Example agent model for ExampleMas
+	%   Simple agent model that defines other models input value.
+	
+	properties
 
-        rel		% Related models
-        val		% Constant output value
-        link	% Connecting attribute
+		rel		% Related models
+		val		% Constant output value
+		link	% Connecting attribute
 
-    end
+	end
 
-    methods 
+	methods 
 
-        function this = Agent(sim,eid,varargin)
-        	% Constructor of the class Agent
+		function this = Agent(sim,eid,varargin)
+			% Constructor of the class Agent
 			%
 			% Parameter:
 			%  - sim: Related simulator
@@ -23,21 +23,21 @@ classdef Agent < MosaikAPI.Model
 			% Return:
 			%  - this: Agent object
 
-            this = this@MosaikAPI.Model(sim,eid);
+			this = this@MosaikAPI.Model(sim,eid);
 
-            p = inputParser;
-            addOptional(p,'val',10,@(x)validateattributes(x,{'numeric'},{'scalar'}));
-            parse(p,varargin{:});
+			p = inputParser;
+			addOptional(p,'val',10,@(x)validateattributes(x,{'numeric'},{'scalar'}));
+			parse(p,varargin{:});
 
-            this.val = p.Results.val;     
+			this.val = p.Results.val;     
 
-        end
+		end
 
-        function step(this,time,varargin)
-        	% Checks for related models, gets their current data and sets a new input.
+		function step(this,time,varargin)
+			% Checks for related models, gets their current data and sets a new input.
 
-        	% Receives all related models.
-            if eq(time,0)
+			% Receives all related models.
+			if eq(time,0)
 				this.rel = this.sim.mosaik.get_related_entities(this.eid);
 				disp(savejson('',this.rel));
 			end
@@ -66,22 +66,22 @@ classdef Agent < MosaikAPI.Model
 			end
 			this.sim.mosaik.set_data(inputs);
 
-        end       
+		end       
 
-    end
+	end
 
-    methods (Static)
+	methods (Static)
 
-        function value = meta()
-        	% Adds model meta content to meta struct.
+		function value = meta()
+			% Adds model meta content to meta struct.
 
-            value.public = true;
-            value.attrs = {'link',[]};
-            value.params = {'val',[]};
-            value.any_inputs = true;
-            
-        end
+			value.public = true;
+			value.attrs = {'link',[]};
+			value.params = {'val',[]};
+			value.any_inputs = true;
+			
+		end
 
-    end
+	end
 
 end
