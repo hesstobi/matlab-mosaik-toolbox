@@ -32,7 +32,7 @@ sim_config = {
 ```
 Where *Package* is your MATLab package containing the *Simulator*. In this example, the folder structure would be `\+Package\Simulator.m`.
 
-To start your simulator in verbose mode (socket messages are displayed and simulator does not exit at the end) add `,\'verbose\',true` to your simulator parameters:
+To start your simulator in *verbose mode* (socket messages are displayed and simulator does not exit at the end) add `,\'verbose\',true` to your simulator parameters:
 ```python
 sim_config = {
     'Matlab': {
