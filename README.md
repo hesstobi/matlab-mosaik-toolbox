@@ -32,6 +32,15 @@ sim_config = {
 ```
 Where *Package* is your MATLab package containing the *Simulator*. In this example, the folder structure would be `\+Package\Simulator.m`.
 
+To start your simulator in verbose mode (socket messages are displayed and simulator does not exit at the end) add `,\'verbose\',true` to your simulator parameters:
+```python
+sim_config = {
+    'Matlab': {
+		'cwd': os.path.dirname(os.path.realpath(__file__)),
+		'cmd': 'matlab.exe -minimize -nosplash -r "Simulator(\'%(addr)s\',\'verbose\',true)"'
+	}
+}
+```
 It is also recommended to increase the timeout since MATLab can take a little time to load. This can be done by changing the `mosaik_config`:
 ```python
 mosaik_config = {
@@ -288,10 +297,167 @@ Output values in the form `source_full_id._destination_full_id.attribute = value
 
 To understand the basic functionality there are example demos provided. It is also recommended to use the examples as reference when reading the developer's guide.
 
+All simulators used in the example demos are implementations of `MosaikAPI.ModelSimulator`.  
+
 #### ExampleSim
+
+ExampleSim demonstrates the APIs basic functionality.  
+It only has the model 'Model':  
+```matlab
+properties
+
+	providedModels = {'Model'}
+
+end
+```
+This model has a defined delta and current value:
+```matlab
+properties
+
+	delta = 1
+	val
+
+end
+```
+In every step the model adds the delta value to its current value:
+```matlab
+function step(this,~,varargin)
+
+	this.val = this.val + this.delta; 
+
+end
+```
+While instantiating the model the initial value has to be defined:
+```matlab
+function this = Model(sim,eid,varargin)
+
+	this = this@MosaikAPI.Model(sim,eid);
+	
+	p = inputParser;
+	addOptional(p,'init_value',0,@(x)validateattributes(x,{'numeric'},{'scalar'}));
+	parse(p,varargin{:});
+	
+	this.val = p.Results.init_value;   
+
+end
+```
 
 #### ExampleMas
 
+ExampleMas demonstrates the APIs advanced functionality.  
+It provides the model 'Agent' which can control ExampleSims 'Model' model via asynchronous requests:
+```matlab
+properties
+
+    providedModels = {'Agent'}
+
+end
+```
+```matlab
+properties
+
+    rel
+    val
+    link	
+
+end
+```
+Before executing MosaikAPIs.ModelSimulators step ExampleMas requests and displays the progress:
+```matlab
+function time_next_step = step(this,time,varargin)
+
+	progress = this.mosaik.get_progress;
+	disp(strcat('Progress: ',num2str(progress,2)));
+
+	time_next_step = step@MosaikAPI.ModelSimulator(this,time,varargin{1});
+
+end
+```
+Then it performs a model step in which the 'Agent' models control their related 'Model' models.  
+First it obtains all related models:
+```matlab
+if eq(time,0)
+	this.rel = this.sim.mosaik.get_related_entities(this.eid);
+	disp(savejson('',this.rel));
+end
+```
+Then it gets their current data:
+```matlab
+for i = 1:numel(rels)
+	full_id = rels{i};
+	outputs.(full_id) = {'val',[]};					
+end
+data = this.sim.mosaik.get_data(outputs);
+disp(savejson('',data));
+```
+At last it sets a predefined value as the 'Model' models new input:
+```matlab
+for i = 1:numel(rels)
+	full_id = rels{i};
+	inputs.(src_full_id).(full_id).val = this.val;				
+end
+this.sim.mosaik.set_data(inputs);
+```
+There are three scenarios to test:  
+Three models connected to three agents  
+
+
 #### ExampleBatteryLoadSim
 
+ExampleBatteryLoadSim simulates a battery to which various loads can be connected. The load consumes capacitance every step and feeds it back to the battery:
+```matlab
+rels = this.sim.mosaik.get_related_entities(this.eid);
+fn_src_full_id = fieldnames(rels);
+l = struct;
+for j = 1:numel(fn_src_full_id)
+	if strcmp(rels.(fn_src_full_id{j}).type, 'Battery')
+		l.(fn_src_full_id{j}) = struct('consumed_capacitance', this.consumed_capacitance);
+	end			
+end
+output = struct;
+output.([strrep(this.sim.sid, '-', '_0x2D_'), '_0x2E_', this.eid]) = l;
+this.sim.mosaik.set_data(output);
+```
+Based on the consumed capacitance the battery voltage decreases:
+```matlab
+this.capacitance = this.capacitance - this.consumed_capacitance;
+
+this.voltage = (((this.capacitance / this.init_capacitance) ^ 0.5) * this.init_voltage);
+```
+There is a predefined voltage tolerance for every load and if the the voltage falls below that tolerance the load switches off for the rest of the simulation duration:
+```matlab
+if ge(this.voltage_in,(this.voltage*(1-this.tolerance))) && le (this.voltage_in,(this.voltage*(1+this.tolerance)))
+	this.consumed_capacitance = ((this.voltage_in/this.resistance)*this.sim.step_size);
+end
+```
+
+
 #### ExampleBatteryLoadSimControlled
+
+ExampleBatteryLoadSimControlled is basically the same simulation as ExampleBatteryLoadSim, but the voltage calculation is done in a battery controller:
+```matlab
+capacitance = inputs.(this.eid).capacitance.(batteries{i});
+init_capacitance = this.getValue(batteries{i},'init_capacitance');
+this.voltage = (capacitance / init_capacitance)^2 * this.init_voltage;
+```
+The controller then decides wether the current voltage is above the shutdown voltage and calaculates consumed capacitance by the connected loads:
+```matlab
+if ge(this.voltage,this.shutdown_voltage)
+
+	total_consumed_cap = 0;
+
+	for j= 1:numel(loads)
+
+		resistance = this.getValue(loads{j},'resistance');
+		consumed_capacitance = (this.voltage / resistance) * this.step_size;
+
+		outputs.(loads{j}).consumed_capacitance = consumed_capacitance;
+		total_consumed_cap = total_consumed_cap + consumed_capacitance;
+
+	end
+
+	outputs.(batteries{i}).voltage = this.voltage;
+	outputs.(batteries{i}).consumed_capacitance = total_consumed_cap;
+
+end
+```
