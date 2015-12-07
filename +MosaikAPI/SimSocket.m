@@ -132,7 +132,7 @@ classdef SimSocket < handle
             message = strrep(message, 'null,', '');
 
             if this.verbose
-                disp(message(5:end));
+                disp(message);
             end
 
             message = [this.makeHeader(message) uint8(message)];
@@ -150,14 +150,16 @@ classdef SimSocket < handle
             %  - id: Double object; message id;
             %  - content: String object; message content.
             
-            if this.verbose
-                disp(char(message(5:end)));
-            end
-
             message = char(message(5:end));
             message = strrep(message, ',null', '');
             message = strrep(message, 'null,', '');
+            message = strrep(message, 'null', '0');
             message = strrep(message, '\",', '"');
+
+            if this.verbose
+                disp(message);
+            end
+            
             message = loadjson(message);
 
             if ~iscell(message)
@@ -165,16 +167,12 @@ classdef SimSocket < handle
             end
 
             type = message{1};
-            disp(type);
             id = message{2};
-            disp(id);
             if ~lt(numel(message),3)
                 content = message{3};
             else
                 content = struct;
             end
-
-            disp(content);
 
             this.last_id = id;
             
