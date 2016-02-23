@@ -29,7 +29,7 @@ classdef SimSocketTest < matlab.unittest.TestCase & MosaikAPI.SimSocketDelegate
            
             t = timer;
             t.StartDelay = 0.1;
-            t.TimerFcn  = @(myTimerObj, thisEvent)MosaikAPI.SimSocket('localhost',8000).send_request(data);
+            t.TimerFcn  = @(myTimerObj, thisEvent)MosaikAPI.SimSocket('localhost',8000).sendRequest(data);
             start(t)
             [~,cmdout] = system('python receivingServer.py');
             delete(t);
