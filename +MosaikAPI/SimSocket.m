@@ -123,8 +123,19 @@ classdef SimSocket < handle
             message{3}=content;
             message{1}=type;
             message{2}=varargin{1};            
+            try
+                message = savejson('',message,'ParseLogical',1,'Compact',1);
+            catch ME
+                if strcmp(ME.identifier,'MATLAB:UndefinedFunction')
+                    msg = ['To use this Toolbox you need to have ',...
+                        'the JSONlab Tollbox installed. You can download it form ', ...
+                        'MatlabCentral: <a href="https://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files">JSONlab</a>'];
+                    causeException = MException('MOSAIKAPI:SimSocket:dependencies',msg);
+                    ME = addCause(ME,causeException);
+                end
+                rethrow(ME)
+            end
             
-            message = savejson('',message,'ParseLogical',1,'Compact',1);
             message = strrep(message, '_0x2D_','-');
             message = strrep(message, '_0x2E_','.');
             message = strrep(message, sprintf('\t'), '');
@@ -161,7 +172,18 @@ classdef SimSocket < handle
                 disp(message);
             end
             
-            message = loadjson(message);
+            try
+                message = loadjson(message);
+            catch ME
+                if strcmp(ME.identifier,'MATLAB:UndefinedFunction')
+                    msg = ['To use this Toolbox you need to have ',...
+                        'the JSONlab Tollbox installed. You can download it form ', ...
+                        'MatlabCentral: <a href="https://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files">JSONlab</a>'];
+                    causeException = MException('MOSAIKAPI:SimSocket:dependencies',msg);
+                    ME = addCause(ME,causeException);
+                end
+                rethrow(ME)
+            end
 
             if ~iscell(message)
                 message = num2cell(message);
