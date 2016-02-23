@@ -21,14 +21,15 @@ classdef SimSocket < handle
 
     methods
         
-        function this = SimSocket(server,port,verbose,varargin)
+        function this = SimSocket(server,port,varargin)
             % Constructor of the class SimSocket.
             %
             % Parameter:
             %  - server: String argument; server ip.
             %  - port: Double argument; server port.
-            %  - varargin: Optional arguments; associated delegate
-            %                                  instance.
+            %  - varargin: Optional arguments; 
+            %                - verbose: verbose communication output
+            %                - delegate: associated delegate instance.
             %
             % Return:
             %  - this: SimSocket object.
@@ -37,9 +38,9 @@ classdef SimSocket < handle
             p = inputParser;
             addRequired(p,'server',@ischar);
             addRequired(p,'port',@(x)validateattributes(x,{'numeric'},{'scalar','integer','positive'}));
-            addRequired(p,'verbose',@islogical);
+            addOptional(p,'verbose',false,@islogical);
             addOptional(p,'delegate',[],@(x)isa(x,'MosaikAPI.SimSocketDelegate'));
-            parse(p,server,port,verbose,varargin{:});
+            parse(p,server,port,varargin{:});
             
             this.server = p.Results.server;
             this.port = p.Results.port;
