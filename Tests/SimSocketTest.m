@@ -154,8 +154,9 @@ classdef SimSocketTest < matlab.unittest.TestCase & MosaikAPI.SimSocketDelegate
             data.d = {'a',[]};
             data.e.a = 1;
             data.e.b = 2;
+            data.f = {'a'};
             
-            res = '[0,1,{"a": 1,"b": "test","c": ["a","b","c"],"d": ["a"],"e": {"a": 1,"b": 2}}]';
+            res = '[0,1,{"a": 1,"b": "test","c": ["a","b","c"],"d": ["a"],"e": {"a": 1,"b": 2},"f": ["a"]}]';
             
             [len,out] = this.tcpCommunicationSend(data);
             
