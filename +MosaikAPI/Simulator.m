@@ -28,7 +28,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             %  - varargin: Optional arguments.
             %              debug: false (default)|true - Create the simulator in
             %              debug mode where no socket server is started.
-            %              message:output: false (default)|true - Shows socket
+            %              verbose: false (default)|true - Shows socket
             %              communication messages. 
             %
             % Return:
@@ -37,7 +37,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
             p = inputParser;
             addRequired(p,'server',@ischar);
             addOptional(p,'debug',false,@islogical);
-            addParameter(p,'verbose',false,@islogical);
+            addOptional(p,'verbose',false,@islogical);
             parse(p,server,varargin{:});
             
             server = p.Results.server;
