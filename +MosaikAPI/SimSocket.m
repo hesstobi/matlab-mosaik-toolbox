@@ -3,22 +3,23 @@ classdef SimSocket < handle
     %   Provides the basic TCP socket comunication for MOSAIK.
     
     properties
-
+        
         server					% Server IP
         port					% Server Port
         delegate				% Associated delegate
         verbose 				% Verbose mode
-
+        
     end
     
     properties (Access=private)
-
+        
         socket					% Associated tcpclient
         last_id = 0				% Last socket message id
         stopServer = false		% Server shutdown trigger
-
+        bufferRemainder = []    % Incomplete Request data
+        messageCue = {}         % OpenMessageCue
     end
-
+    
     methods
         
         function this = SimSocket(server,port,varargin)
@@ -27,7 +28,7 @@ classdef SimSocket < handle
             % Parameter:
             %  - server: String argument; server ip.
             %  - port: Double argument; server port.
-            %  - varargin: Optional arguments; 
+            %  - varargin: Optional arguments;
             %                - verbose: verbose communication output
             %                - delegate: associated delegate instance.
             %
@@ -47,20 +48,20 @@ classdef SimSocket < handle
             this.verbose = p.Results.verbose;
             this.delegate = p.Results.delegate;
             this.socket = tcpclient(this.server,this.port);
-
+            
         end
         
         function delete(this)
-        	% Remove associated delegate.
-        	%
+            % Remove associated delegate.
+            %
             % Parameter:
             %  - none
             %
             % Return:
             %  - none
-
+            
             this.delegate = [];
-
+            
         end
         
     end
@@ -68,45 +69,105 @@ classdef SimSocket < handle
     methods (Access=private)
         
         function mainLoop(this)
-        	% Waits for message, deserializes it, sends request to delegate,
-        	% receives answer from delegate, serializes it, sends it socket.
-        	%
+            % Waits for message, deserializes it, sends request to delegate,
+            % receives answer from delegate, serializes it, sends it socket.
+            %
             % Parameter:
             %  - none
             %
             % Return:
             %  - none
-                        
-            while ~this.stopServer 
+            
+            while ~this.stopServer
                 try
-                    % Wait for bytes
-                    while ~this.socket.BytesAvailable
-                        pause(0.001);
+                                                           
+                    % Read Messages form the Socket
+                    messages = this.readSocket();
+                    
+                    % Add messages from the and clear the message cue
+                    messages = horzcat(this.messageCue,messages);
+                    this.messageCue = {};
+                    
+                    % Response to each message
+                    for idx = 1:numel(messages)
+                        [~,id,content] = this.deserialize(messages{idx});
+                        
+                        % Forward the request to the Delegate
+                        %response = content;
+                        response = this.delegate.simSocketReceivedRequest(content);
+                        
+                        % Serialize and write the response
+                        response = this.serialize(response,1,id);
+                        write(this.socket,response);
+                        
                     end
                     
-                    % Read and deserialize the request
-                    request = read(this.socket);
-                    [~,id,content] = this.deserialize(request);
-
-                    % Forward the request to the Delegate
-                    %response = content;
-                    response = this.delegate.simSocketReceivedRequest(content);
-                    
-                    % Serialize and write the response
-                    response = this.serialize(response,1,id);                    
-                    write(this.socket,response);
-                    
+   
                 catch exception
                     this.socket = [];
                     rethrow(exception)
                 end
             end
-
+            
         end
         
+        function messages = readSocket(this)
+            % Waits for Messages in the Socket and return these
+            % Usaly this should be only one message
+            
+            % Wait for bytes
+            while ~this.socket.BytesAvailable
+                   pause(0.001);
+            end
+            
+            % Read the socket
+            buffer = read(this.socket);
+            buffer = [this.bufferRemainder buffer];
+            this.bufferRemainder = [];
+            
+            messages = this.splitRequest(buffer);
+        end
+        
+        
+        function messages = splitRequest(this,buffer)
+            % Splits the received buffer into the different messages,
+            % saves incomplete messages to for next loop
+            
+            messages = {};
+            
+            while numel(buffer)>0
+                
+                try
+                    messageLength = sum(uint32(buffer(1:4)).*uint32([4 3 2 1].^8));
+                catch ME
+                    if strcmp(ME.identifier,'MATLAB:badsubscript')
+                        this.bufferRemainder = buffer;
+                        break;
+                    end
+                    rethrow(ME)
+                end
+                
+                try
+                    messages{end+1} = buffer(5:messageLength+4);
+                catch ME
+                    if strcmp(ME.identifier,'MATLAB:badsubscript')
+                        this.bufferRemainder = buffer;
+                        break;
+                    end
+                    rethrow(ME)
+                end
+                
+                buffer = buffer(messageLength+5:end);
+                
+            end
+            
+        end
+        
+        
+        
         function message = serialize(this,content,type,varargin)
-        	% Converts response from Matlab data types to JSON.
-        	%
+            % Converts response from Matlab data types to JSON.
+            %
             % Parameter:
             %  - content: String argument; message content.
             %  - type: Double argument; message type.
@@ -114,7 +175,7 @@ classdef SimSocket < handle
             %
             % Return:
             %  - message: Bytes object; socket message.
-
+            
             % if no id is given it is set automaticaly
             if nargin < 4
                 varargin{1}=nextRequestID(this);
@@ -122,7 +183,7 @@ classdef SimSocket < handle
             
             message{3}=content;
             message{1}=type;
-            message{2}=varargin{1};            
+            message{2}=varargin{1};
             try
                 message = savejson('',message,'ParseLogical',1,'Compact',1);
             catch ME
@@ -142,18 +203,19 @@ classdef SimSocket < handle
             message = strrep(message, sprintf('\n'), '');
             message = strrep(message, ',null', '');
             message = strrep(message, 'null,', '');
-
+            
             if this.verbose
                 disp(message);
             end
-
+            
             message = [this.makeHeader(message) uint8(message)];
-
+            
         end
         
+        
         function [type,id,content] = deserialize(this,message)
-        	% Converts request from JSON to Matlab data types.
-        	%
+            % Converts request from JSON to Matlab data types.
+            %
             % Parameter:
             %  - message: Byte argument; socket message.
             %
@@ -162,12 +224,12 @@ classdef SimSocket < handle
             %  - id: Double object; message id;
             %  - content: String object; message content.
             
-            message = char(message(5:end));
+            message = char(message);
             message = strrep(message, ',null', '');
             message = strrep(message, 'null,', '');
             message = strrep(message, 'null', '0');
             message = strrep(message, '\",', '"');
-
+            
             if this.verbose
                 disp(message);
             end
@@ -184,11 +246,11 @@ classdef SimSocket < handle
                 end
                 rethrow(ME)
             end
-
+            
             if ~iscell(message)
                 message = num2cell(message);
             end
-
+            
             type = message{1};
             id = message{2};
             if ~lt(numel(message),3)
@@ -196,24 +258,24 @@ classdef SimSocket < handle
             else
                 content = struct;
             end
-
+            
             this.last_id = id;
             
         end
         
         function value = nextRequestID(this)
-        	% Creates next message id.
-
-        	%
+            % Creates next message id.
+            
+            %
             % Parameter:
             %  - none
             %
             % Return:
             %  - value: Double object; message id.
-
+            
             this.last_id = this.last_id+1;
             value = this.last_id;
-
+            
         end
         
     end
@@ -221,73 +283,87 @@ classdef SimSocket < handle
     methods
         
         function start(this)
-        	% Starts main loop.
-        	%
+            % Starts main loop.
+            %
             % Parameter:
             %  - none
             %
             % Return:
             %  - none
-
+            
             assert(~isempty(this.delegate),'You need to specify a delegate before starting the socket');
             this.mainLoop();
-
-        end        
+            
+        end
         
         function stop(this)
-        	% Activates server stop toggle.
-        	%
+            % Activates server stop toggle.
+            %
             % Parameter:
             %  - none
             %
             % Return:
             %  - none
-
+            
             this.stopServer = true;
-        end        
+        end
         
         function response = sendRequest(this,content)
-        	% Sends request to socket server.
-        	%
+            % Sends request to socket server.
+            %
             % Parameter:
             %  - content: Struct argument; socket request message.
             %
             % Return:
             %  - response: Struct argument; socket return message.
-
+            
             % Serialize and write the request
-            request = this.serialize(content,0);
+            id = nextRequestID(this);
+            request = this.serialize(content,0,id);
             write(this.socket,request);
             
-            % Wait for response
-            while ~this.socket.BytesAvailable
-                pause(0.001);
+            response = {};
+        
+            % Wait for response message        
+            while isempty(response)   
+                
+                messages = this.readSocket();
+                
+                % Search for related resonse in messages
+                for idx = 1:numel(messages)
+                    [~,response_id,content] = this.deserialize(messages{idx});
+                    
+                    % Message found 
+                    if (response_id == id)
+                        response = content;
+                        messages(idx) = [];
+                        break;
+                    end
+                end
+                
+                this.messageCue = horzcat(this.messageCue,messages);
+                
             end
-            
-            % Read and deserialize the response
-            response = read(this.socket);
-            [~,~,content] = this.deserialize(response);
-            response = content;
         end
-
+        
     end
-
+    
     methods (Static)
-
+        
         function header = makeHeader(message)
-        	% Creates byte header for socket message.
-        	%
+            % Creates byte header for socket message.
+            %
             % Parameter:
             %  - message: String argument; socket message.
             %
             % Return:
             %  - header: Byte object; message size;
-
+            
             sizeMessage = numel(message);
             header = typecast(swapbytes(uint32(sizeMessage)),'uint8');
-
+            
         end
-
+        
     end
-
+    
 end
