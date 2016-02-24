@@ -4,7 +4,7 @@ classdef Simulator < MosaikAPI.SimSocketDelegate
 
     properties (Constant)
 
-        api_version = 2    % API version
+        api_version = '2.1'    % API version
 
     end
     
