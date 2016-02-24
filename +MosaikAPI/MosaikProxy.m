@@ -38,7 +38,7 @@ classdef MosaikProxy < handle
 			%  - this: Double object; progress.
 
 			content{1} = 'get_progress';
-			content{2} = {{}};
+			content{2} = {};
 			content{3} = struct;
 			progress = this.sim.socket.sendRequest(content);
 
