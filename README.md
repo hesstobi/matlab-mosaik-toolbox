@@ -2,11 +2,11 @@
 
 ## Quickstart
 
-It is recommended for Mosaik toolbox to run MATLab 2015b or later. Earlier versions have not been tested.
+It is recommended for Mosaik toolbox to run MATLab 2015a or later. Earlier versions have not been tested.
 
-For socket communication you need [JSONLab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave) or provided in our repository (**jsonlab-1.x.mltbx**). Just install the toolbox or put the .m files in your MATLab path.
+For socket communication you need [JSONLab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave). Just install the toolbox or put the .m files in your MATLAB path.
 
-Then you can just install the Mosaik toolbox (**mosaiktlbx-x.x.mltbx**).
+Then you can just install the Mosaik toolbox (**mosaiktlbx-1.0.mltbx**).
 
 ## Scenario Definition
 
@@ -15,7 +15,7 @@ For detailed scenario definition please refer to the official [mosaik documentat
 To initiate a simulator, add the following to your `sim_config`:
 ```python
 sim_config = {
-    'Matlab': {
+	'Matlab': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)),
 		'cmd': 'matlab.exe -minimize -nosplash -r "Simulator(\'%(addr)s\')"'
 	}
@@ -24,7 +24,7 @@ sim_config = {
 Where *Simulator* is the name of your simulator and has to be in the same folder as your **demo.py**. If you need to use a simulator which is not in the same folder, use the following syntax:
 ```python
 sim_config = {
-    'Matlab': {
+	'Matlab': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)),
 		'cmd': 'matlab.exe -minimize -nosplash -r "Package.Simulator(\'%(addr)s\')"'
 	}
@@ -35,7 +35,7 @@ Where *Package* is your MATLab package containing the *Simulator*. In this examp
 To start your simulator in *verbose mode* (socket messages are displayed and simulator does not exit at the end) add `,\'verbose\',true` to your simulator parameters:
 ```python
 sim_config = {
-    'Matlab': {
+	'Matlab': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)),
 		'cmd': 'matlab.exe -minimize -nosplash -r "Simulator(\'%(addr)s\',\'verbose\',true)"'
 	}
@@ -44,8 +44,8 @@ sim_config = {
 It is also recommended to increase the timeout since MATLab can take a little time to load. This can be done by changing the `mosaik_config`:
 ```python
 mosaik_config = {
-    'start_timeout': 600,  # seconds
-    'stop_timeout': 10,  # seconds
+	'start_timeout': 600,  # seconds
+	'stop_timeout': 10,  # seconds
 }
 ```
 Then, start the world using your just created `sim_config` and `mosaik_config`:
@@ -67,7 +67,7 @@ The collector utility is used to create tables or graphical plots from the simul
 First, change the `sim_config`:
 ```python
 sim_config = {
-    'Matlab': {
+	'Matlab': {
 		'cwd': os.path.dirname(os.path.realpath(__file__)),
 		'cmd': 'matlab.exe -minimize -nosplash -r "MosaikUtilites.Collector(\'%(addr)s\')"'
 	}
@@ -323,7 +323,7 @@ In every step the model adds the delta value to its current value:
 ```matlab
 function step(this,~,varargin)
 
-	this.val = this.val + this.delta; 
+	this.val = this.val + this.delta;
 
 end
 ```
@@ -332,11 +332,11 @@ While instantiating the model the initial value has to be defined:
 function this = Model(sim,eid,varargin)
 
 	this = this@MosaikAPI.Model(sim,eid);
-	
+
 	p = inputParser;
 	addOptional(p,'init_value',0,@(x)validateattributes(x,{'numeric'},{'scalar'}));
 	parse(p,varargin{:});
-	
+
 	this.val = p.Results.init_value;   
 
 end
@@ -349,16 +349,16 @@ It provides the model 'Agent' which can control ExampleSims 'Model' model via as
 ```matlab
 properties
 
-    providedModels = {'Agent'}
+	providedModels = {'Agent'}
 
 end
 ```
 ```matlab
 properties
 
-    rel
-    val
-    link	
+	rel
+	val
+	link
 
 end
 ```
