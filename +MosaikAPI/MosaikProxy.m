@@ -44,63 +44,61 @@ classdef MosaikProxy < handle
 
 		end
 		
-		function related_entities = get_related_entities(this,varargin)
+		function related_entities = get_related_entities(this,entities)
 			% Returns 'get_related_entities' message for MOSAIK.
 			%
 			% Parameter:
 			%
-			%  - varargin: String or cell argument; model eid or model eids.
+			%  - entites: String or cell argument; model eid or model eids
+			%             or full eids
+            %               
 			%
 			% Return:
 			%
 			%  - related_entities: Struct object; (source entitiy and) related entities.
 			
+            if ischar(entities)
+                entities = {entities};
+            end        
+                       
+            simpleIds = and(cellfun(@isempty,strfind(entities,'.')),cellfun(@isempty,strfind(entities,'_0x2E_')));                 
+            entities(simpleIds) = strcat(this.sim.sid,'.',entities(simpleIds));
+                    
 			content{1} = 'get_related_entities';        
-			if gt(nargin,1)
-				if ischar(varargin{1})
-					varargin =  strcat(this.sim.sid,'.',cellstr(varargin{1}));
-				end
-				varargin{end+1} = {[]};
-			else
-				varargin{end+1} = {{}};
-			end
-			content{2} = varargin;
+			content{2} = entities;
 			content{3} = struct;
-			related_entities = this.sim.socket.sendRequest(content);
+
+            related_entities = this.sim.socket.sendRequest(content);
 
 		end
 		
-		function data = get_data(this,varargin)
+		function data = get_data(this,attrs)
 			% Returns 'get_data' message for MOSAIK.
 			%
 			% Parameter:
 			%
-			%  - varargin: Struct argument; full ids and requested
+			%  - attrs: Struct argument; full ids and requested
 			%                               attributes.
 			%
 			% Return:
 			%
 			%  - data: Struct object; fulls ids, requested attributes
 			%                         and its values.
-			
+			 
 			content{1} = 'get_data';
-			if iscell(varargin{1})
-				varargin =  varargin{1};
-			else
-				varargin{end+1} = {[]};
-			end
-			content{2} = varargin;
+			content{2} = {attrs};
 			content{3} = struct;
+
 			data = this.sim.socket.sendRequest(content);
 
 		end
 		
-		function set_data(this,varargin)
+		function set_data(this,data)
 			% Returns 'set_data' message for MOSAIK.
 			%
 			% Parameter:
 			%
-			%  - varargin: Struct object; source full ids, destination
+			%  - data: Struct object; source full ids, destination
 			%                             full ids, attributes and values
 			%
 			% Return:
@@ -108,13 +106,9 @@ classdef MosaikProxy < handle
 			%  - none
 			
 			content{1} = 'set_data';
-			if iscell(varargin{1})
-				varargin =  varargin{1};
-			else
-				varargin{end+1} = {[]};
-			end
-			content{2} = varargin;
+			content{2} = {data};
 			content{3} = struct;
+
 			this.sim.socket.sendRequest(content);
 			
 		end
