@@ -41,7 +41,7 @@ classdef Model < MosaikAPI.Model
 
 			value.public = true;
 			value.attrs = {'delta', 'val'};
-			value.params = {'init_value',[]};
+			value.params = {'init_value'};
 			value.any_inputs = false;
 
 		end

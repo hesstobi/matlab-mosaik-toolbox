@@ -49,8 +49,6 @@ classdef Controller < MosaikAPI.Simulator
 
 			end
 
-			ctrl_list{end+1} = [];
-
 			disp(this.amount);
 			this.amount = this.amount + num;
 			disp(this.amount);
@@ -86,7 +84,7 @@ classdef Controller < MosaikAPI.Simulator
 			% Return:
 			%  - value: Double object; requested value.
 
-			output.(id) = {attr,[]};
+			output.(id) = {attr};
 			data = this.mosaik.get_data(output);
 			value = data.(id).(attr);
 			

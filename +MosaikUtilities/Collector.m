@@ -48,11 +48,11 @@ classdef Collector < MosaikAPI.Simulator
 
 			value = meta@MosaikAPI.Simulator(this);
 			
-			value.extra_methods = {'save_results',[]};
+			value.extra_methods = {'save_results'};
 			
 			value.models.(this.model).public = true;
 			value.models.(this.model).attrs = {};
-			value.models.(this.model).params = {'graphical_output',[]};
+			value.models.(this.model).params = {'graphical_output'};
 			value.models.(this.model).any_inputs = true;
 			
 		end
@@ -84,7 +84,7 @@ classdef Collector < MosaikAPI.Simulator
 			
 			s.eid = this.eid;
 			s.type = this.model;
-			dscr_list = horzcat({s},{[]});
+			dscr_list = {s};
 
 		end
 

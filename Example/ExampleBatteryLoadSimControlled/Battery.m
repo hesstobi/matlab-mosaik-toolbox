@@ -51,7 +51,7 @@ classdef Battery < MosaikAPI.Model
 
 			value.public = true;
 			value.attrs = {'init_capacitance','capacitance','voltage'};
-			value.params = {'init_capacitance',[]};
+			value.params = {'init_capacitance'};
 			value.any_inputs = false; %CHECK this
 			
 		end

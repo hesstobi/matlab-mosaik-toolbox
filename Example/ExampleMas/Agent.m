@@ -49,7 +49,7 @@ classdef Agent < MosaikAPI.Model
 			% Gets data from related models.
 			for i = 1:numel(rels)
 				full_id = rels{i};
-				outputs.(full_id) = {'val',[]};					
+				outputs.(full_id) = {'val'};					
 			end
 			data = this.sim.mosaik.get_data(outputs);
 			disp(savejson('',data));
@@ -76,8 +76,8 @@ classdef Agent < MosaikAPI.Model
 			% Adds model meta content to meta struct.
 
 			value.public = true;
-			value.attrs = {'link',[]};
-			value.params = {'val',[]};
+			value.attrs = {'link'};
+			value.params = {'val'};
 			value.any_inputs = true;
 			
 		end

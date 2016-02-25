@@ -110,8 +110,6 @@ classdef ModelSimulator < MosaikAPI.Simulator
             dscrList = cell2struct(vertcat(eids,types),{'eid','type'},1);
             % Creates cell array with model eid and model type for each model as cell.
             dscrList = arrayfun(@(x) x,dscrList','UniformOutput',false);
-            % Adds empty cell at end for JSONLab.
-            dscrList{end+1} = [];     
 
         end        
         

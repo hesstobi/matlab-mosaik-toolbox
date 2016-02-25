@@ -56,7 +56,7 @@ classdef Load < MosaikAPI.Model
 
 			value.public = true;
 			value.attrs = {'resistance','consumed_capacitance','total_consumed_cap'};
-			value.params = {'resistance',[]};
+			value.params = {'resistance'};
 			value.any_inputs = false;
 
 		end
