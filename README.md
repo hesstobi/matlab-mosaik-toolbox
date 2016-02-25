@@ -1,12 +1,14 @@
 # Mosaik Toolbox
 
+This toolbox provides a high-level API for the Mosaik co-simulation framework (https://mosaik.offis.de/) in Matlab.
+
 ## Quickstart
 
 It is recommended for Mosaik toolbox to run MATLab 2015a or later. Earlier versions have not been tested.
 
-For socket communication you need [JSONLab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave). Just install the toolbox or put the .m files in your MATLAB path.
+For socket communication you need [JSONLab](http://www.mathworks.com/matlabcentral/fileexchange/33381-jsonlab--a-toolbox-to-encode-decode-json-files-in-matlab-octave) Version 1.2 or greater. Just install the toolbox or put the .m files somewhere in your MATLAB path.
 
-Then you can just install the Mosaik toolbox (**mosaiktlbx-1.0.mltbx**).
+Then you can just download and install the Mosaik Toolbox [(**Mosaik-Toolbox.mltbx**)](https://github.com/hesstobi/matlab-mosaik-toolbox/releases/latest).
 
 ## Scenario Definition
 
@@ -385,7 +387,7 @@ Then it gets their current data:
 ```matlab
 for i = 1:numel(rels)
 	full_id = rels{i};
-	outputs.(full_id) = {'val',[]};					
+	outputs.(full_id) = {'val'};					
 end
 data = this.sim.mosaik.get_data(outputs);
 disp(savejson('',data));
