@@ -32,7 +32,7 @@ monitor = world.start('Monitor', step_size=10)
 collector = monitor.Collector(graphical_output=True)
 
 # Connect three models to three agents.
-'''
+
 model_set = matlab1.Model.create(3)
 agent_set = [matlab2.Agent(val=(i+1)*20) for i in range(3)]
 
@@ -40,7 +40,7 @@ for model, agent in zip(model_set, agent_set):
     world.connect(model, agent, ('val', 'link',), async_requests=True)
 
 mosaik.util.connect_many_to_one(world, model_set, collector, 'val')
-'''
+
 
 # Connect one model to an agent.
 '''
