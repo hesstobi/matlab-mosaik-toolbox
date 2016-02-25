@@ -253,10 +253,17 @@ classdef SimSocket < handle
             
             type = message{1};
             id = message{2};
+            
             if ~lt(numel(message),3)
                 content = message{3};
             else
                 content = struct;
+            end
+            
+            if type == 2
+                msgID = 'MOSAIKAPI:SimSocket:MosaikError';
+                ME = MException(msgID,strrep(content, '\', '\\'));
+                throw(ME);
             end
             
             this.last_id = id;
