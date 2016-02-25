@@ -80,7 +80,7 @@ classdef SimSocket < handle
             
             while ~this.stopServer
                 try
-                                                           
+                    
                     % Read Messages form the Socket
                     messages = this.readSocket();
                     
@@ -102,7 +102,7 @@ classdef SimSocket < handle
                         
                     end
                     
-   
+                    
                 catch exception
                     this.socket = [];
                     rethrow(exception)
@@ -117,7 +117,7 @@ classdef SimSocket < handle
             
             % Wait for bytes
             while ~this.socket.BytesAvailable
-                   pause(0.001);
+                pause(0.001);
             end
             
             % Read the socket
@@ -197,12 +197,53 @@ classdef SimSocket < handle
                 rethrow(ME)
             end
             
-            message = strrep(message, '_0x2D_','-');
-            message = strrep(message, '_0x2E_','.');
-            message = strrep(message, sprintf('\t'), '');
-            message = strrep(message, sprintf('\n'), '');
-            message = strrep(message, ',null', '');
-            message = strrep(message, 'null,', '');
+            if ~isempty(strfind(message,'_0x2D_'))
+                if this.verbose
+                    disp(message)
+                    warning('MOSAIKAPI:SimSocket:jsonwarming','Replace _0x2D_ in message to mosiak')
+                end
+                message = strrep(message, '_0x2D_','-');
+            end
+            
+            if ~isempty(strfind(message,'_0x2E_'))
+                if this.verbose
+                    disp(message)
+                    warning('MOSAIKAPI:SimSocket:jsonwarming','Replace _0x2E_ in message to mosiak')
+                end
+                message = strrep(message, '_0x2E_','.');
+            end
+            
+            if ~isempty(strfind(message,sprintf('\t')))
+                if this.verbose
+                    disp(message)
+                    warning('MOSAIKAPI:SimSocket:jsonwarming','Replace \\t in message to mosiak')
+                end
+                message = strrep(message, sprintf('\t'),'');
+            end
+            
+            if ~isempty(strfind(message,sprintf('\n')))
+                if this.verbose
+                    disp(message)
+                    warning('MOSAIKAPI:SimSocket:jsonwarming','Replace \\n in message to mosiak')
+                end
+                message = strrep(message, sprintf('\n'),'');
+            end
+            
+            if ~isempty(strfind(message,',null'))
+                if this.verbose
+                    disp(message)
+                    warning('MOSAIKAPI:SimSocket:jsonwarming','Replace ,null in message to mosiak')
+                end
+                message = strrep(message, ',null','');
+            end
+            
+            if ~isempty(strfind(message,'null,'))
+                if this.verbose
+                    disp(message)
+                    warning('MOSAIKAPI:SimSocket:jsonwarming','Replace null, in message to mosiak')
+                end
+                message = strrep(message, 'null,','');
+            end
             
             if this.verbose
                 disp(message);
@@ -225,10 +266,25 @@ classdef SimSocket < handle
             %  - content: String object; message content.
             
             message = char(message);
-            message = strrep(message, ',null', '');
-            message = strrep(message, 'null,', '');
-            message = strrep(message, 'null', '0');
-            message = strrep(message, '\",', '"');
+            
+            
+            if ~isempty(strfind(message,',null'))
+                if this.verbose
+                    disp(message)
+                    warning('MOSAIKAPI:SimSocket:jsonwarming','Replace ,null in message from mosiak')
+                end
+                message = strrep(message, ',null','');
+            end
+            
+            if ~isempty(strfind(message,'null,'))
+                if this.verbose
+                    disp(message)
+                    warning('MOSAIKAPI:SimSocket:jsonwarming','Replace null, in message from mosiak')
+                end
+                message = strrep(message, 'null,','');
+            end
+            
+            message = strrep(message, 'null','0');
             
             if this.verbose
                 disp(message);
@@ -330,9 +386,9 @@ classdef SimSocket < handle
             write(this.socket,request);
             
             response = {};
-        
-            % Wait for response message        
-            while isempty(response)   
+            
+            % Wait for response message
+            while isempty(response)
                 
                 messages = this.readSocket();
                 
@@ -340,7 +396,7 @@ classdef SimSocket < handle
                 for idx = 1:numel(messages)
                     [~,response_id,content] = this.deserialize(messages{idx});
                     
-                    % Message found 
+                    % Message found
                     if (response_id == id)
                         response = content;
                         messages(idx) = [];
